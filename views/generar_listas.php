@@ -1,97 +1,105 @@
 <?php
-// generar_listas.php
-require_once "../config/conexion.php"; // ajustar ruta si es necesario
-// Traer datos para selects
-$docentes = $conn->query("SELECT id_docente, CONCAT(nombre,' ',apellidos) AS nombre_completo FROM docentes ORDER BY nombre, apellidos")->fetch_all(MYSQLI_ASSOC);
-$materias = $conn->query("SELECT * FROM materias ORDER BY nombre")->fetch_all(MYSQLI_ASSOC);
-$grupos = $conn->query("SELECT g.id_grupo, g.nombre AS nombre_grupo, s.numero AS semestre_num
-                        FROM grupos g
-                        INNER JOIN semestres s ON g.id_semestre = s.id_semestre
-                        ORDER BY s.numero, g.nombre")->fetch_all(MYSQLI_ASSOC);
-$parciales = $conn->query("SELECT * FROM parciales ORDER BY numero_parcial")->fetch_all(MYSQLI_ASSOC);
-?>
+require_once "../config/conexion.php";
 
+// Obtener docentes
+$docentes = $conn->query("
+    SELECT id_docente, CONCAT(nombre,' ',apellidos) AS nombre 
+    FROM docentes
+    ORDER BY nombre, apellidos
+")->fetch_all(MYSQLI_ASSOC);
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Generar lista imprimible</title>
-    <link rel="stylesheet" href="../public/css/styles.css"> <!-- opcional -->
-    <style>
-        /* Estilos mínimos para el formulario */
-        body{font-family:Arial,Helvetica,sans-serif;padding:20px}
-        .container{max-width:900px;margin:0 auto}
-        label{display:block;margin-top:10px}
-        select,input[type=date]{width:100%;padding:6px;margin-top:4px}
-        .row{display:flex;gap:10px}
-        .col{flex:1}
-        button{margin-top:12px;padding:10px 16px}
-    </style>
+    <title>Generar lista</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script>
+        function cargarMaterias() {
+            let docente = document.getElementById("docente").value;
+            if(docente === "") {
+                document.getElementById("materia").innerHTML = "<option value=''>Seleccione...</option>";
+                document.getElementById("grupo").innerHTML = "<option value=''>Seleccione...</option>";
+                return;
+            }
+            fetch("../ajax/get_materias.php?id_docente=" + docente)
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById("materia").innerHTML = html;
+                    document.getElementById("grupo").innerHTML = "<option value=''>Seleccione materia primero...</option>";
+                });
+        }
+
+        function cargarGrupos() {
+            let docente = document.getElementById("docente").value;
+            let materia = document.getElementById("materia").value;
+            if(materia === "") {
+                document.getElementById("grupo").innerHTML = "<option value=''>Seleccione...</option>";
+                return;
+            }
+            fetch("../ajax/get_grupos.php?id_docente=" + docente + "&id_materia=" + materia)
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById("grupo").innerHTML = html;
+                });
+        }
+    </script>
 </head>
 <body>
-<div class="container">
-    <h2>Generar lista de asistencia (vista para imprimir)</h2>
+<?php include 'header.php'; ?>
 
-    <form action="lista_impresion.php" method="POST" target="_blank">
-        <div class="row">
-            <div class="col">
-                <label>Docente</label>
-                <select name="id_docente" required>
-                    <option value="">-- Seleccione docente --</option>
-                    <?php foreach($docentes as $d): ?>
-                        <option value="<?php echo $d['id_docente']; ?>"><?php echo htmlspecialchars($d['nombre_completo']); ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+<div class="container-form">
+    <h2>Generar lista de asistencia</h2>
 
-            <div class="col">
-                <label>Grupo</label>
-                <select name="id_grupo" required>
-                    <option value="">-- Seleccione grupo --</option>
-                    <?php foreach($grupos as $g): ?>
-                        <option value="<?php echo $g['id_grupo']; ?>"><?php echo htmlspecialchars($g['nombre_grupo']." - Sem ".$g['semestre_num']); ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+    <form action="lista_impresion.php" method="POST" target="_blank" class="form-grid">
+
+        <div>
+            <label>Docente</label>
+            <select name="id_docente" id="docente" required onchange="cargarMaterias()">
+                <option value="">Seleccione docente...</option>
+                <?php foreach($docentes as $d): ?>
+                    <option value="<?= $d['id_docente'] ?>"><?= $d['nombre'] ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
 
-        <div class="row">
-            <div class="col">
-                <label>Materia</label>
-                <select name="id_materia" required>
-                    <option value="">-- Seleccione materia --</option>
-                    <?php foreach($materias as $m): ?>
-                        <option value="<?php echo $m['id_materia']; ?>"><?php echo htmlspecialchars($m['nombre']); ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <div class="col">
-                <label>Parcial (opcional - si seleccionas reemplaza rango de fechas)</label>
-                <select name="id_parcial">
-                    <option value="">-- Seleccione parcial --</option>
-                    <?php foreach($parciales as $p): ?>
-                        <option value="<?php echo $p['id_parcial']; ?>"><?php echo "Parcial ".$p['numero_parcial']." (".$p['fecha_inicio']." a ".$p['fecha_fin'].")"; ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+        <div>
+            <label>Parcial (opcional)</label>
+            <select name="id_parcial">
+                <option value="">-- Ninguno --</option>
+                <?php
+                    $parciales = $conn->query("SELECT * FROM parciales ORDER BY numero_parcial")->fetch_all(MYSQLI_ASSOC);
+                    foreach($parciales as $p):
+                ?>
+                    <option value="<?= $p['id_parcial'] ?>">Parcial <?= $p['numero_parcial'] ?> (<?= $p['fecha_inicio'] ?> a <?= $p['fecha_fin'] ?>)</option>
+                <?php endforeach; ?>
+            </select>
         </div>
 
-        <div class="row">
-            <div class="col">
-                <label>Fecha inicio (si no usas parcial)</label>
-                <input type="date" name="fecha_inicio" >
-            </div>
-            <div class="col">
-                <label>Fecha fin (si no usas parcial)</label>
-                <input type="date" name="fecha_fin" >
-            </div>
+        <div class="full-row">
+            <label>Materia (solo las que imparte ese docente)</label>
+            <select name="id_materia" id="materia" required onchange="cargarGrupos()">
+                <option value="">Seleccione docente primero...</option>
+            </select>
         </div>
 
-        <p style="margin-top:10px;color:#555">Nota: Las fechas de las columnas se generan automáticamente según los días que estén registrados en <code>horarios</code> para el docente, materia y grupo seleccionados.</p>
+        <div class="full-row">
+            <label>Grupo (solo donde ese docente imparte esa materia)</label>
+            <select name="id_grupo" id="grupo" required>
+                <option value="">Seleccione materia primero...</option>
+            </select>
+        </div>
 
-        <button type="submit">Generar vista imprimible</button>
+        <div class="full-row">
+            <button type="submit" class="btn-agregar">Generar Lista</button>
+        </div>
+
+        
     </form>
 </div>
+
 </body>
 </html>
+
+
+

@@ -9,32 +9,53 @@ function map_dia_enum_a_num($enum) {
 }
 
 function obtener_horarios_docente($conn, $id_docente, $id_materia, $id_grupo) {
-    // devuelve array de filas de horarios (id_horario, dia_semana, hora_inicio, hora_fin)
-    $sql = "SELECT id_horario, dia_semana, hora_inicio, hora_fin
-            FROM horarios
-            WHERE id_docente = ? AND id_materia = ? AND id_grupo = ?
-            ORDER BY FIELD(dia_semana,'L','M','X','J','V','S'), hora_inicio";
+    // Devuelve array de filas con id_horario, dias (como 'L-M-X'), hora_inicio, hora_fin
+    $sql = "SELECT 
+                h.id_horario,
+                GROUP_CONCAT(hd.dia ORDER BY FIELD(hd.dia,'L','M','X','J','V','S') SEPARATOR '-') AS dias,
+                h.hora_inicio,
+                h.hora_fin
+            FROM horarios h
+            LEFT JOIN horario_dias hd ON h.id_horario = hd.id_horario
+            WHERE h.id_docente = ? AND h.id_materia = ? AND h.id_grupo = ?
+            GROUP BY h.id_horario, h.hora_inicio, h.hora_fin
+            ORDER BY FIELD(GROUP_CONCAT(hd.dia ORDER BY FIELD(hd.dia,'L','M','X','J','V','S')), 'L','M','X','J','V','S'), h.hora_inicio";
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('iii', $id_docente, $id_materia, $id_grupo);
     $stmt->execute();
     $res = $stmt->get_result();
     $rows = $res->fetch_all(MYSQLI_ASSOC);
     $stmt->close();
+
+    // Transformamos 'dias' en array individual de letras si quieres mantener compatibilidad
+    foreach ($rows as &$row) {
+        $row['dias_array'] = explode('-', $row['dias']);
+    }
+
     return $rows;
 }
 
+
 function generar_fechas_por_horarios($fecha_inicio, $fecha_fin, $horarios) {
-    // $horarios: array con 'dia_semana' (L M X J V S)
+    // $horarios: array con 'dias_array' => ['L','M',...]
     if (empty($horarios)) return [];
+    
     $dias_allowed = [];
     foreach ($horarios as $h) {
-        $dias_allowed[] = map_dia_enum_a_num($h['dia_semana']);
+        if (isset($h['dias_array']) && is_array($h['dias_array'])) {
+            foreach ($h['dias_array'] as $dia) {
+                $dias_allowed[] = map_dia_enum_a_num($dia);
+            }
+        }
     }
-    $dias_allowed = array_values(array_unique($dias_allowed)); // números 1..6
+
+    // eliminar duplicados y mantener solo números válidos 1..6
+    $dias_allowed = array_values(array_unique(array_filter($dias_allowed)));
 
     $inicio = new DateTime($fecha_inicio);
     $fin = new DateTime($fecha_fin);
-    $fin->modify('+1 day'); // para incluir fecha_fin
+    $fin->modify('+1 day'); // incluir fecha_fin
     $fechas = [];
 
     for ($d = clone $inicio; $d < $fin; $d->modify('+1 day')) {
@@ -43,8 +64,10 @@ function generar_fechas_por_horarios($fecha_inicio, $fecha_fin, $horarios) {
             $fechas[] = $d->format('Y-m-d');
         }
     }
+
     return $fechas;
 }
+
 
 function nombre_dia_corto($fecha) {
     // "Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"

@@ -10,16 +10,9 @@ $alerta = "";
 if(isset($_GET['msg'])){
     $alerta = "<div class='alerta success'>Acción realizada correctamente</div>";
 }
+// INICIAR CAPTURA  
+ob_start();
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Semestres y Grupos</title>
-    <link rel="stylesheet" href="../css/styles.css">
-</head>
-<body>
-<?php include 'header.php'; ?>
 
 <div class="container-form">
 
@@ -27,7 +20,7 @@ if(isset($_GET['msg'])){
 
     <div class="tablas-pequenas">
         <!-- SEMESTRES -->
-        <h3>Semestres</h3>
+               <h2>Semestres</h2>
         <button class="btn-agregar" onclick="abrirModalSemestre()">Agregar Semestre</button>
         <table class="tabla-docentes">
             <thead>
@@ -52,7 +45,7 @@ if(isset($_GET['msg'])){
         </table>
 
         <!-- GRUPOS -->
-        <h3>Grupos</h3>
+         <h2>Grupos</h2>
         <button class="btn-agregar" onclick="abrirModalGrupo()">Agregar Grupo</button>
         <table class="tabla-docentes">
             <thead>
@@ -171,5 +164,12 @@ window.onclick = function(event){
 }
 </script>
 
-</body>
-</html>
+
+<?php
+// FIN de la captura
+$content = ob_get_clean();
+$title = "Semestres y Grupos ";
+
+// Cargar layout
+include "dashboard.php";
+?>

@@ -12,18 +12,11 @@ if(isset($_GET['msg'])){
     if($_GET['msg'] == "edited") $alerta = "<div class='alerta success'>Alumno editado correctamente</div>";
     if($_GET['msg'] == "deleted") $alerta = "<div class='alerta error'>Alumno eliminado correctamente</div>";
 }
-?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>CRUD Alumnos</title>
-    <link rel="stylesheet" href="../css/styles.css">
-</head>
-<body>
-<?php include 'header.php'; ?>
-
+// INICIAR CAPTURA  
+    ob_start();
+    ?>
 <div class="container-form">
+           <h2>Alumnos</h2>
     <?php echo $alerta; ?>
 
     <button class="btn-agregar" onclick="abrirModalAlumno()">Agregar Alumno</button>
@@ -111,5 +104,11 @@ window.onclick = function(event){
 }
 </script>
 
-</body>
-</html>
+<?php
+// FIN de la captura
+$content = ob_get_clean();
+$title = "Alumnos";
+
+// Cargar layout
+include "dashboard.php";
+?>

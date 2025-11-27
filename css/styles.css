@@ -1,4 +1,3 @@
-
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f4f6f8;
@@ -14,7 +13,7 @@ body {
     background-color: #2c3e50;
     padding: 15px 30px;
     color: #fff;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -59,12 +58,51 @@ body {
     background-color: #1f2d3d;
 }
 
-
+/* Contenedor principal del formulario */
 .container-form {
-    width: 95%;
-    max-width: 1000px;
-    margin: 40px auto;
+    width: 100%;
+    max-width: 1000px; /* puedes usar 900px si quieres más compacto */
+    margin: 20px auto; /* margen superior/inferior */
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
+
+/* Títulos dentro del contenedor */
+.container-form h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+/* Labels dentro del contenedor */
+.container-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #34495e;
+}
+
+/* Selects dentro del contenedor */
+.container-form select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    background: #fff;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.container-form select:focus {
+    border-color: #2980b9;
+    box-shadow: 0 0 4px rgba(41, 128, 185, 0.4);
+    outline: none;
+}
+
 
 /* Alertas */
 /* Alertas flotantes a la derecha */
@@ -77,7 +115,7 @@ body {
     border-radius: 12px;
     font-weight: 600;
     text-align: left;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     display: flex;
     justify-content: space-between;
@@ -86,8 +124,15 @@ body {
     transition: opacity 0.6s, transform 0.3s;
 }
 
-.alerta.success { background-color: #27ae60; color: #fff; }
-.alerta.error { background-color: #c0392b; color: #fff; }
+.alerta.success {
+    background-color: #27ae60;
+    color: #fff;
+}
+
+.alerta.error {
+    background-color: #c0392b;
+    color: #fff;
+}
 
 .cerrar-alerta {
     cursor: pointer;
@@ -105,7 +150,10 @@ body {
 
 
 /* Botones */
-button, .btn-agregar, .btn-editar, .btn-eliminar {
+button,
+.btn-agregar,
+.btn-editar,
+.btn-eliminar {
     padding: 8px 15px;
     border-radius: 8px;
     font-weight: 600;
@@ -114,14 +162,36 @@ button, .btn-agregar, .btn-editar, .btn-eliminar {
     transition: all 0.3s ease;
 }
 
-.btn-agregar { background:#2980b9; color:#fff; margin-bottom:15px; }
-.btn-agregar:hover { background:#1f618d; }
+.btn-agregar {
+    background: #0c0c55;
+    color: #fff;
+    margin-bottom: 15px;
+}
 
-.btn-editar { background:#f39c12; color:#fff; margin-right:5px; }
-.btn-editar:hover { background:#d68910; }
+.btn-agregar:hover {
+    background: #1f618d;
+}
 
-.btn-eliminar { background:#e74c3c; color:#fff; text-decoration:none; padding:8px 12px; }
-.btn-eliminar:hover { background:#c0392b; } 
+.btn-editar {
+    background: #f39c12;
+    color: #fff;
+    margin-right: 5px;
+}
+
+.btn-editar:hover {
+    background: #d68910;
+}
+
+.btn-eliminar {
+    background: #e74c3c;
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 12px;
+}
+
+.btn-eliminar:hover {
+    background: #c0392b;
+}
 
 
 
@@ -132,39 +202,85 @@ button, .btn-agregar, .btn-editar, .btn-eliminar {
     background-color: #fff;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-.tabla-docentes th, .tabla-docentes td {
+.tabla-docentes th,
+.tabla-docentes td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
 
 .tabla-docentes th {
-    background-color: #2980b9;
+    background-color: #29295b ;
     color: #fff;
 }
 
-.tabla-docentes tr:hover { background-color: #f1f1f1; }
+.tabla-docentes tr:hover {
+    background-color: #f1f1f1;
+}
 
 /* Modal */
-.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index:100; }
-.modal-content {
-    background:#fff;
-    margin: 8% auto;
-    padding:20px 25px;
-    border-radius:12px;
-    width: 520px;
-    box-shadow:0 5px 20px rgba(0,0,0,0.2);
-    position:relative;
-}
-.cerrar { position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer; }
+.modal {
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .5);
 
-.modal-content label { display:block; margin-top:10px; margin-bottom:5px; font-weight:600; }
-.modal-content input { width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; margin-bottom:12px; }
-.modal-content button { width:100%; padding:12px; background:#2980b9; color:#fff; border-radius:8px; cursor:pointer; font-weight:600; }
-.modal-content button:hover { background:#1f618d; }
+    display: none; 
+}
+
+
+.modal-content {
+    background: #fff;
+    margin: 8% auto;
+    padding: 20px 25px;
+    border-radius: 12px;
+    width: 520px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.cerrar {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.modal-content label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 12px;
+}
+
+.modal-content button {
+    width: 100%;
+    padding: 12px;
+    background: #2980b9;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.modal-content button:hover {
+    background: #1f618d;
+}
 
 
 
@@ -183,7 +299,7 @@ button, .btn-agregar, .btn-editar, .btn-eliminar {
 
 .modal-content select:focus {
     border-color: #2980b9;
-    box-shadow: 0 0 4px rgba(41,128,185,0.5);
+    box-shadow: 0 0 4px rgba(41, 128, 185, 0.5);
     outline: none;
 }
 
@@ -216,16 +332,157 @@ button, .btn-agregar, .btn-editar, .btn-eliminar {
     cursor: pointer;
 }
 
-/* Contenedor de dos columnas dentro del modal */
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 25px; /* Separación horizontal */
-    row-gap: 15px;    /* Separación vertical */
+
+
+.info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+    font-size: 12px;
+
+
+}
+
+.info-table th,
+.info-table td {
+    border: 1px solid #333;
+    padding: 5px;
+    text-align: left;
+
+}
+
+.info-table th {
+    background: #2980b9;
+    color: #fff;
+    width: 12%;
+}
+
+.info-table td {
+    background: #f9f9f9;
 }
 
 
-/* Hacer que SELECT y INPUT ocupen todo su espacio */
+
+@media print {
+    body {
+        -webkit-print-color-adjust: exact;
+        /* Chrome, Safari */
+        print-color-adjust: exact;
+        /* Firefox */
+    }
+
+    .page {
+        background: url('../img/logoListas.jpg') no-repeat center center !important;
+        background-size: cover !important;
+    }
+}
+
+
+
+/* ============================= */
+/* SIDEBAR LATERAL DEL LAYOUT    */
+/* ============================= */
+.sidebar {
+    width: 240px;
+    background-color: #0b0b32;
+    color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    padding-top: 20px;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.sidebar img {
+    width: 240px;
+}
+
+.sidebar h2 {
+    font-size: 19px;
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    margin: 0;
+}
+
+.sidebar ul li {
+    position: relative; /* Para la línea de selección */
+}
+
+.sidebar ul li a {
+    display: block;
+    padding: 12px 20px;
+    color: #ecf0f1;
+    text-decoration: none;
+    width: 100%;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative; /* importante */
+    box-sizing: border-box; /* asegura que padding no desborde */
+}
+
+/* Hover sin mover contenido */
+.sidebar ul li a:hover {
+    background-color: #feffff;
+    color: #080808;
+}
+
+/* Sección activa */
+.sidebar ul li a.active {
+    background-color: #feffff;
+    color: #080808;
+}
+
+/* Línea de selección a la izquierda */
+.sidebar ul li a::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 10px;
+    background-color: #c2ccff;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    transform: scaleY(0);
+}
+
+/* Hover o activo muestra la línea */
+.sidebar ul li a.active::before,
+.sidebar ul li a:hover::before {
+    opacity: 1;
+    transform: scaleY(1);
+}
+
+/* ============================= */
+/* CONTENIDO PRINCIPAL (MAIN)   */
+/* ============================= */
+.main {
+    margin-left: 240px;
+    /* espacio del sidebar */
+    padding: 30px;
+    min-height: 100vh;
+}
+
+/* GRID DEL FORM */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 20px; /* separación horizontal */
+    row-gap: 20px;    /* separación vertical */
+}
+
+/* Hacer que SELECT y INPUT ocupen todo su espacio dentro del grid */
 .form-grid input,
 .form-grid select {
     width: 100%;
@@ -235,93 +492,10 @@ button, .btn-agregar, .btn-editar, .btn-eliminar {
 .full-row {
     grid-column: span 2;
 }
-/* Espaciado interno adecuado para cada campo en el grid */
+
+/* Labels dentro del grid */
+.form-grid label,
 .form-grid div label {
-    margin-bottom: 4px;
     display: block;
-}
-
-
-.form-grid label {
-    margin-bottom: 3px;
-}
-
-
-
-
-/* Reutilizar estilos de modal para selects y labels */
-.container-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 600;
-    color: #34495e;
-}
-
-.container-form select {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 15px;
-    background: #fff;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.container-form select:focus {
-    border-color: #2980b9;
-    box-shadow: 0 0 4px rgba(41,128,185,0.3);
-    outline: none;
-}
-
-
-
-/* Ajustes para el grid */
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 20px;
-    row-gap: 20px;
-}
-
-.full-row {
-    grid-column: span 2;
-}
-
-
-.info-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 10px;
-    font-size: 12px;
-    
-    
-}
-.info-table th, .info-table td {
-    border: 1px solid #333;
-    padding: 5px;
-    text-align: left;
-    
-}
-.info-table th {
-    background: #2980b9;
-    color: #fff;
-    width: 12%;
-}
-.info-table td {
-    background: #f9f9f9;
-}
-
-
-
-@media print {
-    body {
-        -webkit-print-color-adjust: exact; /* Chrome, Safari */
-        print-color-adjust: exact;         /* Firefox */
-    }
-
-    .page {
-        background: url('../img/logoListas.jpg') no-repeat center center !important;
-        background-size: cover !important;
-    }
+    margin-bottom: 4px; /* puedes dejar 3px si prefieres más compacto */
 }

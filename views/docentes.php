@@ -1,35 +1,30 @@
 <?php
 require_once "../config/conexion.php";
 require_once "../models/DocentesModel.php";
+
 $docenteModel = new DocentesModel($conn);
 $docentes = $docenteModel->getDocentes();
-$alerta = "";
-if(isset($_GET['msg'])){
-    if($_GET['msg'] == "success") $alerta = "<div class='alerta success'>Docente agregado correctamente</div>";
-    if($_GET['msg'] == "edited") $alerta = "<div class='alerta success'>Docente editado correctamente</div>";
-    if($_GET['msg'] == "deleted") $alerta = "<div class='alerta error'>Docente eliminado correctamente</div>";
-}
-?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>CRUD Docentes</title>
-    <link rel="stylesheet" href="../css/styles.css">
 
-</head>
-<body>
-<?php include 'header.php'; ?>
+$alerta = "";
+if (isset($_GET['msg'])) {
+    if ($_GET['msg'] == "success") $alerta = "<div class='alerta success'>Docente agregado correctamente</div>";
+    if ($_GET['msg'] == "edited")  $alerta = "<div class='alerta success'>Docente editado correctamente</div>";
+    if ($_GET['msg'] == "deleted") $alerta = "<div class='alerta error'>Docente eliminado correctamente</div>";
+}
+
+// INICIAR CAPTURA  
+ob_start();
+?>
+
 <div class="container-form">
-    <?php if($alerta): ?>
-        <div id="alertaMsg" class="alerta <?php echo strpos($alerta,'success')!==false ? 'success':'error'; ?>">
+    <h2>Docentes</h2>
+    <?php if ($alerta): ?>
+        <div id="alertaMsg" class="alerta <?php echo strpos($alerta, 'success') !== false ? 'success' : 'error'; ?>">
             <span><?php echo strip_tags($alerta); ?></span>
             <span class="cerrar-alerta" onclick="cerrarAlerta()">&times;</span>
         </div>
     <?php endif; ?>
 
-
-    
     <button class="btn-agregar" onclick="abrirModal()">Agregar Docente</button>
 
     <table class="tabla-docentes">
@@ -44,24 +39,24 @@ if(isset($_GET['msg'])){
             </tr>
         </thead>
         <tbody>
-        <?php foreach($docentes as $d): ?>
-            <tr>
-                <td><?php echo $d['id_docente']; ?></td>
-                <td><?php echo $d['nombre']; ?></td>
-                <td><?php echo $d['apellidos']; ?></td>
-                <td><?php echo $d['correo']; ?></td>
-                <td><?php echo $d['telefono']; ?></td>
-                <td>
-                    <button class="btn-editar" onclick="abrirModal(<?php echo $d['id_docente']; ?>)">Editar</button>
-                    <a href="../controllers/DocentesController.php?eliminar=<?php echo $d['id_docente']; ?>" 
-                    class="btn-eliminar" 
-                    onclick="return confirm('¿Eliminar este docente?')">Eliminar</a>
-                </td>
-
-            </tr>
-        <?php endforeach; ?>
+            <?php foreach ($docentes as $d): ?>
+                <tr>
+                    <td><?= $d['id_docente'] ?></td>
+                    <td><?= $d['nombre'] ?></td>
+                    <td><?= $d['apellidos'] ?></td>
+                    <td><?= $d['correo'] ?></td>
+                    <td><?= $d['telefono'] ?></td>
+                    <td>
+                        <button class="btn-editar" onclick="abrirModal(<?= $d['id_docente'] ?>)">Editar</button>
+                        <a href="../controllers/DocentesController.php?eliminar=<?= $d['id_docente'] ?>"
+                            class="btn-eliminar"
+                            onclick="return confirm('¿Eliminar este docente?')">Eliminar</a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
         </tbody>
     </table>
+
 </div>
 
 <!-- Modal -->
@@ -72,19 +67,31 @@ if(isset($_GET['msg'])){
         <form id="formDocente" action="../controllers/DocentesController.php" method="POST">
             <input type="hidden" name="accion" value="agregar" id="accion">
             <input type="hidden" name="id_docente" id="id_docente">
+
             <label>Nombre</label>
             <input type="text" name="nombre" id="nombre" required>
+
             <label>Apellidos</label>
             <input type="text" name="apellidos" id="apellidos" required>
+
             <label>Correo</label>
             <input type="email" name="correo" id="correo" required>
+
             <label>Teléfono</label>
             <input type="text" name="telefono" id="telefono">
+
             <button type="submit">Guardar</button>
         </form>
     </div>
 </div>
 
 <script src="../js/script.js"></script>
-</body>
-</html>
+
+<?php
+// FIN de la captura
+$content = ob_get_clean();
+$title = "Docentes";
+
+// Cargar layout
+include "dashboard.php";
+?>

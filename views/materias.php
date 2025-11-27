@@ -10,18 +10,11 @@ if(isset($_GET['msg'])){
     if($_GET['msg'] == "edited") $alerta = "<div class='alerta success'>Materia editada correctamente</div>";
     if($_GET['msg'] == "deleted") $alerta = "<div class='alerta error'>Materia eliminada correctamente</div>";
 }
+ob_start();
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>CRUD Materias</title>
-    <link rel="stylesheet" href="../css/styles.css">
-</head>
-<body>
-<?php include 'header.php'; ?>
 
 <div class="container-form">
+        <h2>Materias</h2>
     <?php echo $alerta; ?>
 
     <button class="btn-agregar" onclick="abrirModalMateria()">Agregar Materia</button>
@@ -117,5 +110,11 @@ window.onclick = function(event){
 }
 </script>
 
-</body>
-</html>
+<?php
+// FIN de la captura
+$content = ob_get_clean();
+$title = "Materias";
+
+// Cargar layout
+include "dashboard.php";
+?>

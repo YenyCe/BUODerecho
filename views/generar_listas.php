@@ -7,13 +7,11 @@ $docentes = $conn->query("
     FROM docentes
     ORDER BY nombre, apellidos
 ")->fetch_all(MYSQLI_ASSOC);
+
+// INICIAR CAPTURA  
+ob_start();
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Generar lista</title>
-    <link rel="stylesheet" href="../css/styles.css">
+
     <script>
         function cargarMaterias() {
             let docente = document.getElementById("docente").value;
@@ -44,9 +42,7 @@ $docentes = $conn->query("
                 });
         }
     </script>
-</head>
-<body>
-<?php include 'header.php'; ?>
+
 
 <div class="container-form">
     <h2>Generar lista de asistencia</h2>
@@ -98,8 +94,15 @@ $docentes = $conn->query("
     </form>
 </div>
 
-</body>
-</html>
+
+<?php
+// FIN de la captura
+$content = ob_get_clean();
+$title = " Generacion de Listas ";
+
+// Cargar layout
+include "dashboard.php";
+?>
 
 
 

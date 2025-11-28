@@ -31,7 +31,6 @@ ob_start();
                 <th>Usuario</th>
                 <th>Rol</th>
                 <th>Carrera</th>
-                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -50,7 +49,6 @@ ob_start();
                 <td><?= $u['usuario'] ?></td>
                 <td><?= $u['rol'] ?></td>
                 <td><?= $u['carrera'] ?></td>
-                <td><?= $u['estado'] ? 'Activo' : 'Inactivo' ?></td>
                 <td>
                     <button class="btn-editar" onclick="abrirModalUsuario(<?= $u['id_usuario'] ?>)">Editar</button>
                     <a href="../controllers/UsuariosController.php?eliminar=<?= $u['id_usuario'] ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar este usuario?')">Eliminar</a>

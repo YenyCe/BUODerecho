@@ -51,7 +51,6 @@ $pagina = $pagina ?? 'dashboard'; // Si la página no define $pagina, usar 'dash
         ?>
     </div>
 
-    <script src="../js/modals.js"></script>
 </body>
 
 </html>

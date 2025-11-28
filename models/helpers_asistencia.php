@@ -9,17 +9,16 @@ function map_dia_enum_a_num($enum) {
 }
 
 function obtener_horarios_docente($conn, $id_docente, $id_materia, $id_grupo) {
-    // Devuelve array de filas con id_horario, dias (como 'L-M-X'), hora_inicio, hora_fin
+    // Devuelve array de filas con id_horario, dias (como 'L-M-X'), horario_texto
     $sql = "SELECT 
                 h.id_horario,
                 GROUP_CONCAT(hd.dia ORDER BY FIELD(hd.dia,'L','M','X','J','V','S') SEPARATOR '-') AS dias,
-                h.hora_inicio,
-                h.hora_fin
+                h.horario_texto
             FROM horarios h
             LEFT JOIN horario_dias hd ON h.id_horario = hd.id_horario
             WHERE h.id_docente = ? AND h.id_materia = ? AND h.id_grupo = ?
-            GROUP BY h.id_horario, h.hora_inicio, h.hora_fin
-            ORDER BY FIELD(GROUP_CONCAT(hd.dia ORDER BY FIELD(hd.dia,'L','M','X','J','V','S')), 'L','M','X','J','V','S'), h.hora_inicio";
+            GROUP BY h.id_horario, h.horario_texto
+            ORDER BY FIELD(GROUP_CONCAT(hd.dia ORDER BY FIELD(hd.dia,'L','M','X','J','V','S')), 'L','M','X','J','V','S')";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('iii', $id_docente, $id_materia, $id_grupo);

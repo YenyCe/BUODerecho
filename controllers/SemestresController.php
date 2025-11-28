@@ -27,7 +27,8 @@ if(isset($_POST['accion_grupo'])){
     $nombre = $_POST['nombre'];
     $id_semestre = $_POST['id_semestre'];
     // Para administradores viene por el select, para coordinadores usamos su propia carrera
-    $id_carrera = $_POST['id_carrera'] ?? $_SESSION['id_carrera'];
+    $id_carrera = !empty($_POST['id_carrera']) ? $_POST['id_carrera'] : $_SESSION['id_carrera'];
+
 
     if($_POST['accion_grupo'] == 'agregar'){
         $model->agregarGrupo($nombre, $id_semestre, $id_carrera);

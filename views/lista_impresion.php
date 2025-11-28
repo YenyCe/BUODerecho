@@ -43,15 +43,18 @@ $horarios = obtener_horarios_docente($conn, $id_docente, $id_materia, $id_grupo)
 $fechas = generar_fechas_por_horarios($fecha_inicio, $fecha_fin, $horarios) ?? [];
 
 // Función para mostrar horarios
+// Función para mostrar horarios
 function formato_horarios($horarios)
 {
     if (empty($horarios) || !is_array($horarios)) return '-';
     $arr = [];
     foreach ($horarios as $h) {
-        $arr[] = $h['hora_inicio'] . '-' . $h['hora_fin'];
+        // Cambiado de hora_inicio/hora_fin a horario_texto
+        $arr[] = $h['horario_texto'] ?? '-';
     }
     return implode(', ', $arr);
 }
+
 
 ?>
 

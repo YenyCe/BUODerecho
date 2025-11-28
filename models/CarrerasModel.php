@@ -7,11 +7,11 @@ class CarrerasModel {
         $this->conn = $conexion;
     }
 
-    public function obtenerCarreras() {
-        $sql = "SELECT * FROM carreras ORDER BY nombre ASC";
-        $result = $this->conn->query($sql);
-        return $result;
-    }
+public function obtenerCarreras() {
+    $sql = "SELECT * FROM carreras ORDER BY id_carrera ASC";
+    $result = $this->conn->query($sql);
+    return $result;
+}
 
     public function agregarCarrera($nombre, $clave) {
         $stmt = $this->conn->prepare("INSERT INTO carreras (nombre, clave) VALUES (?, ?)");

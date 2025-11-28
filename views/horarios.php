@@ -1,217 +1,223 @@
 <?php
 require_once "../middlewares/auth.php";
 require_once "../config/conexion.php";
+require_once "../models/HorariosModel.php";
 
-// Obtener datos para selects
-$docentes = $conn->query("SELECT id_docente, nombre FROM docentes ORDER BY nombre");
-$materias = $conn->query("SELECT id_materia, nombre FROM materias ORDER BY nombre");
-$grupos   = $conn->query("SELECT id_grupo, nombre FROM grupos ORDER BY nombre");
+$model = new HorariosModel($conn);
 
-// Obtener horarios con días desde la tabla nueva
-$horarios = $conn->query("
-SELECT 
-    h.id_horario,
-    h.id_docente,
-    h.id_materia,
-    h.id_grupo,
-    d.nombre AS docente,
-    m.nombre AS materia,
-    g.nombre AS grupo,
-    GROUP_CONCAT(hd.dia ORDER BY FIELD(hd.dia,'L','M','X','J','V') SEPARATOR '-') AS dias,
-    h.hora_inicio,
-    h.hora_fin
-FROM horarios h
-INNER JOIN docentes d ON h.id_docente = d.id_docente
-INNER JOIN materias m ON h.id_materia = m.id_materia
-INNER JOIN grupos g   ON h.id_grupo   = g.id_grupo
-LEFT JOIN horario_dias hd ON h.id_horario = hd.id_horario
-GROUP BY h.id_horario
-ORDER BY d.nombre;
+// =======================
+// Traer horarios y datos necesarios
+// =======================
+if ($_SESSION['rol'] === 'admin') {
+    $horarios = $model->getHorarios();
+    $carreras = $model->getCarreras();
+} else {
+    $id_carrera = $_SESSION['id_carrera'];
+    $horarios = $model->getHorariosByCarrera($id_carrera);
+    $carreras = [$model->getCarrera($id_carrera)];
+}
 
-");
+$docentes = $model->getDocentes();
 
-// INICIAR CAPTURA  
+// Para cargar grupos y materias directamente desde PHP
+$gruposPorCarrera = [];
+$materiasPorCarrera = [];
+
+$carrerasTodos = $model->getCarreras();
+foreach ($carrerasTodos as $c) {
+    $gruposPorCarrera[$c['id_carrera']] = $model->getGruposByCarrera($c['id_carrera']);
+    $materiasPorCarrera[$c['id_carrera']] = $model->getMateriasByCarrera($c['id_carrera']);
+}
+
 ob_start();
 ?>
 
 <div class="container-form">
-
     <h2>Horarios</h2>
     <button class="btn-agregar" onclick="abrirModalHorario()">Agregar Horario</button>
 
     <table class="tabla-docentes">
-        <tr>
-            <th>Docente</th>
-            <th>Materia</th>
-            <th>Grupo</th>
-            <th>Días</th>
-            <th>Inicio</th>
-            <th>Fin</th>
-            <th>Acciones</th>
-        </tr>
-
-        <?php while ($h = $horarios->fetch_assoc()): ?>
+        <thead>
             <tr>
-                <td><?= $h['docente']; ?></td>
-                <td><?= $h['materia']; ?></td>
-                <td><?= $h['grupo']; ?></td>
-                <td><?= $h['dias']; ?></td>
-                <td><?= $h['hora_inicio']; ?></td>
-                <td><?= $h['hora_fin']; ?></td>
+                <th>Carrera</th>
+                <th>Grupo</th>
+                <th>Materia</th>
+                <th>Docente</th>
+                <th>Días</th>
+                <th>Horario</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($horarios as $h): ?>
+            <tr>
+                <td><?= htmlspecialchars($h['carrera'] ?? '') ?></td>
+                <td><?= htmlspecialchars($h['grupo'] ?? '') ?></td>
+                <td><?= htmlspecialchars($h['materia'] ?? '') ?></td>
+                <td><?= htmlspecialchars($h['docente'] ?? '') ?></td>
+                <td><?= htmlspecialchars($h['dias'] ?? '') ?></td>
+                <td><?= htmlspecialchars($h['horario_texto'] ?? '') ?></td>
                 <td>
-                    <button class="btn-editar" onclick='abrirModalHorario(<?= $h["id_horario"] ?>, <?= json_encode($h) ?>)'>
+                    <button class="btn-editar"
+                        onclick='abrirModalHorario(<?= $h["id_horario"] ?>, <?= json_encode($h, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP) ?>)'>
                         Editar
                     </button>
-                    <a href="../controllers/horariosController.php?accion=eliminar&id=<?= $h['id_horario']; ?>"
-                        onclick="return confirm('¿Eliminar este horario COMPLETO y sus días?');"
-                        class="btn-eliminar">Eliminar</a>
+                    <a class="btn-eliminar" href="../controllers/horariosController.php?accion=eliminar&id=<?= $h['id_horario'] ?>" onclick="return confirm('¿Eliminar?')">Eliminar</a>
                 </td>
             </tr>
-        <?php endwhile; ?>
+        <?php endforeach; ?>
+        </tbody>
     </table>
 </div>
 
-<!-- Modal Horarios -->
+<!-- Modal Horario -->
 <div id="modalHorario" class="modal">
     <div class="modal-content">
         <span class="cerrar" onclick="cerrarModalHorario()">&times;</span>
         <h2 id="tituloModalHorario">Agregar Horario</h2>
-        <form action="../controllers/HorariosController.php" method="POST">
-            <input type="hidden" name="accion" id="accionHorario" value="guardar">
+
+        <form action="../controllers/horariosController.php" method="POST" id="formHorario">
+            <input type="hidden" name="accion" id="accion" value="guardar">
             <input type="hidden" name="id_horario" id="id_horario">
 
-            <div class="form-grid">
+            <!-- Carrera -->
+            <?php if ($_SESSION['rol'] === 'admin'): ?>
+                <label>Carrera:</label>
+                <select name="id_carrera" id="id_carrera" required onchange="cambiarCarrera(this.value)">
+                    <option value="">Seleccione...</option>
+                    <?php foreach ($carreras as $c): ?>
+                        <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            <?php else: ?>
+                <input type="hidden" name="id_carrera" id="id_carrera" value="<?= $_SESSION['id_carrera'] ?>">
+            <?php endif; ?>
 
-                <div class="full-row">
-                    <label>Docente:</label>
-                    <select name="id_docente" id="id_docente" required>
-                        <option value="">Seleccione...</option>
-                        <?php foreach ($docentes as $d): ?>
-                            <option value="<?= $d['id_docente']; ?>"><?= $d['nombre']; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+            <!-- Grupo -->
+            <label>Grupo:</label>
+            <select name="id_grupo" id="id_grupo" required>
+                <option value="">Seleccione grupo...</option>
+            </select>
 
-                <div>
-                    <label>Materia:</label>
-                    <select name="id_materia" id="id_materia" required>
-                        <option value="">Seleccione...</option>
-                        <?php foreach ($materias as $m): ?>
-                            <option value="<?= $m['id_materia']; ?>"><?= $m['nombre']; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+            <!-- Materia -->
+            <label>Materia:</label>
+            <select name="id_materia" id="id_materia" required>
+                <option value="">Seleccione materia...</option>
+            </select>
 
-                <div>
-                    <label>Grupo:</label>
-                    <select name="id_grupo" id="id_grupo" required>
-                        <option value="">Seleccione...</option>
-                        <?php foreach ($grupos as $g): ?>
-                            <option value="<?= $g['id_grupo']; ?>"><?= $g['nombre']; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+            <!-- Docente -->
+            <label>Docente:</label>
+            <select name="id_docente" id="id_docente" required>
+                <option value="">Seleccione...</option>
+                <?php foreach ($docentes as $d): ?>
+                    <option value="<?= $d['id_docente'] ?>"><?= htmlspecialchars($d['nombre']) ?></option>
+                <?php endforeach; ?>
+            </select>
 
-                <div class="full-row">
-                    <label>Días:</label>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="dia_semana[]" value="L"> L</label>
-                        <label><input type="checkbox" name="dia_semana[]" value="M"> M</label>
-                        <label><input type="checkbox" name="dia_semana[]" value="X"> X</label>
-                        <label><input type="checkbox" name="dia_semana[]" value="J"> J</label>
-                        <label><input type="checkbox" name="dia_semana[]" value="V"> V</label>
-                    </div>
-
-                </div>
-
-                <div class="form-grid">
-                    <div>
-                        <label>Hora inicio:</label>
-                        <input type="time" name="hora_inicio">
-                    </div>
-                    <div>
-                        <label>Hora fin:</label>
-                        <input type="time" name="hora_fin">
-                    </div>
-                </div>
+            <!-- Días -->
+            <label>Días:</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="dia_semana[]" value="L"> L</label>
+                <label><input type="checkbox" name="dia_semana[]" value="M"> M</label>
+                <label><input type="checkbox" name="dia_semana[]" value="X"> X</label>
+                <label><input type="checkbox" name="dia_semana[]" value="J"> J</label>
+                <label><input type="checkbox" name="dia_semana[]" value="V"> V</label>
             </div>
+
+            <!-- Horario en texto -->
+            <label>Horario:</label>
+            <input type="text" name="horario_texto" id="horario_texto" placeholder="Ej: 8:00-10:00" required>
+
             <button type="submit">Guardar</button>
         </form>
     </div>
 </div>
+
 <script>
-    function abrirModalHorario(id = null, data = null) {
-        const modal = document.getElementById("modalHorario");
-        modal.style.display = "block";
-        const titulo = document.getElementById("tituloModalHorario");
-        const accion = document.getElementById("accionHorario");
-        const idHorario = document.getElementById("id_horario");
+// Arrays de PHP a JS
+const gruposPorCarrera = <?= json_encode($gruposPorCarrera) ?>;
+const materiasPorCarrera = <?= json_encode($materiasPorCarrera) ?>;
 
-        const selectDocente = document.getElementById("id_docente");
-        const selectMateria = document.getElementById("id_materia");
-        const selectGrupo = document.getElementById("id_grupo");
+function abrirModalHorario(id = null, data = null) {
+    const modal = document.getElementById('modalHorario');
+    modal.style.display = 'block';
 
-        const horaInicio = document.querySelector("input[name='hora_inicio']");
-        const horaFin = document.querySelector("input[name='hora_fin']");
+    document.getElementById('accion').value = id ? 'editar' : 'guardar';
+    document.getElementById('id_horario').value = id || '';
 
-        const checkboxes = document.querySelectorAll("input[name='dia_semana[]']");
+    // Limpiar selects y checkboxes
+    document.getElementById('id_grupo').innerHTML = '<option value="">Seleccione grupo...</option>';
+    document.getElementById('id_materia').innerHTML = '<option value="">Seleccione materia...</option>';
+    document.querySelectorAll("input[name='dia_semana[]']").forEach(cb => cb.checked = false);
+    document.getElementById('horario_texto').value = '';
 
-        if (id && data) {
-            titulo.textContent = "Editar Horario";
-            accion.value = "editar";
-            idHorario.value = id;
+    let carreraId = document.getElementById('id_carrera').value;
 
-            selectDocente.value = data.id_docente;
-            selectMateria.value = data.id_materia;
-            selectGrupo.value = data.id_grupo;
+    if (data) {
+        carreraId = data.id_carrera ?? carreraId;
+        document.getElementById('id_carrera').value = carreraId;
 
-            // Limpiar todos antes de marcar
-            checkboxes.forEach(cb => cb.checked = false);
+        cargarSelects(carreraId, data.id_grupo, data.id_materia);
 
-            // Marcar días recibidos en array
-            if (data.dias) {
-                data.dias.split("-").forEach(d => {
-                    let cb = document.querySelector(`input[name='dia_semana[]'][value='${d}']`);
-                    if (cb) cb.checked = true;
-                });
-            }
+        if (data.id_docente) document.getElementById('id_docente').value = data.id_docente.toString();
 
-            horaInicio.value = data.hora_inicio;
-            horaFin.value = data.hora_fin;
-
-        } else {
-            titulo.textContent = "Agregar Horario";
-            accion.value = "guardar";
-            idHorario.value = "";
-
-            selectDocente.value = "";
-            selectMateria.value = "";
-            selectGrupo.value = "";
-
-            checkboxes.forEach(cb => cb.checked = false);
-
-            horaInicio.value = "";
-            horaFin.value = "";
+        if (data.dias && typeof data.dias === 'string') {
+            data.dias.split('-').forEach(d => {
+                const cb = document.querySelector("input[name='dia_semana[]'][value='" + d + "']");
+                if (cb) cb.checked = true;
+            });
         }
+
+        if (data.horario_texto) document.getElementById('horario_texto').value = data.horario_texto;
+    } else if (carreraId) {
+        cargarSelects(carreraId);
+    }
+}
+
+function cerrarModalHorario() {
+    document.getElementById('modalHorario').style.display = 'none';
+}
+
+window.onclick = function(e) {
+    const modal = document.getElementById('modalHorario');
+    if (e.target == modal) cerrarModalHorario();
+}
+
+function cambiarCarrera(id_carrera) {
+    cargarSelects(id_carrera);
+}
+
+function cargarSelects(id_carrera, selectedGrupo = null, selectedMateria = null) {
+    const gSelect = document.getElementById('id_grupo');
+    const mSelect = document.getElementById('id_materia');
+
+    gSelect.innerHTML = '<option value="">Seleccione grupo...</option>';
+    mSelect.innerHTML = '<option value="">Seleccione materia...</option>';
+
+    if (gruposPorCarrera[id_carrera]) {
+        gruposPorCarrera[id_carrera].forEach(g => {
+            const opt = document.createElement('option');
+            opt.value = g.id_grupo;
+            opt.textContent = g.nombre;
+            if (selectedGrupo && selectedGrupo == g.id_grupo) opt.selected = true;
+            gSelect.appendChild(opt);
+        });
     }
 
-    function cerrarModalHorario() {
-        document.getElementById("modalHorario").style.display = "none";
+    if (materiasPorCarrera[id_carrera]) {
+        materiasPorCarrera[id_carrera].forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m.id_materia;
+            opt.textContent = m.nombre;
+            if (selectedMateria && selectedMateria == m.id_materia) opt.selected = true;
+            mSelect.appendChild(opt);
+        });
     }
-
-    window.onclick = function(event) {
-        const modal = document.getElementById("modalHorario");
-        if (event.target === modal) {
-            cerrarModalHorario();
-        }
-    }
+}
 </script>
 
 <?php
-// FIN de la captura
 $content = ob_get_clean();
-$title = "Horario";
-
-// Cargar layout
+$title = "Horarios";
 include "dashboard.php";
 ?>

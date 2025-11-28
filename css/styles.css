@@ -150,21 +150,26 @@ body {
 
 
 /* Botones */
+/* Botones base */
 button,
 .btn-agregar,
 .btn-editar,
 .btn-eliminar {
-    padding: 8px 15px;
     border-radius: 8px;
     font-weight: 600;
     border: none;
     cursor: pointer;
     transition: all 0.3s ease;
+    color: #fff;
+    text-align: center;
+    display: inline-block;
+    font-size: 13px;
 }
 
+/* Botón agregar (grande, fuera de tabla) */
 .btn-agregar {
+    padding: 8px 15px;
     background: #0c0c55;
-    color: #fff;
     margin-bottom: 15px;
 }
 
@@ -172,9 +177,25 @@ button,
     background: #1f618d;
 }
 
+/* Botones de acción dentro de la tabla (editar y eliminar) */
+.btn-editar,
+.btn-eliminar {
+    width: 80px;           /* ancho fijo igual para ambos */
+    padding: 6px 0;        /* alto uniforme */
+    text-align: center;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+/* Editar */
 .btn-editar {
     background: #f39c12;
-    color: #fff;
     margin-right: 5px;
 }
 
@@ -182,11 +203,10 @@ button,
     background: #d68910;
 }
 
+/* Eliminar */
 .btn-eliminar {
     background: #e74c3c;
-    color: #fff;
-    text-decoration: none;
-    padding: 8px 12px;
+    margin-left: 5px;
 }
 
 .btn-eliminar:hover {

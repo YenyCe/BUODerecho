@@ -2,20 +2,31 @@
 require_once "../middlewares/auth.php";
 require_once "../config/conexion.php";
 require_once "../models/MateriasModel.php";
+require_once "../models/CarrerasModel.php";
+
+$rol = $_SESSION['rol'];
+$id_carrera = ($rol === 'coordinador') ? $_SESSION['id_carrera'] : null;
+
 $materiaModel = new MateriasModel($conn);
-$materias = $materiaModel->getMaterias();
+$carrerasModel = new CarrerasModel($conn);
+
+$materias = $materiaModel->getMaterias($id_carrera); // Filtra por carrera si es coordinador
+
+// Solo administrador necesita todas las carreras para el select
+$carreras = ($rol === 'admin') ? $carrerasModel->obtenerCarreras() : [];
 
 $alerta = "";
 if(isset($_GET['msg'])){
     if($_GET['msg'] == "success") $alerta = "<div class='alerta success'>Materia agregada correctamente</div>";
-    if($_GET['msg'] == "edited") $alerta = "<div class='alerta success'>Materia editada correctamente</div>";
+    if($_GET['msg'] == "edited")  $alerta = "<div class='alerta success'>Materia editada correctamente</div>";
     if($_GET['msg'] == "deleted") $alerta = "<div class='alerta error'>Materia eliminada correctamente</div>";
 }
+
 ob_start();
 ?>
 
 <div class="container-form">
-        <h2>Materias</h2>
+    <h2>Materias</h2>
     <?php echo $alerta; ?>
 
     <button class="btn-agregar" onclick="abrirModalMateria()">Agregar Materia</button>
@@ -28,24 +39,31 @@ ob_start();
                 <th>Clave</th>
                 <th>Horas/Semana</th>
                 <th>Horas/Semestre</th>
+                <?php if($rol === 'admin'): ?><th>Carrera</th><?php endif; ?>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
         <?php foreach($materias as $m): ?>
-            <tr data-id="<?php echo $m['id_materia']; ?>"
-                data-nombre="<?php echo $m['nombre']; ?>"
-                data-clave="<?php echo $m['clave']; ?>"
-                data-horas_semana="<?php echo $m['horas_semana']; ?>"
-                data-horas_semestre="<?php echo $m['horas_semestre']; ?>">
-                <td><?php echo $m['id_materia']; ?></td>
-                <td><?php echo $m['nombre']; ?></td>
-                <td><?php echo $m['clave']; ?></td>
-                <td><?php echo $m['horas_semana']; ?></td>
-                <td><?php echo $m['horas_semestre']; ?></td>
+            <tr 
+                data-id="<?= $m['id_materia'] ?>" 
+                data-nombre="<?= htmlspecialchars($m['nombre']) ?>" 
+                data-clave="<?= htmlspecialchars($m['clave']) ?>" 
+                data-horas_semana="<?= $m['horas_semana'] ?>" 
+                data-horas_semestre="<?= $m['horas_semestre'] ?>" 
+                data-id_carrera="<?= $m['id_carrera'] ?? '' ?>"
+            >
+                <td><?= $m['id_materia'] ?></td>
+                <td><?= htmlspecialchars($m['nombre']) ?></td>
+                <td><?= htmlspecialchars($m['clave']) ?></td>
+                <td><?= $m['horas_semana'] ?></td>
+                <td><?= $m['horas_semestre'] ?></td>
+                <?php if($rol === 'admin'): ?>
+                    <td><?= htmlspecialchars($m['nombre_carrera'] ?? '') ?></td>
+                <?php endif; ?>
                 <td>
-                    <button class="btn-editar" onclick="abrirModalMateria(<?php echo $m['id_materia']; ?>)">Editar</button>
-                    <a href="../controllers/MateriasController.php?eliminar=<?php echo $m['id_materia']; ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar esta materia?')">Eliminar</a>
+                    <button class="btn-editar" onclick="abrirModalMateria(<?= $m['id_materia'] ?>)">Editar</button>
+                    <a href="../controllers/MateriasController.php?eliminar=<?= $m['id_materia'] ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar esta materia?')">Eliminar</a>
                 </td>
             </tr>
         <?php endforeach; ?>
@@ -61,14 +79,31 @@ ob_start();
         <form id="formMateria" action="../controllers/MateriasController.php" method="POST">
             <input type="hidden" name="accion" value="agregar" id="accionMateria">
             <input type="hidden" name="id_materia" id="id_materia">
+
             <label>Nombre</label>
             <input type="text" name="nombre" id="nombreMateria" required>
+
             <label>Clave</label>
             <input type="text" name="clave" id="claveMateria" required>
+
             <label>Horas/Semana</label>
             <input type="number" name="horas_semana" id="horasSemanaMateria" required>
+
             <label>Horas/Semestre</label>
             <input type="number" name="horas_semestre" id="horasSemestreMateria" required>
+
+            <?php if($rol === 'admin'): ?>
+            <label>Carrera</label>
+            <select name="id_carrera" id="id_carrera_materia" required>
+                <option value="">Seleccione una carrera</option>
+                <?php foreach($carreras as $c): ?>
+                    <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <?php else: ?>
+            <input type="hidden" name="id_carrera" value="<?= $id_carrera ?>">
+            <?php endif; ?>
+
             <button type="submit">Guardar</button>
         </form>
     </div>
@@ -88,6 +123,10 @@ function abrirModalMateria(id=null){
         document.getElementById('claveMateria').value = row.dataset.clave;
         document.getElementById('horasSemanaMateria').value = row.dataset.horas_semana;
         document.getElementById('horasSemestreMateria').value = row.dataset.horas_semestre;
+
+        if(document.getElementById('id_carrera_materia')){
+            document.getElementById('id_carrera_materia').value = row.dataset.id_carrera || '';
+        }
     } else {
         document.getElementById('tituloModalMateria').innerText = 'Agregar Materia';
         document.getElementById('accionMateria').value = 'agregar';
@@ -96,6 +135,7 @@ function abrirModalMateria(id=null){
         document.getElementById('claveMateria').value = '';
         document.getElementById('horasSemanaMateria').value = '';
         document.getElementById('horasSemestreMateria').value = '';
+        if(document.getElementById('id_carrera_materia')) document.getElementById('id_carrera_materia').value = '';
     }
 }
 
@@ -112,10 +152,7 @@ window.onclick = function(event){
 </script>
 
 <?php
-// FIN de la captura
 $content = ob_get_clean();
 $title = "Materias";
-
-// Cargar layout
 include "dashboard.php";
 ?>

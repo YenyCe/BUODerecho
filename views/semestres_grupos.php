@@ -138,6 +138,10 @@ ob_start();
                     <?php endforeach; ?>
                 </select>
             <?php endif; ?>
+            <?php if($rol === 'coordinador'): ?>
+    <input type="hidden" name="id_carrera" value="<?= $_SESSION['id_carrera'] ?>">
+<?php endif; ?>
+
 
             <button type="submit">Guardar</button>
         </form>

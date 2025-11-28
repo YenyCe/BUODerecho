@@ -1,15 +1,27 @@
 <?php
+require_once "../middlewares/auth.php";
 require_once "../config/conexion.php";
 require_once "../models/SemestresModel.php";
+require_once "../models/CarrerasModel.php";
 
-$model = new SemestresModel($conn);
-$semestres = $model->getSemestres();
-$grupos = $model->getGrupos();
+$rol = $_SESSION['rol'];
+$id_carrera = ($rol === 'coordinador') ? $_SESSION['id_carrera'] : null;
+
+$semModel = new SemestresModel($conn);
+$carrerasModel = new CarrerasModel($conn);
+
+// Obtener semestres y grupos
+$semestres = $semModel->getSemestres();
+$grupos = $semModel->getGrupos($id_carrera); // Filtra por carrera si es coordinador
+
+// Solo administrador necesita todas las carreras para el select
+$carreras = ($rol === 'admin') ? $carrerasModel->obtenerCarreras() : [];
 
 $alerta = "";
 if(isset($_GET['msg'])){
     $alerta = "<div class='alerta success'>Acción realizada correctamente</div>";
 }
+
 // INICIAR CAPTURA  
 ob_start();
 ?>
@@ -20,7 +32,7 @@ ob_start();
 
     <div class="tablas-pequenas">
         <!-- SEMESTRES -->
-               <h2>Semestres</h2>
+        <h2>Semestres</h2>
         <button class="btn-agregar" onclick="abrirModalSemestre()">Agregar Semestre</button>
         <table class="tabla-docentes">
             <thead>
@@ -45,7 +57,7 @@ ob_start();
         </table>
 
         <!-- GRUPOS -->
-         <h2>Grupos</h2>
+        <h2>Grupos</h2>
         <button class="btn-agregar" onclick="abrirModalGrupo()">Agregar Grupo</button>
         <table class="tabla-docentes">
             <thead>
@@ -53,25 +65,31 @@ ob_start();
                     <th>ID</th>
                     <th>Nombre</th>
                     <th>Semestre</th>
+                    <?php if($rol === 'admin'): ?><th>Carrera</th><?php endif; ?>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($grupos as $g): ?>
-                    <tr 
-                        data-id="<?php echo isset($g['id_grupo']) ? $g['id_grupo'] : ''; ?>" 
-                        data-nombre="<?php echo isset($g['nombre']) ? $g['nombre'] : ''; ?>" 
-                        data-id_semestre="<?php echo isset($g['id_semestre']) ? $g['id_semestre'] : ''; ?>"
-                    >
-                        <td><?php echo $g['id_grupo']; ?></td>
-                        <td><?php echo $g['nombre']; ?></td>
-                        <td><?php echo $g['semestre_num']; ?></td>
-                        <td>
-                            <button class="btn-editar" onclick="abrirModalGrupo(<?php echo $g['id_grupo']; ?>)">Editar</button>
-                            <a href="../controllers/SemestresController.php?eliminar_grupo=<?php echo $g['id_grupo']; ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar este grupo?')">Eliminar</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
+<?php foreach($grupos as $g): ?>
+    <tr 
+        data-id="<?= $g['id_grupo'] ?? '' ?>" 
+        data-nombre="<?= htmlspecialchars($g['nombre'] ?? '') ?>" 
+        data-id_semestre="<?= $g['id_semestre'] ?? '' ?>"
+        data-id_carrera="<?= $g['id_carrera'] ?? '' ?>"
+    >
+        <td><?= $g['id_grupo'] ?? '' ?></td>
+        <td><?= htmlspecialchars($g['nombre'] ?? '') ?></td>
+        <td><?= $g['semestre_num'] ?? '' ?></td>
+        <?php if($rol === 'admin'): ?>
+            <td><?= htmlspecialchars($g['nombre_carrera'] ?? '') ?></td>
+        <?php endif; ?>
+        <td>
+            <button class="btn-editar" onclick="abrirModalGrupo(<?= $g['id_grupo'] ?? '' ?>)">Editar</button>
+            <a href="../controllers/SemestresController.php?eliminar_grupo=<?= $g['id_grupo'] ?? '' ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar este grupo?')">Eliminar</a>
+        </td>
+    </tr>
+<?php endforeach; ?>
+
             </tbody>
         </table>
     </div>
@@ -110,6 +128,17 @@ ob_start();
                     <option value="<?php echo $s['id_semestre']; ?>"><?php echo $s['numero']; ?></option>
                 <?php endforeach; ?>
             </select>
+
+            <?php if($rol === 'admin'): ?>
+                <label>Carrera</label>
+                <select name="id_carrera" id="id_carrera_grupo" required>
+                    <option value="">Seleccione una carrera</option>
+                    <?php foreach($carreras as $c): ?>
+                        <option value="<?php echo $c['id_carrera']; ?>"><?php echo $c['nombre']; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            <?php endif; ?>
+
             <button type="submit">Guardar</button>
         </form>
     </div>
@@ -146,12 +175,18 @@ function abrirModalGrupo(id=null){
         document.getElementById('id_grupo').value = id;
         document.getElementById('nombre_grupo').value = row.dataset.nombre;
         document.getElementById('id_semestre_grupo').value = row.dataset.id_semestre;
+        if(document.getElementById('id_carrera_grupo')) {
+            document.getElementById('id_carrera_grupo').value = row.dataset.id_carrera || '';
+        }
     } else {
         document.getElementById('tituloModalGrupo').innerText = 'Agregar Grupo';
         document.getElementById('accion_grupo').value = 'agregar';
         document.getElementById('id_grupo').value = '';
         document.getElementById('nombre_grupo').value = '';
         document.getElementById('id_semestre_grupo').value = '';
+        if(document.getElementById('id_carrera_grupo')) {
+            document.getElementById('id_carrera_grupo').value = '';
+        }
     }
 }
 function cerrarModalGrupo(){ document.getElementById('modalGrupo').style.display='none'; }
@@ -164,11 +199,10 @@ window.onclick = function(event){
 }
 </script>
 
-
 <?php
 // FIN de la captura
 $content = ob_get_clean();
-$title = "Semestres y Grupos ";
+$title = "Semestres y Grupos";
 
 // Cargar layout
 include "dashboard.php";

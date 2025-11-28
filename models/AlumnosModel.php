@@ -7,14 +7,26 @@ class AlumnosModel {
         $this->conn = $conexion;
     }
 
-    public function getAlumnos(){
-        $sql = "SELECT a.id_alumno, a.nombre, g.nombre AS grupo 
-                FROM alumnos a 
-                JOIN grupos g ON a.id_grupo = g.id_grupo
-                ORDER BY a.id_alumno DESC";
+public function getAlumnos($id_carrera = null){
+    $sql = "SELECT a.id_alumno, a.nombre, g.nombre AS grupo
+            FROM alumnos a
+            JOIN grupos g ON a.id_grupo = g.id_grupo";
+
+    if($id_carrera){
+        $sql .= " WHERE g.id_carrera = ?";
+        $stmt = $this->conn->prepare($sql);
+        if(!$stmt) return []; // Retorna array vacío si falla la preparación
+        $stmt->bind_param("i", $id_carrera);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    } else {
         $result = $this->conn->query($sql);
-        return $result->fetch_all(MYSQLI_ASSOC);
+        if(!$result) return []; // Retorna array vacío si falla la consulta
     }
+
+    return $result->fetch_all(MYSQLI_ASSOC) ?? [];
+}
+
 
     public function agregarAlumno($nombre, $id_grupo){
         $stmt = $this->conn->prepare("INSERT INTO alumnos (nombre, id_grupo) VALUES (?, ?)");

@@ -1,4 +1,5 @@
 <?php
+require_once "../middlewares/auth.php";
 require_once "../config/conexion.php";
 require_once "../models/MateriasModel.php";
 $materiaModel = new MateriasModel($conn);

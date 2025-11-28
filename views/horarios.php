@@ -1,4 +1,5 @@
 <?php
+require_once "../middlewares/auth.php";
 require_once "../config/conexion.php";
 
 // Obtener datos para selects

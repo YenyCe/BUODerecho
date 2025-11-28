@@ -1,10 +1,16 @@
 <?php
+require_once "../middlewares/auth.php";
 require_once "../config/conexion.php";
 require_once "../models/AlumnosModel.php";
+$rol = $_SESSION['rol'];
+$id_carrera = ($rol === 'coordinador') ? $_SESSION['id_carrera'] : null;
 
 $alumnoModel = new AlumnosModel($conn);
-$alumnos = $alumnoModel->getAlumnos();
+
+// ✅ Aquí obtenemos los alumnos filtrando por carrera si es coordinador
+$alumnos = $alumnoModel->getAlumnos($id_carrera);
 $grupos = $alumnoModel->getGrupos();
+
 
 $alerta = "";
 if(isset($_GET['msg'])){
@@ -108,7 +114,7 @@ window.onclick = function(event){
 // FIN de la captura
 $content = ob_get_clean();
 $title = "Alumnos";
-
+$pagina = "alumnos";
 // Cargar layout
 include "dashboard.php";
 ?>

@@ -1,7 +1,8 @@
 <?php
 session_start();
 if(isset($_SESSION['id_usuario'])){
-    header("Location: index.php");
+    header("Location: ../views/dashboard.php");
+
     exit();
 }
 ?>
@@ -27,6 +28,10 @@ if(isset($_SESSION['id_usuario'])){
                 <div class="card-body">
                     <?php if(isset($_GET['error'])): ?>
                         <div class="alert alert-danger">Usuario o contraseña incorrectos</div>
+                    <?php endif; ?>
+
+                    <?php if(isset($_GET['inactivo'])): ?>
+                        <div class="alert alert-warning">Usuario inactivo, contacte al administrador</div>
                     <?php endif; ?>
 
                     <form action="../controllers/LoginController.php" method="POST">

@@ -24,11 +24,17 @@ if(isset($_GET['eliminar_semestre'])){
 
 /* --- GRUPOS --- */
 if(isset($_POST['accion_grupo'])){
+    $nombre = $_POST['nombre'];
+    $id_semestre = $_POST['id_semestre'];
+    // Para administradores viene por el select, para coordinadores usamos su propia carrera
+    $id_carrera = $_POST['id_carrera'] ?? $_SESSION['id_carrera'];
+
     if($_POST['accion_grupo'] == 'agregar'){
-        $model->agregarGrupo($_POST['nombre'], $_POST['id_semestre']);
+        $model->agregarGrupo($nombre, $id_semestre, $id_carrera);
     }
     if($_POST['accion_grupo'] == 'editar'){
-        $model->editarGrupo($_POST['id_grupo'], $_POST['nombre'], $_POST['id_semestre']);
+        $id_grupo = $_POST['id_grupo'];
+        $model->editarGrupo($id_grupo, $nombre, $id_semestre, $id_carrera);
     }
     header("Location: ../views/semestres_grupos.php?msg=success");
     exit();

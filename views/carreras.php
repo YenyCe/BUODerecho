@@ -1,4 +1,5 @@
 <?php
+require_once "../middlewares/auth.php";
 require_once "../config/conexion.php";
 require_once "../models/CarrerasModel.php";
 
@@ -12,9 +13,6 @@ if(isset($_GET['msg'])){
     if($_GET['msg'] == "deleted") $alerta = "<div class='alerta error'>Carrera eliminada correctamente</div>";
 }
 
-/* =============================
-   INICIAR CONTENIDO
-============================= */
 ob_start();
 ?>
 <div class="container-form">
@@ -113,6 +111,6 @@ window.onclick = function(event){
 // FIN CAPTURA
 $content = ob_get_clean();
 $title = "Carreras";
-
+$pagina = "carreras"; // Esto indica que el menú activo es "Carreras"
 include "dashboard.php";
 ?>

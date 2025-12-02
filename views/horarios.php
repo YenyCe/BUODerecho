@@ -49,23 +49,23 @@ ob_start();
             </tr>
         </thead>
         <tbody>
-        <?php foreach ($horarios as $h): ?>
-            <tr>
-                <td><?= htmlspecialchars($h['carrera'] ?? '') ?></td>
-                <td><?= htmlspecialchars($h['grupo'] ?? '') ?></td>
-                <td><?= htmlspecialchars($h['materia'] ?? '') ?></td>
-                <td><?= htmlspecialchars($h['docente'] ?? '') ?></td>
-                <td><?= htmlspecialchars($h['dias'] ?? '') ?></td>
-                <td><?= htmlspecialchars($h['horario_texto'] ?? '') ?></td>
-                <td>
-                    <button class="btn-editar"
-                        onclick='abrirModalHorario(<?= $h["id_horario"] ?>, <?= json_encode($h, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP) ?>)'>
-                        Editar
-                    </button>
-                    <a class="btn-eliminar" href="../controllers/horariosController.php?accion=eliminar&id=<?= $h['id_horario'] ?>" onclick="return confirm('¿Eliminar?')">Eliminar</a>
-                </td>
-            </tr>
-        <?php endforeach; ?>
+            <?php foreach ($horarios as $h): ?>
+                <tr>
+                    <td><?= htmlspecialchars($h['carrera'] ?? '') ?></td>
+                    <td><?= htmlspecialchars($h['grupo'] ?? '') ?></td>
+                    <td><?= htmlspecialchars($h['materia'] ?? '') ?></td>
+                    <td><?= htmlspecialchars($h['docente'] ?? '') ?></td>
+                    <td><?= htmlspecialchars($h['dias'] ?? '') ?></td>
+                    <td><?= htmlspecialchars($h['horario_texto'] ?? '') ?></td>
+                    <td>
+                        <button class="btn-editar"
+                            onclick='abrirModalHorario(<?= $h["id_horario"] ?>, <?= json_encode($h, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)'>
+                            Editar
+                        </button>
+                        <a class="btn-eliminar" href="../controllers/horariosController.php?accion=eliminar&id=<?= $h['id_horario'] ?>" onclick="return confirm('¿Eliminar?')">Eliminar</a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
         </tbody>
     </table>
 </div>
@@ -110,7 +110,10 @@ ob_start();
             <select name="id_docente" id="id_docente" required>
                 <option value="">Seleccione...</option>
                 <?php foreach ($docentes as $d): ?>
-                    <option value="<?= $d['id_docente'] ?>"><?= htmlspecialchars($d['nombre']) ?></option>
+                    <option value="<?= $d['id_docente'] ?>">
+                        <?= htmlspecialchars($d['nombre'] . ' ' . $d['apellidos']) ?>
+                    </option>
+
                 <?php endforeach; ?>
             </select>
 
@@ -134,86 +137,86 @@ ob_start();
 </div>
 
 <script>
-// Arrays de PHP a JS
-const gruposPorCarrera = <?= json_encode($gruposPorCarrera) ?>;
-const materiasPorCarrera = <?= json_encode($materiasPorCarrera) ?>;
+    // Arrays de PHP a JS
+    const gruposPorCarrera = <?= json_encode($gruposPorCarrera) ?>;
+    const materiasPorCarrera = <?= json_encode($materiasPorCarrera) ?>;
 
-function abrirModalHorario(id = null, data = null) {
-    const modal = document.getElementById('modalHorario');
-    modal.style.display = 'block';
+    function abrirModalHorario(id = null, data = null) {
+        const modal = document.getElementById('modalHorario');
+        modal.style.display = 'block';
 
-    document.getElementById('accion').value = id ? 'editar' : 'guardar';
-    document.getElementById('id_horario').value = id || '';
+        document.getElementById('accion').value = id ? 'editar' : 'guardar';
+        document.getElementById('id_horario').value = id || '';
 
-    // Limpiar selects y checkboxes
-    document.getElementById('id_grupo').innerHTML = '<option value="">Seleccione grupo...</option>';
-    document.getElementById('id_materia').innerHTML = '<option value="">Seleccione materia...</option>';
-    document.querySelectorAll("input[name='dia_semana[]']").forEach(cb => cb.checked = false);
-    document.getElementById('horario_texto').value = '';
+        // Limpiar selects y checkboxes
+        document.getElementById('id_grupo').innerHTML = '<option value="">Seleccione grupo...</option>';
+        document.getElementById('id_materia').innerHTML = '<option value="">Seleccione materia...</option>';
+        document.querySelectorAll("input[name='dia_semana[]']").forEach(cb => cb.checked = false);
+        document.getElementById('horario_texto').value = '';
 
-    let carreraId = document.getElementById('id_carrera').value;
+        let carreraId = document.getElementById('id_carrera').value;
 
-    if (data) {
-        carreraId = data.id_carrera ?? carreraId;
-        document.getElementById('id_carrera').value = carreraId;
+        if (data) {
+            carreraId = data.id_carrera ?? carreraId;
+            document.getElementById('id_carrera').value = carreraId;
 
-        cargarSelects(carreraId, data.id_grupo, data.id_materia);
+            cargarSelects(carreraId, data.id_grupo, data.id_materia);
 
-        if (data.id_docente) document.getElementById('id_docente').value = data.id_docente.toString();
+            if (data.id_docente) document.getElementById('id_docente').value = data.id_docente.toString();
 
-        if (data.dias && typeof data.dias === 'string') {
-            data.dias.split('-').forEach(d => {
-                const cb = document.querySelector("input[name='dia_semana[]'][value='" + d + "']");
-                if (cb) cb.checked = true;
+            if (data.dias && typeof data.dias === 'string') {
+                data.dias.split('-').forEach(d => {
+                    const cb = document.querySelector("input[name='dia_semana[]'][value='" + d + "']");
+                    if (cb) cb.checked = true;
+                });
+            }
+
+            if (data.horario_texto) document.getElementById('horario_texto').value = data.horario_texto;
+        } else if (carreraId) {
+            cargarSelects(carreraId);
+        }
+    }
+
+    function cerrarModalHorario() {
+        document.getElementById('modalHorario').style.display = 'none';
+    }
+
+    window.onclick = function(e) {
+        const modal = document.getElementById('modalHorario');
+        if (e.target == modal) cerrarModalHorario();
+    }
+
+    function cambiarCarrera(id_carrera) {
+        cargarSelects(id_carrera);
+    }
+
+    function cargarSelects(id_carrera, selectedGrupo = null, selectedMateria = null) {
+        const gSelect = document.getElementById('id_grupo');
+        const mSelect = document.getElementById('id_materia');
+
+        gSelect.innerHTML = '<option value="">Seleccione grupo...</option>';
+        mSelect.innerHTML = '<option value="">Seleccione materia...</option>';
+
+        if (gruposPorCarrera[id_carrera]) {
+            gruposPorCarrera[id_carrera].forEach(g => {
+                const opt = document.createElement('option');
+                opt.value = g.id_grupo;
+                opt.textContent = g.nombre;
+                if (selectedGrupo && selectedGrupo == g.id_grupo) opt.selected = true;
+                gSelect.appendChild(opt);
             });
         }
 
-        if (data.horario_texto) document.getElementById('horario_texto').value = data.horario_texto;
-    } else if (carreraId) {
-        cargarSelects(carreraId);
+        if (materiasPorCarrera[id_carrera]) {
+            materiasPorCarrera[id_carrera].forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m.id_materia;
+                opt.textContent = m.nombre;
+                if (selectedMateria && selectedMateria == m.id_materia) opt.selected = true;
+                mSelect.appendChild(opt);
+            });
+        }
     }
-}
-
-function cerrarModalHorario() {
-    document.getElementById('modalHorario').style.display = 'none';
-}
-
-window.onclick = function(e) {
-    const modal = document.getElementById('modalHorario');
-    if (e.target == modal) cerrarModalHorario();
-}
-
-function cambiarCarrera(id_carrera) {
-    cargarSelects(id_carrera);
-}
-
-function cargarSelects(id_carrera, selectedGrupo = null, selectedMateria = null) {
-    const gSelect = document.getElementById('id_grupo');
-    const mSelect = document.getElementById('id_materia');
-
-    gSelect.innerHTML = '<option value="">Seleccione grupo...</option>';
-    mSelect.innerHTML = '<option value="">Seleccione materia...</option>';
-
-    if (gruposPorCarrera[id_carrera]) {
-        gruposPorCarrera[id_carrera].forEach(g => {
-            const opt = document.createElement('option');
-            opt.value = g.id_grupo;
-            opt.textContent = g.nombre;
-            if (selectedGrupo && selectedGrupo == g.id_grupo) opt.selected = true;
-            gSelect.appendChild(opt);
-        });
-    }
-
-    if (materiasPorCarrera[id_carrera]) {
-        materiasPorCarrera[id_carrera].forEach(m => {
-            const opt = document.createElement('option');
-            opt.value = m.id_materia;
-            opt.textContent = m.nombre;
-            if (selectedMateria && selectedMateria == m.id_materia) opt.selected = true;
-            mSelect.appendChild(opt);
-        });
-    }
-}
 </script>
 
 <?php

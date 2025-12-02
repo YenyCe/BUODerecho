@@ -20,7 +20,6 @@ if (!isset($_GET['accion']) && !isset($_POST['accion'])) {
     }
 
     $docentes = $model->getDocentes();
-
     include "../views/horarios.php";
     exit();
 }
@@ -54,12 +53,10 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'guardar') {
     $id_grupo = $_POST['id_grupo'];
     $id_materia = $_POST['id_materia'];
     $id_docente = $_POST['id_docente'];
-    $hora_inicio = $_POST['hora_inicio'];
-    $hora_fin = $_POST['hora_fin'];
+    $horario_texto = $_POST['horario_texto'];
     $dias = isset($_POST['dia_semana']) ? $_POST['dia_semana'] : [];
 
-    $model->guardar($id_carrera, $id_grupo, $id_materia, $id_docente, $hora_inicio, $hora_fin, $dias);
-
+    $model->guardar($id_carrera, $id_grupo, $id_materia, $id_docente, $horario_texto, $dias);
     header("Location: ../views/horarios.php?msg=success");
     exit();
 }
@@ -73,12 +70,10 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'editar') {
     $id_grupo = $_POST['id_grupo'];
     $id_materia = $_POST['id_materia'];
     $id_docente = $_POST['id_docente'];
-    $hora_inicio = $_POST['hora_inicio'];
-    $hora_fin = $_POST['hora_fin'];
+    $horario_texto = $_POST['horario_texto'];
     $dias = isset($_POST['dia_semana']) ? $_POST['dia_semana'] : [];
 
-    $model->editarHorario($id_horario, $id_docente, $id_materia, $id_grupo, $id_carrera, $hora_inicio, $hora_fin, $dias);
-
+    $model->editarHorario($id_horario, $id_docente, $id_materia, $id_grupo, $id_carrera, $horario_texto, $dias);
     header("Location: ../views/horarios.php?msg=edited");
     exit();
 }
@@ -93,4 +88,3 @@ if (isset($_GET['accion']) && $_GET['accion'] === 'eliminar') {
     header("Location: ../views/horarios.php?msg=deleted");
     exit();
 }
-?>

@@ -1,17 +1,20 @@
 <?php
-class HorariosModel {
+class HorariosModel
+{
 
     private $conn;
 
-    public function __construct($conexion) {
+    public function __construct($conexion)
+    {
         $this->conn = $conexion;
     }
 
     // =======================
     // Obtener todos los horarios (para admin)
     // =======================
-public function getHorarios() {
-    $sql = "
+    public function getHorarios()
+    {
+        $sql = "
         SELECT 
             h.id_horario,
             h.id_carrera,
@@ -21,7 +24,7 @@ public function getHorarios() {
             c.nombre AS carrera,
             g.nombre AS grupo,
             m.nombre AS materia,
-            d.nombre AS docente,
+            CONCAT(d.nombre, ' ', d.apellidos) AS docente,
             h.horario_texto,
             GROUP_CONCAT(hd.dia ORDER BY FIELD(hd.dia,'L','M','X','J','V') SEPARATOR '-') AS dias
         FROM horarios h
@@ -33,15 +36,16 @@ public function getHorarios() {
         GROUP BY h.id_horario
         ORDER BY c.nombre, g.nombre, d.nombre
     ";
-    return $this->conn->query($sql)->fetch_all(MYSQLI_ASSOC);
-}
+        return $this->conn->query($sql)->fetch_all(MYSQLI_ASSOC);
+    }
 
 
     // =======================
     // Obtener horarios por carrera (coordinador)
-// =======================
-public function getHorariosByCarrera($id_carrera) {
-    $stmt = $this->conn->prepare("
+    // =======================
+    public function getHorariosByCarrera($id_carrera)
+    {
+        $stmt = $this->conn->prepare("
         SELECT 
             h.id_horario,
             c.nombre AS carrera,
@@ -60,19 +64,21 @@ public function getHorariosByCarrera($id_carrera) {
         GROUP BY h.id_horario
         ORDER BY g.nombre, m.nombre
     ");
-    $stmt->bind_param("i", $id_carrera);
-    $stmt->execute();
-    return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-}
+        $stmt->bind_param("i", $id_carrera);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
 
     // =======================
     // Obtener carreras
     // =======================
-    public function getCarreras() {
+    public function getCarreras()
+    {
         return $this->conn->query("SELECT * FROM carreras ORDER BY nombre")->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function getCarrera($id_carrera) {
+    public function getCarrera($id_carrera)
+    {
         $stmt = $this->conn->prepare("SELECT * FROM carreras WHERE id_carrera = ?");
         $stmt->bind_param("i", $id_carrera);
         $stmt->execute();
@@ -82,14 +88,16 @@ public function getHorariosByCarrera($id_carrera) {
     // =======================
     // Obtener docentes
     // =======================
-    public function getDocentes() {
+    public function getDocentes()
+    {
         return $this->conn->query("SELECT * FROM docentes ORDER BY nombre")->fetch_all(MYSQLI_ASSOC);
     }
 
     // =======================
     // Obtener grupos por carrera (para select dinámico)
     // =======================
-    public function getGruposByCarrera($id_carrera) {
+    public function getGruposByCarrera($id_carrera)
+    {
         $stmt = $this->conn->prepare("SELECT * FROM grupos WHERE id_carrera = ? ORDER BY nombre");
         $stmt->bind_param("i", $id_carrera);
         $stmt->execute();
@@ -99,7 +107,8 @@ public function getHorariosByCarrera($id_carrera) {
     // =======================
     // Obtener materias por carrera (para select dinámico)
     // =======================
-    public function getMateriasByCarrera($id_carrera) {
+    public function getMateriasByCarrera($id_carrera)
+    {
         $stmt = $this->conn->prepare("SELECT * FROM materias WHERE id_carrera = ? ORDER BY nombre");
         $stmt->bind_param("i", $id_carrera);
         $stmt->execute();
@@ -109,18 +118,22 @@ public function getHorariosByCarrera($id_carrera) {
     // =======================
     // Guardar nuevo horario
     // =======================
-    public function guardar($id_carrera, $id_grupo, $id_materia, $id_docente, $dias = [], $horario_texto = null) {
-    $stmt = $this->conn->prepare("
+    public function guardar($id_carrera, $id_grupo, $id_materia, $id_docente, $horario_texto, $dias = [])
+    {
+
+        // Insertar horario
+        $stmt = $this->conn->prepare("
         INSERT INTO horarios (id_carrera, id_grupo, id_materia, id_docente, horario_texto)
         VALUES (?, ?, ?, ?, ?)
     ");
-    $stmt->bind_param("iiiis", $id_carrera, $id_grupo, $id_materia, $id_docente, $horario_texto);
+        $stmt->bind_param("iiiis", $id_carrera, $id_grupo, $id_materia, $id_docente, $horario_texto);
         $stmt->execute();
+
         $id_horario = $stmt->insert_id;
 
-        // Insertar días
+        // Insertar días seleccionados
         $stmtDias = $this->conn->prepare("INSERT INTO horario_dias (id_horario, dia) VALUES (?, ?)");
-        foreach($dias as $d) {
+        foreach ($dias as $d) {
             $stmtDias->bind_param("is", $id_horario, $d);
             $stmtDias->execute();
         }
@@ -128,37 +141,42 @@ public function getHorariosByCarrera($id_carrera) {
         return true;
     }
 
+
     // =======================
     // Editar horario
     // =======================
-    public function editarHorario($id_horario, $id_docente, $id_materia, $id_grupo, $id_carrera, $dias = [], $horario_texto = null) {
-    // Actualizar datos principales y el horario en texto
-    $stmt = $this->conn->prepare("
+    public function editarHorario($id_horario, $id_docente, $id_materia, $id_grupo, $id_carrera, $horario_texto, $dias = [])
+    {
+
+        // Actualizar horario
+        $stmt = $this->conn->prepare("
         UPDATE horarios
         SET id_docente = ?, id_materia = ?, id_grupo = ?, id_carrera = ?, horario_texto = ?
         WHERE id_horario = ?
     ");
-    $stmt->bind_param("iiiisi", $id_docente, $id_materia, $id_grupo, $id_carrera, $horario_texto, $id_horario);
-    $stmt->execute();
+        $stmt->bind_param("iiiisi", $id_docente, $id_materia, $id_grupo, $id_carrera, $horario_texto, $id_horario);
+        $stmt->execute();
 
-    // Borrar días antiguos
-    $this->conn->query("DELETE FROM horario_dias WHERE id_horario = $id_horario");
+        // Borrar días antiguos
+        $this->conn->query("DELETE FROM horario_dias WHERE id_horario = $id_horario");
 
-    // Insertar nuevos días
-    $stmtDias = $this->conn->prepare("INSERT INTO horario_dias (id_horario, dia) VALUES (?, ?)");
-    foreach ($dias as $d) {
-        $stmtDias->bind_param("is", $id_horario, $d);
-        $stmtDias->execute();
+        // Insertar días nuevos
+        $stmtDias = $this->conn->prepare("INSERT INTO horario_dias (id_horario, dia) VALUES (?, ?)");
+        foreach ($dias as $d) {
+            $stmtDias->bind_param("is", $id_horario, $d);
+            $stmtDias->execute();
+        }
+
+        return true;
     }
 
-    return true;
-}
 
 
     // =======================
     // Eliminar horario
     // =======================
-    public function eliminar($id_horario) {
+    public function eliminar($id_horario)
+    {
         $this->conn->query("DELETE FROM horario_dias WHERE id_horario = $id_horario");
         $this->conn->query("DELETE FROM horarios WHERE id_horario = $id_horario");
         return true;
@@ -167,7 +185,8 @@ public function getHorariosByCarrera($id_carrera) {
     // =======================
     // Obtener un horario por ID
     // =======================
-    public function getHorario($id_horario) {
+    public function getHorario($id_horario)
+    {
         $stmt = $this->conn->prepare("SELECT * FROM horarios WHERE id_horario = ?");
         $stmt->bind_param("i", $id_horario);
         $stmt->execute();
@@ -176,7 +195,7 @@ public function getHorariosByCarrera($id_carrera) {
         // Traer días
         $res = $this->conn->query("SELECT dia FROM horario_dias WHERE id_horario = $id_horario");
         $dias = [];
-        while($row = $res->fetch_assoc()) {
+        while ($row = $res->fetch_assoc()) {
             $dias[] = $row['dia'];
         }
         $horario['dias'] = implode('-', $dias);

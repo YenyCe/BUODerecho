@@ -61,8 +61,10 @@ body {
 /* Contenedor principal del formulario */
 .container-form {
     width: 100%;
-    max-width: 1000px; /* puedes usar 900px si quieres más compacto */
-    margin: 20px auto; /* margen superior/inferior */
+    max-width: 1000px;
+    /* puedes usar 900px si quieres más compacto */
+    margin: 20px auto;
+    /* margen superior/inferior */
     background: #fff;
     padding: 25px 30px;
     border-radius: 12px;
@@ -76,6 +78,7 @@ body {
     color: #2c3e50;
     font-weight: 700;
 }
+
 
 /* Labels dentro del contenedor */
 .container-form label {
@@ -180,8 +183,10 @@ button,
 /* Botones de acción dentro de la tabla (editar y eliminar) */
 .btn-editar,
 .btn-eliminar {
-    width: 80px;           /* ancho fijo igual para ambos */
-    padding: 6px 0;        /* alto uniforme */
+    width: 80px;
+    /* ancho fijo igual para ambos */
+    padding: 6px 0;
+    /* alto uniforme */
     text-align: center;
     border-radius: 8px;
     font-weight: 600;
@@ -233,7 +238,7 @@ button,
 }
 
 .tabla-docentes th {
-    background-color: #29295b ;
+    background-color: #29295b;
     color: #fff;
 }
 
@@ -250,10 +255,8 @@ button,
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, .5);
-
-    display: none; 
+    display: none;
 }
-
 
 .modal-content {
     background: #fff;
@@ -264,6 +267,7 @@ button,
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
     position: relative;
 }
+
 
 .cerrar {
     position: absolute;
@@ -436,7 +440,8 @@ button,
 }
 
 .sidebar ul li {
-    position: relative; /* Para la línea de selección */
+    position: relative;
+    /* Para la línea de selección */
 }
 
 .sidebar ul li a {
@@ -447,8 +452,10 @@ button,
     width: 100%;
     font-weight: 600;
     transition: all 0.3s ease;
-    position: relative; /* importante */
-    box-sizing: border-box; /* asegura que padding no desborde */
+    position: relative;
+    /* importante */
+    box-sizing: border-box;
+    /* asegura que padding no desborde */
 }
 
 /* Hover sin mover contenido */
@@ -498,8 +505,10 @@ button,
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    column-gap: 20px; /* separación horizontal */
-    row-gap: 20px;    /* separación vertical */
+    column-gap: 20px;
+    /* separación horizontal */
+    row-gap: 20px;
+    /* separación vertical */
 }
 
 /* Hacer que SELECT y INPUT ocupen todo su espacio dentro del grid */
@@ -517,5 +526,6 @@ button,
 .form-grid label,
 .form-grid div label {
     display: block;
-    margin-bottom: 4px; /* puedes dejar 3px si prefieres más compacto */
+    margin-bottom: 4px;
+    /* puedes dejar 3px si prefieres más compacto */
 }

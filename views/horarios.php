@@ -34,6 +34,19 @@ ob_start();
 
 <div class="container-form">
     <h2>Horarios</h2>
+    <?php if ($_SESSION['rol'] === 'admin'): ?>
+        <div class="filtros-container" style="margin-bottom:15px;">
+            <div>
+                <label>Carrera:</label>
+                <select id="filtroCarrera" class="form-control">
+                    <option value="">Todas</option>
+                    <?php foreach ($carreras as $c): ?>
+                        <option value="<?= $c['id_carrera'] ?>"><?= $c['nombre'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+    <?php endif; ?>
     <button class="btn-agregar" onclick="abrirModalHorario()">Agregar Horario</button>
 
     <table class="tabla-docentes">
@@ -73,9 +86,8 @@ ob_start();
 <!-- Modal Horario -->
 <div id="modalHorario" class="modal">
     <div class="modal-content">
-        <span class="cerrar" onclick="cerrarModalHorario()">&times;</span>
+        <span class="cerrar" onclick="cerrarModal('modalHorario')">&times;</span>
         <h2 id="tituloModalHorario">Agregar Horario</h2>
-
         <form action="../controllers/horariosController.php" method="POST" id="formHorario">
             <input type="hidden" name="accion" id="accion" value="guardar">
             <input type="hidden" name="id_horario" id="id_horario">
@@ -177,15 +189,6 @@ ob_start();
         }
     }
 
-    function cerrarModalHorario() {
-        document.getElementById('modalHorario').style.display = 'none';
-    }
-
-    window.onclick = function(e) {
-        const modal = document.getElementById('modalHorario');
-        if (e.target == modal) cerrarModalHorario();
-    }
-
     function cambiarCarrera(id_carrera) {
         cargarSelects(id_carrera);
     }
@@ -217,8 +220,23 @@ ob_start();
             });
         }
     }
-</script>
 
+    // FILTRO POR CARRERA EN TABLA
+    document.getElementById("filtroCarrera")?.addEventListener("change", function() {
+        const carrera = this.value;
+        const filas = document.querySelectorAll(".tabla-docentes tbody tr");
+
+        filas.forEach(fila => {
+            const colCarrera = fila.children[0].innerText.trim();
+            if (carrera === "" || colCarrera === this.options[this.selectedIndex].text) {
+                fila.style.display = "";
+            } else {
+                fila.style.display = "none";
+            }
+        });
+    });
+</script>
+<script src="/ASISTENCIAS/js/modales.js"></script>
 <?php
 $content = ob_get_clean();
 $title = "Horarios";

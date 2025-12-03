@@ -1,8 +1,12 @@
+html {
+    font-size: 14px; /* antes era implícito 16px, ahora un poco más pequeño */
+}
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f4f6f8;
     margin: 0;
     padding: 0;
+    font-size: 1rem; /* 14px */
 }
 
 /* Header */
@@ -30,7 +34,7 @@ body {
 }
 
 .header-principal .logo span {
-    font-size: 20px;
+    font-size: 1.25rem; 
     font-weight: bold;
 }
 
@@ -77,6 +81,7 @@ body {
     margin-bottom: 20px;
     color: #2c3e50;
     font-weight: 700;
+    font-size: 1.5rem; 
 }
 
 
@@ -108,7 +113,6 @@ body {
 
 
 /* Alertas */
-/* Alertas flotantes a la derecha */
 .alerta {
     position: fixed;
     top: 20px;
@@ -153,7 +157,6 @@ body {
 
 
 /* Botones */
-/* Botones base */
 button,
 .btn-agregar,
 .btn-editar,

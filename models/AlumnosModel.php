@@ -8,23 +8,26 @@ class AlumnosModel {
     }
 
 public function getAlumnos($id_carrera = null){
-    $sql = "SELECT a.id_alumno, a.nombre, g.nombre AS grupo
+    $sql = "SELECT 
+                a.id_alumno, 
+                a.nombre, 
+                g.nombre AS grupo,
+                g.id_grupo,
+                g.id_carrera
             FROM alumnos a
             JOIN grupos g ON a.id_grupo = g.id_grupo";
 
-    if($id_carrera){
+    if ($id_carrera){
         $sql .= " WHERE g.id_carrera = ?";
         $stmt = $this->conn->prepare($sql);
-        if(!$stmt) return []; // Retorna array vacío si falla la preparación
         $stmt->bind_param("i", $id_carrera);
         $stmt->execute();
         $result = $stmt->get_result();
     } else {
         $result = $this->conn->query($sql);
-        if(!$result) return []; // Retorna array vacío si falla la consulta
     }
 
-    return $result->fetch_all(MYSQLI_ASSOC) ?? [];
+    return $result->fetch_all(MYSQLI_ASSOC);
 }
 
 
@@ -58,4 +61,17 @@ public function getAlumnos($id_carrera = null){
         $result = $this->conn->query($sql);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+    public function getGruposPorCarrera($id_carrera){
+    $stmt = $this->conn->prepare(
+        "SELECT id_grupo, nombre 
+         FROM grupos 
+         WHERE id_carrera = ?
+         ORDER BY nombre ASC"
+    );
+    $stmt->bind_param("i", $id_carrera);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+
 }

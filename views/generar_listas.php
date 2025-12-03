@@ -13,36 +13,36 @@ $docentes = $conn->query("
 ob_start();
 ?>
 
-    <script>
-        function cargarMaterias() {
-            let docente = document.getElementById("docente").value;
-            if(docente === "") {
-                document.getElementById("materia").innerHTML = "<option value=''>Seleccione...</option>";
-                document.getElementById("grupo").innerHTML = "<option value=''>Seleccione...</option>";
-                return;
-            }
-            fetch("../ajax/get_materias.php?id_docente=" + docente)
-                .then(r => r.text())
-                .then(html => {
-                    document.getElementById("materia").innerHTML = html;
-                    document.getElementById("grupo").innerHTML = "<option value=''>Seleccione materia primero...</option>";
-                });
+<script>
+    function cargarMaterias() {
+        let docente = document.getElementById("docente").value;
+        if (docente === "") {
+            document.getElementById("materia").innerHTML = "<option value=''>Seleccione...</option>";
+            document.getElementById("grupo").innerHTML = "<option value=''>Seleccione...</option>";
+            return;
         }
+        fetch("../ajax/get_materias.php?id_docente=" + docente)
+            .then(r => r.text())
+            .then(html => {
+                document.getElementById("materia").innerHTML = html;
+                document.getElementById("grupo").innerHTML = "<option value=''>Seleccione materia primero...</option>";
+            });
+    }
 
-        function cargarGrupos() {
-            let docente = document.getElementById("docente").value;
-            let materia = document.getElementById("materia").value;
-            if(materia === "") {
-                document.getElementById("grupo").innerHTML = "<option value=''>Seleccione...</option>";
-                return;
-            }
-            fetch("../ajax/get_grupos.php?id_docente=" + docente + "&id_materia=" + materia)
-                .then(r => r.text())
-                .then(html => {
-                    document.getElementById("grupo").innerHTML = html;
-                });
+    function cargarGrupos() {
+        let docente = document.getElementById("docente").value;
+        let materia = document.getElementById("materia").value;
+        if (materia === "") {
+            document.getElementById("grupo").innerHTML = "<option value=''>Seleccione...</option>";
+            return;
         }
-    </script>
+        fetch("../ajax/get_grupos.php?id_docente=" + docente + "&id_materia=" + materia)
+            .then(r => r.text())
+            .then(html => {
+                document.getElementById("grupo").innerHTML = html;
+            });
+    }
+</script>
 
 
 <div class="container-form">
@@ -54,7 +54,7 @@ ob_start();
             <label>Docente</label>
             <select name="id_docente" id="docente" required onchange="cargarMaterias()">
                 <option value="">Seleccione docente...</option>
-                <?php foreach($docentes as $d): ?>
+                <?php foreach ($docentes as $d): ?>
                     <option value="<?= $d['id_docente'] ?>"><?= $d['nombre'] ?></option>
                 <?php endforeach; ?>
             </select>
@@ -65,8 +65,8 @@ ob_start();
             <select name="id_parcial">
                 <option value="">-- Ninguno --</option>
                 <?php
-                    $parciales = $conn->query("SELECT * FROM parciales ORDER BY numero_parcial")->fetch_all(MYSQLI_ASSOC);
-                    foreach($parciales as $p):
+                $parciales = $conn->query("SELECT * FROM parciales ORDER BY numero_parcial")->fetch_all(MYSQLI_ASSOC);
+                foreach ($parciales as $p):
                 ?>
                     <option value="<?= $p['id_parcial'] ?>">Parcial <?= $p['numero_parcial'] ?> (<?= $p['fecha_inicio'] ?> a <?= $p['fecha_fin'] ?>)</option>
                 <?php endforeach; ?>
@@ -91,7 +91,7 @@ ob_start();
             <button type="submit" class="btn-agregar">Generar Lista</button>
         </div>
 
-        
+
     </form>
 </div>
 
@@ -104,6 +104,3 @@ $title = " Generacion de Listas ";
 // Cargar layout
 include "dashboard.php";
 ?>
-
-
-

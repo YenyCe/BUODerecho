@@ -20,6 +20,7 @@ if (isset($_GET['msg'])) {
 ob_start();
 ?>
 
+
 <div class="container-form">
     <h2>Docentes</h2>
     <?php if ($alerta): ?>
@@ -29,7 +30,24 @@ ob_start();
         </div>
     <?php endif; ?>
 
+    <?php if ($rol === 'admin'): ?>
+        <div class="filtros-container" style="margin-bottom:15px;">
+            <div>
+                <label>Filtrar por carrera:</label>
+
+                <select id="filtroCarrera" onchange="filtrarCarrera()">
+                    <option value="">Todas</option>
+                    <?php
+                    $carreras = $conn->query("SELECT id_carrera, nombre FROM carreras ORDER BY nombre ASC")->fetch_all(MYSQLI_ASSOC);
+                    foreach ($carreras as $c): ?>
+                        <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+    <?php endif; ?>
     <button class="btn-agregar" onclick="abrirModal()">Agregar Docente</button>
+
 
     <table class="tabla-docentes">
         <thead>
@@ -38,7 +56,7 @@ ob_start();
                 <th>Nombre</th>
                 <th>Correo</th>
                 <th>Teléfono</th>
-                <?php if($rol === 'admin'): ?>
+                <?php if ($rol === 'admin'): ?>
                     <th>Carrera</th>
                 <?php endif; ?>
                 <th>Acciones</th>
@@ -53,13 +71,13 @@ ob_start();
                     data-telefono="<?= htmlspecialchars($d['telefono']) ?>"
                     data-id_carrera="<?= $d['id_carrera'] ?? '' ?>">
                     <td><?= $d['id_docente'] ?></td>
-                    <td><?= htmlspecialchars($d['nombre'].' '.$d['apellidos']) ?></td>
+                    <td><?= htmlspecialchars($d['nombre'] . ' ' . $d['apellidos']) ?></td>
                     <td><?= htmlspecialchars($d['correo']) ?></td>
                     <td><?= htmlspecialchars($d['telefono']) ?></td>
-                    <?php if($rol === 'admin'): ?>
+                    <?php if ($rol === 'admin'): ?>
                         <td>
                             <?php
-                            if($d['id_carrera']){
+                            if ($d['id_carrera']) {
                                 $carrera = $conn->query("SELECT nombre FROM carreras WHERE id_carrera={$d['id_carrera']}")->fetch_assoc();
                                 echo htmlspecialchars($carrera['nombre']);
                             } else {
@@ -81,9 +99,9 @@ ob_start();
 </div>
 
 <!-- Modal -->
-<div id="modalForm" class="modal">
+<div id="modalDocente" class="modal">
     <div class="modal-content">
-        <span class="cerrar" onclick="cerrarModal()">&times;</span>
+        <span class="cerrar" onclick="cerrarModal('modalDocente')">&times;</span>
         <h2 id="tituloModal">Agregar Docente</h2>
         <form id="formDocente" action="../controllers/DocentesController.php" method="POST">
             <input type="hidden" name="accion" value="agregar" id="accion">
@@ -101,13 +119,13 @@ ob_start();
             <label>Teléfono</label>
             <input type="text" name="telefono" id="telefono">
 
-            <?php if($rol === 'admin'): ?>
+            <?php if ($rol === 'admin'): ?>
                 <label>Carrera</label>
                 <select name="id_carrera" id="id_carrera" required>
                     <option value="">Seleccione una carrera</option>
                     <?php
                     $carreras = $conn->query("SELECT id_carrera, nombre FROM carreras ORDER BY nombre ASC")->fetch_all(MYSQLI_ASSOC);
-                    foreach($carreras as $c): ?>
+                    foreach ($carreras as $c): ?>
                         <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
                     <?php endforeach; ?>
                 </select>
@@ -119,52 +137,55 @@ ob_start();
 </div>
 
 <script>
-function abrirModal(id=null){
-    const modal = document.getElementById('modalForm');
-    modal.style.display = 'block';
+    function abrirModal(id = null) {
+        const modal = document.getElementById('modalDocente');
+        modal.style.display = 'block';
 
-    if(id){
-        const row = document.querySelector(`tr[data-id='${id}']`);
-        document.getElementById('tituloModal').innerText = 'Editar Docente';
-        document.getElementById('accion').value = 'editar';
-        document.getElementById('id_docente').value = id;
-        document.getElementById('nombre').value = row.dataset.nombre;
-        document.getElementById('apellidos').value = row.dataset.apellidos;
-        document.getElementById('correo').value = row.dataset.correo;
-        document.getElementById('telefono').value = row.dataset.telefono;
-        <?php if($rol === 'admin'): ?>
-            document.getElementById('id_carrera').value = row.dataset.id_carrera;
-        <?php endif; ?>
-    } else {
-        document.getElementById('tituloModal').innerText = 'Agregar Docente';
-        document.getElementById('accion').value = 'agregar';
-        document.getElementById('id_docente').value = '';
-        document.getElementById('nombre').value = '';
-        document.getElementById('apellidos').value = '';
-        document.getElementById('correo').value = '';
-        document.getElementById('telefono').value = '';
-        <?php if($rol === 'admin'): ?>
-            document.getElementById('id_carrera').value = '';
-        <?php endif; ?>
+        if (id) {
+            const row = document.querySelector(`tr[data-id='${id}']`);
+            document.getElementById('tituloModal').innerText = 'Editar Docente';
+            document.getElementById('accion').value = 'editar';
+            document.getElementById('id_docente').value = id;
+            document.getElementById('nombre').value = row.dataset.nombre;
+            document.getElementById('apellidos').value = row.dataset.apellidos;
+            document.getElementById('correo').value = row.dataset.correo;
+            document.getElementById('telefono').value = row.dataset.telefono;
+            <?php if ($rol === 'admin'): ?>
+                document.getElementById('id_carrera').value = row.dataset.id_carrera;
+            <?php endif; ?>
+        } else {
+            document.getElementById('tituloModal').innerText = 'Agregar Docente';
+            document.getElementById('accion').value = 'agregar';
+            document.getElementById('id_docente').value = '';
+            document.getElementById('nombre').value = '';
+            document.getElementById('apellidos').value = '';
+            document.getElementById('correo').value = '';
+            document.getElementById('telefono').value = '';
+            <?php if ($rol === 'admin'): ?>
+                document.getElementById('id_carrera').value = '';
+            <?php endif; ?>
+        }
     }
-}
 
-function cerrarModal(){
-    document.getElementById('modalForm').style.display = 'none';
-}
-
-function cerrarAlerta(){
-    document.getElementById('alertaMsg').style.display = 'none';
-}
-
-window.onclick = function(event){
-    const modal = document.getElementById('modalForm');
-    if(event.target == modal){
-        cerrarModal();
+    function cerrarAlerta() {
+        document.getElementById('alertaMsg').style.display = 'none';
     }
-}
+
+    // FILTRO POR CARRERA (solo admin)
+    document.getElementById('filtroCarrera')?.addEventListener('change', function() {
+        let filtro = this.value;
+        let filas = document.querySelectorAll(".tabla-docentes tbody tr");
+
+        filas.forEach(row => {
+            if (filtro === "" || row.dataset.id_carrera === filtro) {
+                row.style.display = ""; // mostrar
+            } else {
+                row.style.display = "none"; // ocultar
+            }
+        });
+    });
 </script>
-
+<script src="/ASISTENCIAS/js/modales.js"></script>
 <?php
 $content = ob_get_clean();
 $title = "Docentes";

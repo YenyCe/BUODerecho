@@ -16,10 +16,10 @@ $materias = $materiaModel->getMaterias($id_carrera); // Filtra por carrera si es
 $carreras = ($rol === 'admin') ? $carrerasModel->obtenerCarreras() : [];
 
 $alerta = "";
-if(isset($_GET['msg'])){
-    if($_GET['msg'] == "success") $alerta = "<div class='alerta success'>Materia agregada correctamente</div>";
-    if($_GET['msg'] == "edited")  $alerta = "<div class='alerta success'>Materia editada correctamente</div>";
-    if($_GET['msg'] == "deleted") $alerta = "<div class='alerta error'>Materia eliminada correctamente</div>";
+if (isset($_GET['msg'])) {
+    if ($_GET['msg'] == "success") $alerta = "<div class='alerta success'>Materia agregada correctamente</div>";
+    if ($_GET['msg'] == "edited")  $alerta = "<div class='alerta success'>Materia editada correctamente</div>";
+    if ($_GET['msg'] == "deleted") $alerta = "<div class='alerta error'>Materia eliminada correctamente</div>";
 }
 
 ob_start();
@@ -27,9 +27,30 @@ ob_start();
 
 <div class="container-form">
     <h2>Materias</h2>
-    <?php echo $alerta; ?>
+    <?php if ($alerta): ?>
+        <div id="alertaMsg" class="alerta <?php echo strpos($alerta, 'success') !== false ? 'success' : 'error'; ?>">
+            <span><?php echo strip_tags($alerta); ?></span>
+            <span class="cerrar-alerta" onclick="cerrarAlerta()">&times;</span>
+        </div>
+    <?php endif; ?>
 
-    <button class="btn-agregar" onclick="abrirModalMateria()">Agregar Materia</button>
+    <?php if ($rol === 'admin'): ?>
+        <div class="filtros-container" style="margin-bottom:15px;">
+            <div>
+                <label>Filtrar por carrera:</label>
+
+                <select id="filtroCarrera" onchange="filtrarCarrera()">
+                    <option value="">Todas</option>
+                    <?php
+                    $carreras = $conn->query("SELECT id_carrera, nombre FROM carreras ORDER BY nombre ASC")->fetch_all(MYSQLI_ASSOC);
+                    foreach ($carreras as $c): ?>
+                        <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+    <?php endif; ?>
+    <button class="btn-agregar" onclick="abrirModal()">Agregar Docente</button>
 
     <table class="tabla-docentes">
         <thead>
@@ -39,34 +60,33 @@ ob_start();
                 <th>Clave</th>
                 <th>Horas/Semana</th>
                 <th>Horas/Semestre</th>
-                <?php if($rol === 'admin'): ?><th>Carrera</th><?php endif; ?>
+                <?php if ($rol === 'admin'): ?><th>Carrera</th><?php endif; ?>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-        <?php foreach($materias as $m): ?>
-            <tr 
-                data-id="<?= $m['id_materia'] ?>" 
-                data-nombre="<?= htmlspecialchars($m['nombre']) ?>" 
-                data-clave="<?= htmlspecialchars($m['clave']) ?>" 
-                data-horas_semana="<?= $m['horas_semana'] ?>" 
-                data-horas_semestre="<?= $m['horas_semestre'] ?>" 
-                data-id_carrera="<?= $m['id_carrera'] ?? '' ?>"
-            >
-                <td><?= $m['id_materia'] ?></td>
-                <td><?= htmlspecialchars($m['nombre']) ?></td>
-                <td><?= htmlspecialchars($m['clave']) ?></td>
-                <td><?= $m['horas_semana'] ?></td>
-                <td><?= $m['horas_semestre'] ?></td>
-                <?php if($rol === 'admin'): ?>
-                    <td><?= htmlspecialchars($m['nombre_carrera'] ?? '') ?></td>
-                <?php endif; ?>
-                <td>
-                    <button class="btn-editar" onclick="abrirModalMateria(<?= $m['id_materia'] ?>)">Editar</button>
-                    <a href="../controllers/MateriasController.php?eliminar=<?= $m['id_materia'] ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar esta materia?')">Eliminar</a>
-                </td>
-            </tr>
-        <?php endforeach; ?>
+            <?php foreach ($materias as $m): ?>
+                <tr
+                    data-id="<?= $m['id_materia'] ?>"
+                    data-nombre="<?= htmlspecialchars($m['nombre']) ?>"
+                    data-clave="<?= htmlspecialchars($m['clave']) ?>"
+                    data-horas_semana="<?= $m['horas_semana'] ?>"
+                    data-horas_semestre="<?= $m['horas_semestre'] ?>"
+                    data-id_carrera="<?= $m['id_carrera'] ?? '' ?>">
+                    <td><?= $m['id_materia'] ?></td>
+                    <td><?= htmlspecialchars($m['nombre']) ?></td>
+                    <td><?= htmlspecialchars($m['clave']) ?></td>
+                    <td><?= $m['horas_semana'] ?></td>
+                    <td><?= $m['horas_semestre'] ?></td>
+                    <?php if ($rol === 'admin'): ?>
+                        <td><?= htmlspecialchars($m['nombre_carrera'] ?? '') ?></td>
+                    <?php endif; ?>
+                    <td>
+                        <button class="btn-editar" onclick="abrirModalMateria(<?= $m['id_materia'] ?>)">Editar</button>
+                        <a href="../controllers/MateriasController.php?eliminar=<?= $m['id_materia'] ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar esta materia?')">Eliminar</a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
         </tbody>
     </table>
 </div>
@@ -92,16 +112,16 @@ ob_start();
             <label>Horas/Semestre</label>
             <input type="number" name="horas_semestre" id="horasSemestreMateria" required>
 
-            <?php if($rol === 'admin'): ?>
-            <label>Carrera</label>
-            <select name="id_carrera" id="id_carrera_materia" required>
-                <option value="">Seleccione una carrera</option>
-                <?php foreach($carreras as $c): ?>
-                    <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
-                <?php endforeach; ?>
-            </select>
+            <?php if ($rol === 'admin'): ?>
+                <label>Carrera</label>
+                <select name="id_carrera" id="id_carrera_materia" required>
+                    <option value="">Seleccione una carrera</option>
+                    <?php foreach ($carreras as $c): ?>
+                        <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
+                    <?php endforeach; ?>
+                </select>
             <?php else: ?>
-            <input type="hidden" name="id_carrera" value="<?= $id_carrera ?>">
+                <input type="hidden" name="id_carrera" value="<?= $id_carrera ?>">
             <?php endif; ?>
 
             <button type="submit">Guardar</button>
@@ -110,45 +130,55 @@ ob_start();
 </div>
 
 <script>
-function abrirModalMateria(id=null){
-    const modal = document.getElementById('modalMateria');
-    modal.style.display = 'block';
+    function abrirModalMateria(id = null) {
+        const modal = document.getElementById('modalMateria');
+        modal.style.display = 'block';
 
-    if(id){
-        const row = document.querySelector(`tr[data-id='${id}']`);
-        document.getElementById('tituloModalMateria').innerText = 'Editar Materia';
-        document.getElementById('accionMateria').value = 'editar';
-        document.getElementById('id_materia').value = id;
-        document.getElementById('nombreMateria').value = row.dataset.nombre;
-        document.getElementById('claveMateria').value = row.dataset.clave;
-        document.getElementById('horasSemanaMateria').value = row.dataset.horas_semana;
-        document.getElementById('horasSemestreMateria').value = row.dataset.horas_semestre;
+        if (id) {
+            const row = document.querySelector(`tr[data-id='${id}']`);
+            document.getElementById('tituloModalMateria').innerText = 'Editar Materia';
+            document.getElementById('accionMateria').value = 'editar';
+            document.getElementById('id_materia').value = id;
+            document.getElementById('nombreMateria').value = row.dataset.nombre;
+            document.getElementById('claveMateria').value = row.dataset.clave;
+            document.getElementById('horasSemanaMateria').value = row.dataset.horas_semana;
+            document.getElementById('horasSemestreMateria').value = row.dataset.horas_semestre;
 
-        if(document.getElementById('id_carrera_materia')){
-            document.getElementById('id_carrera_materia').value = row.dataset.id_carrera || '';
+            if (document.getElementById('id_carrera_materia')) {
+                document.getElementById('id_carrera_materia').value = row.dataset.id_carrera || '';
+            }
+        } else {
+            document.getElementById('tituloModalMateria').innerText = 'Agregar Materia';
+            document.getElementById('accionMateria').value = 'agregar';
+            document.getElementById('id_materia').value = '';
+            document.getElementById('nombreMateria').value = '';
+            document.getElementById('claveMateria').value = '';
+            document.getElementById('horasSemanaMateria').value = '';
+            document.getElementById('horasSemestreMateria').value = '';
+            if (document.getElementById('id_carrera_materia')) document.getElementById('id_carrera_materia').value = '';
         }
-    } else {
-        document.getElementById('tituloModalMateria').innerText = 'Agregar Materia';
-        document.getElementById('accionMateria').value = 'agregar';
-        document.getElementById('id_materia').value = '';
-        document.getElementById('nombreMateria').value = '';
-        document.getElementById('claveMateria').value = '';
-        document.getElementById('horasSemanaMateria').value = '';
-        document.getElementById('horasSemestreMateria').value = '';
-        if(document.getElementById('id_carrera_materia')) document.getElementById('id_carrera_materia').value = '';
     }
-}
 
-function cerrarModalMateria(){
-    document.getElementById('modalMateria').style.display = 'none';
-}
-
-window.onclick = function(event){
-    const modal = document.getElementById('modalMateria');
-    if(event.target == modal){
-        cerrarModalMateria();
+    function cerrarModalMateria() {
+        document.getElementById('modalMateria').style.display = 'none';
     }
-}
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('modalMateria');
+        if (event.target == modal) {
+            cerrarModalMateria();
+        }
+    }
+
+    document.getElementById('filtroCarrera')?.addEventListener('change', function() {
+        const carrera = this.value;
+        const filas = document.querySelectorAll('table tbody tr');
+
+        filas.forEach(fila => {
+            const idCarreraFila = fila.getAttribute('data-id_carrera');
+            fila.style.display = (carrera === "" || carrera === idCarreraFila) ? "" : "none";
+        });
+    });
 </script>
 
 <?php

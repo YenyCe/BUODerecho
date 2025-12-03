@@ -70,7 +70,7 @@ function formato_horarios($horarios)
 <body>
     <button onclick="window.print()" class="print-btn">Imprimir</button>
     <div class="page" style="position:relative;">
-        
+
         <div class="contenido" style="position:relative; z-index:1; margin-top:40px;">
             <!-- Aquí tu tabla de info y asistencia -->
 

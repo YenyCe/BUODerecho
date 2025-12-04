@@ -1,5 +1,5 @@
 @page {
-  size: letter landscape; /* Carta horizontal */
+  size: letter landscape;
   margin: 0;
 }
 
@@ -7,9 +7,9 @@ body {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
-  background: #f4f4f4;
 }
 
+/* Botón de impresión */
 .print-btn {
   position: fixed;
   top: 20px;
@@ -22,12 +22,13 @@ body {
   cursor: pointer;
 }
 
+/* Página */
 .page {
-  width: 279mm;   /* ancho de Carta */
-  height: 214.5mm;  /* alto de Carta */
+  width: 279mm;
+  height: 214.5mm;
   background: url("../img/logoListas.jpg") no-repeat center center;
   background-size: 100% 100%;
-  padding: 15mm;
+  padding: 15mm 8mm;
   box-sizing: border-box;
 }
 
@@ -38,64 +39,121 @@ body {
   box-sizing: border-box;
 }
 
-.info {
-  margin-bottom: 5px;
-  font-size: 12px;
-}
-
-.info span {
-  display: inline-block;
-  margin-right: 15px;
-}
+/* ===== TABLAS ===== */
 
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 10px;
 }
 
-th,
-td {
-  border: 1px solid #333;
-  padding: 3px;
+/* Encabezados de tabla */
+table th {
+  font-size: 11px;   /* Tamaño uniforme de encabezados */
+  font-weight: bold;
   text-align: center;
-  text-transform: uppercase;
-}
-
-th {
   background: #f2f2f2;
-  text-align: center;
+  text-transform: uppercase;
+  padding: 3px;
+  border: 1px solid #333;
 }
 
-td {
+/* Celdas normales */
+table td {
+  font-size: 12px;
   text-align: left;
+  padding: 3px;
+  border: 1px solid #333;
 }
 
+/* Columna nombre del alumno */
 .nombre-col {
+  width: 35%;
   text-align: left;
-  width: 200px;
 }
 
+
+
+/* Columna Observaciones */
 .observaciones {
   width: 100px;
 }
 
+/* ===== IMPRESIÓN ===== */
 @media print {
   body {
     -webkit-print-color-adjust: exact;
-    /* Chrome/Safari */
-    print-color-adjust: exact;
-    /* Firefox */
-  }
-
-  th,
-  td {
-    -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
-  /* Oculta botón de imprimir */
   .print-btn {
     display: none;
   }
+}
+
+/* Página de salto */
+.page-break {
+  page-break-after: always;
+}
+
+/* ===== BLOQUE FINAL DE FIRMAS ===== */
+
+.pie-final {
+  padding: 40px;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-top: 25px;
+}
+
+.fila-flex {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+.pie-col {
+  width: 48%;
+  text-align: center;
+}
+
+.linea-firma {
+  border-top: 1px solid #000;
+  width: 60%;
+  margin: 5px auto;
+}
+
+/* Celda de nombre de alumno con altura fija y ajuste de texto */
+td.capitalizar {
+    text-transform: capitalize;
+    font-weight: bold;
+    min-height: 25px;       /* altura mínima de la fila */
+    height: 25px;           /* altura fija para que todas las filas sean iguales */
+    vertical-align: middle; /* centra el texto verticalmente */
+    word-wrap: break-word;  /* permite que nombres largos se rompan en dos líneas si es necesario */
+    overflow: hidden;       /* evita que el contenido desborde */
+}
+
+
+td.capitalizar.nombre-normal {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+td.capitalizar.nombre-pequeno {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+td.capitalizar.nombre-muy-pequeno {
+    font-size: 10px;
+    font-weight: bold;
+}
+
+
+
+
+.info-table td[colspan] {
+    padding: 4px 6px;       /* espacio interno reducido */
+    font-size: 13px;        /* tamaño uniforme */
+    text-align: left;       /* alineado a la izquierda */
+    white-space: normal;    /* permite que el texto se ajuste */
 }

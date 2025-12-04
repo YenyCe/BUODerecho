@@ -92,6 +92,22 @@ class HorariosModel
     {
         return $this->conn->query("SELECT * FROM docentes ORDER BY nombre")->fetch_all(MYSQLI_ASSOC);
     }
+    // =======================
+// Obtener docentes por carrera
+// =======================
+public function getDocentesByCarrera($id_carrera)
+{
+    $stmt = $this->conn->prepare("
+        SELECT *
+        FROM docentes
+        WHERE id_carrera = ?
+        ORDER BY nombre
+    ");
+    $stmt->bind_param("i", $id_carrera);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+
 
     // =======================
     // Obtener grupos por carrera (para select dinámico)

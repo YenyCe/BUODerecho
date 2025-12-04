@@ -1,35 +1,45 @@
 <?php
 require_once "../config/conexion.php";
 require_once "../models/ParcialesModel.php";
+session_start();
 
-$model = new ParcialesModel($conn);
+$Parciales = new ParcialesModel($conn);
+$rol = $_SESSION['rol'];
+$id_carrera_sesion = $_SESSION['id_carrera'] ?? null;
 
-if(isset($_POST['accion'])){
-    $accion = $_POST['accion'];
+if ($_POST['accion'] === "agregar") {
 
-    if($accion == "agregar"){
-        $numero = $_POST['numero_parcial'];
-        $fecha_inicio = $_POST['fecha_inicio'];
-        $fecha_fin = $_POST['fecha_fin'];
-        $model->agregarParcial($numero, $fecha_inicio, $fecha_fin);
+    $numero = $_POST['numero_parcial'];
+    $inicio = $_POST['fecha_inicio'];
+    $fin = $_POST['fecha_fin'];
+
+    // Coordinador: usa su carrera automáticamente
+    if ($rol === "coordinador") {
+        $id_carrera = $id_carrera_sesion;
+    } else {
+        $id_carrera = $_POST['id_carrera'];
     }
 
-    if($accion == "editar"){
-        $id = $_POST['id_parcial'];
-        $numero = $_POST['numero_parcial'];
-        $fecha_inicio = $_POST['fecha_inicio'];
-        $fecha_fin = $_POST['fecha_fin'];
-        $model->editarParcial($id, $numero, $fecha_inicio, $fecha_fin);
-    }
-
-    header("Location: ../views/parciales.php?msg=ok");
-    exit;
+    $Parciales->agregarParcial($numero, $inicio, $fin, $id_carrera);
+    header("Location: ../views/parciales.php?msg=success");
+    exit();
 }
 
-if(isset($_GET['eliminar'])){
+if ($_POST['accion'] === "editar") {
+    $id = $_POST['id_parcial'];
+    $numero = $_POST['numero_parcial'];
+    $inicio = $_POST['fecha_inicio'];
+    $fin = $_POST['fecha_fin'];
+
+    $Parciales->editarParcial($id, $numero, $inicio, $fin);
+    header("Location: ../views/parciales.php?msg=edited");
+    exit();
+}
+
+if (isset($_GET['eliminar'])) {
     $id = $_GET['eliminar'];
-    $model->eliminarParcial($id);
-    header("Location: ../views/parciales.php?msg=ok");
-    exit;
+    $Parciales->eliminarParcial($id);
+    header("Location: ../views/parciales.php?msg=deleted");
+    exit();
 }
 ?>

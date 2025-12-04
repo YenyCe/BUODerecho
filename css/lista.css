@@ -54,7 +54,7 @@ table th {
   background: #f2f2f2;
   text-transform: uppercase;
   padding: 3px;
-  border: 1px solid #333;
+  border: 1px solid #c8c8c8;
 }
 
 /* Celdas normales */
@@ -62,7 +62,7 @@ table td {
   font-size: 12px;
   text-align: left;
   padding: 3px;
-  border: 1px solid #333;
+  border: 1px solid #c8c8c8;
 }
 
 /* Columna nombre del alumno */
@@ -125,8 +125,8 @@ table td {
 td.capitalizar {
     text-transform: capitalize;
     font-weight: bold;
-    min-height: 25px;       /* altura mínima de la fila */
-    height: 25px;           /* altura fija para que todas las filas sean iguales */
+    min-height: 24px;       /* altura mínima de la fila */
+    height: 24px;           /* altura fija para que todas las filas sean iguales */
     vertical-align: middle; /* centra el texto verticalmente */
     word-wrap: break-word;  /* permite que nombres largos se rompan en dos líneas si es necesario */
     overflow: hidden;       /* evita que el contenido desborde */
@@ -156,4 +156,18 @@ td.capitalizar.nombre-muy-pequeno {
     font-size: 13px;        /* tamaño uniforme */
     text-align: left;       /* alineado a la izquierda */
     white-space: normal;    /* permite que el texto se ajuste */
+}
+
+
+/* Quitar bordes y ajustar la tabla de info del reporte */
+.info-reporte{
+    width: 100%;
+    border-collapse: collapse; /* evita espacios extra entre celdas */
+}
+
+.info-reporte td {
+    border: none;       /* quita todos los bordes */
+    padding: 4px 10px;   /* espacio interno para que se vea limpio */
+    text-align: left;   /* puedes ajustar a center si quieres */
+    font-size: 14px;    /* tamaño uniforme, más pequeño si quieres */
 }

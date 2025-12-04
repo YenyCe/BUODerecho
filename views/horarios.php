@@ -11,23 +11,41 @@ $model = new HorariosModel($conn);
 if ($_SESSION['rol'] === 'admin') {
     $horarios = $model->getHorarios();
     $carreras = $model->getCarreras();
+    $id_carrera_usuario = null;
 } else {
-    $id_carrera = $_SESSION['id_carrera'];
-    $horarios = $model->getHorariosByCarrera($id_carrera);
-    $carreras = [$model->getCarrera($id_carrera)];
+    $id_carrera_usuario = $_SESSION['id_carrera'];
+    $horarios = $model->getHorariosByCarrera($id_carrera_usuario);
+    $carreras = [$model->getCarrera($id_carrera_usuario)];
 }
 
-$docentes = $model->getDocentes();
+// Docentes: para admin traer todos; para coordinador traer sólo los de su carrera
+if ($_SESSION['rol'] === 'admin') {
+    $docentes = $model->getDocentes(); // todos
+} else {
+    $docentes = $model->getDocentesByCarrera($id_carrera_usuario); // sólo de su carrera
+}
 
-// Para cargar grupos y materias directamente desde PHP
+// Para cargar grupos, materias y docentes por carrera desde PHP (JS)
 $gruposPorCarrera = [];
 $materiasPorCarrera = [];
-
-$carrerasTodos = $model->getCarreras();
-foreach ($carrerasTodos as $c) {
-    $gruposPorCarrera[$c['id_carrera']] = $model->getGruposByCarrera($c['id_carrera']);
-    $materiasPorCarrera[$c['id_carrera']] = $model->getMateriasByCarrera($c['id_carrera']);
+$docentesPorCarrera = [];
+$todas = $model->getCarreras();
+foreach ($todas as $c) {
+    $id = $c['id_carrera'];
+    $gruposPorCarrera[$id] = $model->getGruposByCarrera($id);
+    $materiasPorCarrera[$id] = $model->getMateriasByCarrera($id);
+    // Si tu modelo tiene un método para traer docentes por carrera:
+    if (method_exists($model, 'getDocentesByCarrera')) {
+        $docentesPorCarrera[$id] = $model->getDocentesByCarrera($id);
+    } else {
+        // fallback: todos (mejor implementar getDocentesByCarrera en el modelo)
+        $docentesPorCarrera[$id] = $model->getDocentes();
+    }
 }
+
+// Mapa id->nombre de carreras (útil para crear option oculto)
+$carrerasMap = [];
+foreach ($todas as $c) $carrerasMap[$c['id_carrera']] = $c['nombre'];
 
 ob_start();
 ?>
@@ -41,12 +59,13 @@ ob_start();
                 <select id="filtroCarrera" class="form-control">
                     <option value="">Todas</option>
                     <?php foreach ($carreras as $c): ?>
-                        <option value="<?= $c['id_carrera'] ?>"><?= $c['nombre'] ?></option>
+                        <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
         </div>
     <?php endif; ?>
+
     <button class="btn-agregar" onclick="abrirModalHorario()">Agregar Horario</button>
 
     <table class="tabla-docentes">
@@ -102,7 +121,10 @@ ob_start();
                     <?php endforeach; ?>
                 </select>
             <?php else: ?>
-                <input type="hidden" name="id_carrera" id="id_carrera" value="<?= $_SESSION['id_carrera'] ?>">
+                <!-- para coordinador: select oculto pero con el valor correcto y texto -->
+                <select name="id_carrera" id="id_carrera" required style="display:none;">
+                    <option value="<?= $id_carrera_usuario ?>" selected><?= htmlspecialchars($carrerasMap[$id_carrera_usuario] ?? $id_carrera_usuario) ?></option>
+                </select>
             <?php endif; ?>
 
             <!-- Grupo -->
@@ -123,9 +145,8 @@ ob_start();
                 <option value="">Seleccione...</option>
                 <?php foreach ($docentes as $d): ?>
                     <option value="<?= $d['id_docente'] ?>">
-                        <?= htmlspecialchars($d['nombre'] . ' ' . $d['apellidos']) ?>
+                        <?= htmlspecialchars($d['nombre'] . ' ' . ($d['apellidos'] ?? '')) ?>
                     </option>
-
                 <?php endforeach; ?>
             </select>
 
@@ -149,10 +170,14 @@ ob_start();
 </div>
 
 <script>
-    // Arrays de PHP a JS
+    // Datos PHP -> JS
     const gruposPorCarrera = <?= json_encode($gruposPorCarrera) ?>;
     const materiasPorCarrera = <?= json_encode($materiasPorCarrera) ?>;
+    const docentesPorCarrera = <?= json_encode($docentesPorCarrera) ?>;
+    const carrerasMap = <?= json_encode($carrerasMap) ?>;
+    const DEFAULT_CARRERA = <?= json_encode($id_carrera_usuario ?? null) ?>;
 
+    // función para abrir modal (crear/editar)
     function abrirModalHorario(id = null, data = null) {
         const modal = document.getElementById('modalHorario');
         modal.style.display = 'block';
@@ -160,46 +185,88 @@ ob_start();
         document.getElementById('accion').value = id ? 'editar' : 'guardar';
         document.getElementById('id_horario').value = id || '';
 
-        // Limpiar selects y checkboxes
-        document.getElementById('id_grupo').innerHTML = '<option value="">Seleccione grupo...</option>';
-        document.getElementById('id_materia').innerHTML = '<option value="">Seleccione materia...</option>';
+        // limpiar selects y campos
+        const gSelect = document.getElementById('id_grupo');
+        const mSelect = document.getElementById('id_materia');
+        const dSelect = document.getElementById('id_docente');
+        gSelect.innerHTML = '<option value="">Seleccione grupo...</option>';
+        mSelect.innerHTML = '<option value="">Seleccione materia...</option>';
+        // no limpiamos dSelect porque lo rellenaremos según carrera
         document.querySelectorAll("input[name='dia_semana[]']").forEach(cb => cb.checked = false);
         document.getElementById('horario_texto').value = '';
 
-        let carreraId = document.getElementById('id_carrera').value;
+        // obtener select carrera (puede estar oculto para coordinador)
+        const carreraSelect = document.getElementById('id_carrera');
 
+        // determinar carreraId con prioridad:
+        // 1) data.id_carrera (registro existente)
+        // 2) DEFAULT_CARRERA (coordinador)
+        // 3) valor actual del select (admin)
+        let carreraId = null;
+        if (data && data.id_carrera) {
+            carreraId = data.id_carrera;
+        } else if (DEFAULT_CARRERA) {
+            carreraId = DEFAULT_CARRERA;
+        } else if (carreraSelect) {
+            carreraId = carreraSelect.value || null;
+        }
+
+        // si no hay carreraId, dejamos selects vacíos y salimos
+        if (!carreraId) {
+            // asegurar que docSelect tenga por lo menos la lista completa si admin
+            if (docentesPorCarrera && Object.keys(docentesPorCarrera).length) {
+                rellenarDocentes(null); // dejar vacio o con global
+            }
+            return;
+        }
+
+        // si existe el select de carrera, setear su valor y si hace falta crear option (coordinador oculto)
+        if (carreraSelect) {
+            if (!Array.from(carreraSelect.options).some(o => o.value == carreraId)) {
+                const opt = document.createElement('option');
+                opt.value = carreraId;
+                opt.textContent = carrerasMap[carreraId] || '';
+                carreraSelect.appendChild(opt);
+            }
+            carreraSelect.value = carreraId;
+        }
+
+        // cargar grupos/materias y docentes para la carrera
+        cargarSelects(carreraId, data?.id_grupo, data?.id_materia);
+        rellenarDocentes(carreraId, data?.id_docente);
+
+        // si data (edición) completar dias y horario
         if (data) {
-            carreraId = data.id_carrera ?? carreraId;
-            document.getElementById('id_carrera').value = carreraId;
-
-            cargarSelects(carreraId, data.id_grupo, data.id_materia);
-
-            if (data.id_docente) document.getElementById('id_docente').value = data.id_docente.toString();
-
+            // completar dias (p.ej. "L-M-X")
             if (data.dias && typeof data.dias === 'string') {
                 data.dias.split('-').forEach(d => {
                     const cb = document.querySelector("input[name='dia_semana[]'][value='" + d + "']");
                     if (cb) cb.checked = true;
                 });
             }
-
-            if (data.horario_texto) document.getElementById('horario_texto').value = data.horario_texto;
-        } else if (carreraId) {
-            cargarSelects(carreraId);
+            // horario texto
+            if (data.horario_texto) {
+                document.getElementById('horario_texto').value = data.horario_texto;
+            }
         }
     }
 
+    // cuando admin cambie de carrera en el modal, recargar selects
     function cambiarCarrera(id_carrera) {
         cargarSelects(id_carrera);
+        rellenarDocentes(id_carrera);
     }
 
+    // carga grupos y materias de la carrera, y selecciona si se pasan valores
     function cargarSelects(id_carrera, selectedGrupo = null, selectedMateria = null) {
         const gSelect = document.getElementById('id_grupo');
         const mSelect = document.getElementById('id_materia');
-
         gSelect.innerHTML = '<option value="">Seleccione grupo...</option>';
         mSelect.innerHTML = '<option value="">Seleccione materia...</option>';
 
+        if (!id_carrera) return;
+
+        // Grupos
         if (gruposPorCarrera[id_carrera]) {
             gruposPorCarrera[id_carrera].forEach(g => {
                 const opt = document.createElement('option');
@@ -210,6 +277,7 @@ ob_start();
             });
         }
 
+        // Materias
         if (materiasPorCarrera[id_carrera]) {
             materiasPorCarrera[id_carrera].forEach(m => {
                 const opt = document.createElement('option');
@@ -221,7 +289,36 @@ ob_start();
         }
     }
 
-    // FILTRO POR CARRERA EN TABLA
+    // rellena (o filtra) el select de docentes según la carrera
+    // si id_carrera es null -> deja la lista que ya trae el servidor (o vacía)
+    // si id_docente_selected se pasa, lo selecciona al final (usado en edición)
+    function rellenarDocentes(id_carrera = null, id_docente_selected = null) {
+        const dSelect = document.getElementById('id_docente');
+        dSelect.innerHTML = '<option value="">Seleccione...</option>';
+
+        if (!id_carrera) {
+            // si no hay carrera, y existe un mapping global, no rellenar
+            return;
+        }
+
+        const lista = docentesPorCarrera[id_carrera] || [];
+
+        lista.forEach(d => {
+            const opt = document.createElement('option');
+            opt.value = d.id_docente;
+            // algunos modelos devuelven nombre + apellidos separados; ajusta si hace falta
+            opt.textContent = (d.nombre ? d.nombre : '') + (d.apellidos ? ' ' + d.apellidos : '');
+            dSelect.appendChild(opt);
+        });
+
+        if (id_docente_selected) {
+            setTimeout(() => {
+                dSelect.value = id_docente_selected;
+            }, 10);
+        }
+    }
+
+    // filtro en la tabla principal por carrera (solo UI)
     document.getElementById("filtroCarrera")?.addEventListener("change", function() {
         const carrera = this.value;
         const filas = document.querySelectorAll(".tabla-docentes tbody tr");
@@ -235,8 +332,16 @@ ob_start();
             }
         });
     });
+
+    // cerrar modal al click fuera
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('modalHorario');
+        if (event.target == modal) modal.style.display = 'none';
+    });
 </script>
+
 <script src="/ASISTENCIAS/js/modales.js"></script>
+
 <?php
 $content = ob_get_clean();
 $title = "Horarios";

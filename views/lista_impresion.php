@@ -42,12 +42,13 @@ $alumnos = $conn->query("
     ORDER BY nombre
 ")->fetch_all(MYSQLI_ASSOC) ?? [];
 
-// Horarios del docente
+// Horarios del docente (usa tu helper existente)
 $horarios = obtener_horarios_docente($conn, $id_docente, $id_materia, $id_grupo) ?? [];
 
-// Fechas generadas por los horarios
-$fechas = generar_fechas_por_horarios($fecha_inicio, $fecha_fin, $horarios) ?? [];
+// Generamos fechas con horas
+$fechas = generar_fechas_y_horas($fecha_inicio, $fecha_fin, $horarios);
 
+// Ajuste de nombre-clase según cantidad de fechas (para css)
 $total_fechas = count($fechas);
 
 if ($total_fechas <= 10) {
@@ -58,16 +59,34 @@ if ($total_fechas <= 10) {
     $nombre_clase = "nombre-muy-pequeno"; // aún más pequeño
 }
 
+// Arreglo con los nombres de los meses en español
+$meses_es = [
+    1 => 'enero',
+    2 => 'febrero',
+    3 => 'marzo',
+    4 => 'abril',
+    5 => 'mayo',
+    6 => 'junio',
+    7 => 'julio',
+    8 => 'agosto',
+    9 => 'septiembre',
+    10 => 'octubre',
+    11 => 'noviembre',
+    12 => 'diciembre'
+];
 
-// Agrupar fechas por mes
+// Agrupar fechas por mes (cada elemento mantiene 'fecha' y 'horas')
 $fechas_por_mes = [];
 foreach ($fechas as $f) {
-    $mes = date('F Y', strtotime($f));
+    $fecha_real = $f['fecha'];
+    $num_mes = (int)date('m', strtotime($fecha_real));
+    $anio = date('Y', strtotime($fecha_real));
+    $mes = $meses_es[$num_mes] . " " . $anio;
+    if (!isset($fechas_por_mes[$mes])) $fechas_por_mes[$mes] = [];
     $fechas_por_mes[$mes][] = $f;
 }
 
-
-// Formato horarios
+// Formato horarios (texto para mostrar en encabezado)
 function formato_horarios($horarios)
 {
     if (empty($horarios)) return '-';
@@ -76,6 +95,27 @@ function formato_horarios($horarios)
         $arr[] = $h['horario_texto'] ?? '-';
     }
     return implode(', ', $arr);
+}
+
+function nombre_dia_corto_local($fecha)
+{
+    $map = [
+        'Mon' => 'Lun',
+        'Tue' => 'Mar',
+        'Wed' => 'Mie',
+        'Thu' => 'Jue',
+        'Fri' => 'Vie',
+        'Sat' => 'Sab',
+        'Sun' => 'Dom'
+    ];
+    $d = date('D', strtotime($fecha));
+    return $map[$d] ?? $d;
+}
+function fecha_larga_es($fecha)
+{
+    setlocale(LC_TIME, 'es_MX.UTF-8', 'es_ES.UTF-8', 'spanish');
+    $timestamp = strtotime($fecha);
+    return strftime('%d de %B', $timestamp);
 }
 
 ?>
@@ -93,10 +133,10 @@ function formato_horarios($horarios)
     <button onclick="window.print()" class="print-btn">Imprimir</button>
 
     <?php
-    // PAGINAR 15 POR HOJA
+    // PAGINAR 15 POR HOJA (alumnos)
     $total_alumnos = count($alumnos);
     $por_pagina = 15;
-    $paginas = ceil($total_alumnos / $por_pagina);
+    $paginas = max(1, ceil($total_alumnos / $por_pagina));
 
     $index_global = 0;
 
@@ -105,98 +145,93 @@ function formato_horarios($horarios)
 
         <div class="page">
             <div class="contenido" style="margin-top:40px;">
-
-
-                <!-- ================== ENCABEZADO DE INFORMACIÓN ================== -->
+                <!-- ENCABEZADO INFORMACIÓN -->
                 <table class="info-table">
                     <tr>
-                        <td colspan="7">
-                            <strong>Materia:</strong> <?= htmlspecialchars($materia['nombre'] ?? '-') ?>
-                        </td>
-                        <td colspan="2">
-                            <strong>Clave:</strong> <?= htmlspecialchars($materia['clave'] ?? '-') ?>
-                        </td>
-                        <td colspan="2">
-                            <strong>Horas semestre:</strong> <?= htmlspecialchars($materia['horas_semestre'] ?? '-') ?>
-                        </td>
-                        <td colspan="2">
-                            <strong>Horas semana:</strong> <?= htmlspecialchars($materia['horas_semana'] ?? '-') ?>
-                        </td>
+                        <td colspan="7"><strong>Materia:</strong> <?= htmlspecialchars($materia['nombre'] ?? '-') ?></td>
+                        <td colspan="2"><strong>Clave:</strong> <?= htmlspecialchars($materia['clave'] ?? '-') ?></td>
+                        <td colspan="2"><strong>Horas semestre:</strong> <?= htmlspecialchars($materia['horas_semestre'] ?? '-') ?></td>
+                        <td colspan="2"><strong>Horas semana:</strong> <?= htmlspecialchars($materia['horas_semana'] ?? '-') ?></td>
                     </tr>
-
                     <tr>
-                        <td colspan="4">
-                            <strong>Semestre / Grupo:</strong> <?= ($grupo['semestre_num'] ?? '-') . ' / ' . ($grupo['nombre_grupo'] ?? '-') ?>
-                        </td>
-                        <td colspan="4">
-                            <strong>Parcial:</strong> <?= $id_parcial
-                                                            ? "Parcial {$p['numero_parcial']} ({$fecha_inicio} a {$fecha_fin})"
-                                                            : "{$fecha_inicio} a {$fecha_fin}" ?>
-                        </td>
-                        <td colspan="4">
-                            <strong>Docente:</strong> <?= htmlspecialchars($docente['nombre'] ?? '-') ?>
-                        </td>
-                    </tr>
+                        <td colspan="4"><strong>Semestre / Grupo:</strong> <?= ($grupo['semestre_num'] ?? '-') . ' / ' . ($grupo['nombre_grupo'] ?? '-') ?></td>
+                        <td colspan="2">Parcial </strong> <?= ($p['numero_parcial'] ?? '-')  ?></td>
+                        <td colspan="2">
+                            <?php
+                            $f_i = fecha_larga_es($fecha_inicio);
+                            $f_f = fecha_larga_es($fecha_fin);
 
+                            if ($id_parcial) {
+                                echo " $f_i a $f_f";
+                            }
+                            ?>
+                        </td>
+
+                        <td colspan="4"><strong>Docente:</strong> <?= htmlspecialchars($docente['nombre'] ?? '-') ?></td>
+                    </tr>
                     <tr>
-                        <td colspan="12">
-                            <strong>Horario:</strong> <?= formato_horarios($horarios) ?>
-                        </td>
+                        <td colspan="12"><strong>Horario:</strong> <?= htmlspecialchars(formato_horarios($horarios)) ?></td>
                     </tr>
-
                 </table>
 
-
-                <!-- ================== TABLA PRINCIPAL ================== -->
-                <table>
+                <!-- TABLA PRINCIPAL -->
+                <table class="<?= $nombre_clase ?>">
                     <thead>
+                        <!-- fila 1: meses + Total y Calificación Parcial -->
                         <tr>
                             <th rowspan="2">N.</th>
                             <th rowspan="2" class="nombre-col">Nombre del alumno</th>
 
                             <?php foreach ($fechas_por_mes as $mes => $dias): ?>
-                                <th colspan="<?= count($dias) ?>">
-                                    <?= strftime('%B %Y', strtotime($dias[0])) ?>
-                                </th>
+                                <?php
+                                $cols_mes = 0;
+                                foreach ($dias as $d) $cols_mes += (int)$d['horas'];
+                                ?>
+                                <th colspan="<?= $cols_mes ?>"><?= ucfirst($mes) ?></th>
                             <?php endforeach; ?>
 
-                            <th colspan="2">Asistencias</th>
+                            <th colspan="2">Total</th>
                             <th colspan="2">Calificación Parcial</th>
-
                             <th rowspan="2" class="observaciones">Observaciones</th>
                         </tr>
 
+                        <!-- fila 2: fechas + subcolumnas Total y Calificación Parcial -->
                         <tr>
                             <?php foreach ($fechas_por_mes as $dias): ?>
-                                <?php foreach ($dias as $f): ?>
-                                    <th><?= nombre_dia_corto($f) . ' ' . date('d/m', strtotime($f)) ?></th>
+                                <?php foreach ($dias as $d): ?>
+                                    <th colspan="<?= (int)$d['horas'] ?>">
+                                        <?= nombre_dia_corto_local($d['fecha']) . ' ' . date('d', strtotime($d['fecha'])) ?>
+                                    </th>
                                 <?php endforeach; ?>
                             <?php endforeach; ?>
 
-                            <th>Total</th>
+                            <!-- subcolumnas de Total -->
+                            <th>Asistencias</th>
                             <th>Faltas</th>
+
+                            <!-- subcolumnas de Calificación Parcial -->
                             <th>Número</th>
                             <th>Letra</th>
                         </tr>
                     </thead>
 
                     <tbody>
-
                         <?php
-                        // ALUMNOS PARA ESTA HOJA
                         for ($i = 1; $i <= $por_pagina; $i++):
                             if ($index_global >= $total_alumnos) break;
-
                             $a = $alumnos[$index_global];
                         ?>
                             <tr>
                                 <td><?= $index_global + 1 ?></td>
+                                <td class="capitalizar <?= $nombre_clase ?>"><?= htmlspecialchars(strtolower($a['nombre']), ENT_QUOTES, 'UTF-8') ?></td>
 
-                                <td class="capitalizar <?= $nombre_clase ?>">
-                                    <?= htmlspecialchars(strtolower($a['nombre']), ENT_QUOTES, 'UTF-8') ?>
-                                </td>
-                                <?php foreach ($fechas as $f): ?>
-                                    <td>&nbsp;</td>
+                                <!-- celdas por cada fecha y por cada hora -->
+                                <?php foreach ($fechas_por_mes as $dias): ?>
+                                    <?php foreach ($dias as $d): ?>
+                                        <?php for ($h = 1; $h <= (int)$d['horas']; $h++): ?>
+                                            <td class="asistencia-cell">&nbsp;</td>
+                                        <?php endfor; ?>
+                                    <?php endforeach; ?>
                                 <?php endforeach; ?>
 
                                 <td>&nbsp;</td>
@@ -207,15 +242,13 @@ function formato_horarios($horarios)
 
                                 <td>&nbsp;</td>
                             </tr>
-
                         <?php
                             $index_global++;
                         endfor;
                         ?>
-
                     </tbody>
-
                 </table>
+
                 <?php if ($pagina == $paginas): ?>
 
                     <div class="pie-final">
@@ -250,7 +283,6 @@ function formato_horarios($horarios)
                 <?php endif; ?>
 
             </div>
-
         </div>
 
         <?php if ($pagina < $paginas): ?>
@@ -258,6 +290,7 @@ function formato_horarios($horarios)
         <?php endif; ?>
 
     <?php endfor; ?>
+
 </body>
 
 </html>

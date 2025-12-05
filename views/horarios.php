@@ -153,11 +153,11 @@ ob_start();
             <!-- Días -->
             <label>Días:</label>
             <div class="checkbox-group">
-                <label><input type="checkbox" name="dia_semana[]" value="L"> L</label>
-                <label><input type="checkbox" name="dia_semana[]" value="M"> M</label>
-                <label><input type="checkbox" name="dia_semana[]" value="X"> X</label>
-                <label><input type="checkbox" name="dia_semana[]" value="J"> J</label>
-                <label><input type="checkbox" name="dia_semana[]" value="V"> V</label>
+                <label><input type="checkbox" name="dia_semana[]" value="L"> Lun</label>
+                <label><input type="checkbox" name="dia_semana[]" value="M"> Mar</label>
+                <label><input type="checkbox" name="dia_semana[]" value="X"> Mie</label>
+                <label><input type="checkbox" name="dia_semana[]" value="J"> Jue</label>
+                <label><input type="checkbox" name="dia_semana[]" value="V"> Vie</label>
             </div>
 
             <!-- Horario en texto -->

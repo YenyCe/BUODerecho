@@ -48,7 +48,7 @@ table {
 
 /* Encabezados de tabla */
 table th {
-  font-size: 11px;   /* Tamaño uniforme de encabezados */
+  font-size: 11px; /* Tamaño uniforme de encabezados */
   font-weight: bold;
   text-align: center;
   background: #f2f2f2;
@@ -70,8 +70,6 @@ table td {
   width: 35%;
   text-align: left;
 }
-
-
 
 /* Columna Observaciones */
 .observaciones {
@@ -123,41 +121,39 @@ table td {
 
 /* Celda de nombre de alumno con altura fija y ajuste de texto */
 td.capitalizar {
-    text-transform: capitalize;
-    font-weight: bold;
-    min-height: 24px;       /* altura mínima de la fila */
-    height: 24px;           /* altura fija para que todas las filas sean iguales */
-    vertical-align: middle; /* centra el texto verticalmente */
-    word-wrap: break-word;  /* permite que nombres largos se rompan en dos líneas si es necesario */
-    overflow: hidden;       /* evita que el contenido desborde */
+  text-transform: capitalize;
+  font-weight: bold;
+  min-height: 24px; /* altura mínima de la fila */
+  height: 24px; /* altura fija para que todas las filas sean iguales */
+  vertical-align: middle; /* centra el texto verticalmente */
+  word-wrap: break-word; /* permite que nombres largos se rompan en dos líneas si es necesario */
+  overflow: hidden; /* evita que el contenido desborde */
 }
 
-
 td.capitalizar.nombre-normal {
-    font-size: 15px;
-    font-weight: bold;
+  font-size: 15px;
+  font-weight: bold;
 }
 
 td.capitalizar.nombre-pequeno {
-    font-size: 12px;
-    font-weight: bold;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 td.capitalizar.nombre-muy-pequeno {
-    font-size: 10px;
-    font-weight: bold;
+  font-size: 10px;
+  font-weight: bold;
 }
-
-
-
+.info-table {
+    text-transform: uppercase;
+}
 
 .info-table td[colspan] {
-    padding: 4px 6px;       /* espacio interno reducido */
-    font-size: 13px;        /* tamaño uniforme */
-    text-align: left;       /* alineado a la izquierda */
-    white-space: normal;    /* permite que el texto se ajuste */
+  padding: 4px 6px; /* espacio interno reducido */
+  font-size: 13px; /* tamaño uniforme */
+  text-align: left; /* alineado a la izquierda */
+  white-space: normal; /* permite que el texto se ajuste */
 }
-
 
 /* Quitar bordes y ajustar la tabla de info del reporte */
 .info-reporte{
@@ -170,4 +166,26 @@ td.capitalizar.nombre-muy-pequeno {
     padding: 4px 10px;   /* espacio interno para que se vea limpio */
     text-align: left;   /* puedes ajustar a center si quieres */
     font-size: 14px;    /* tamaño uniforme, más pequeño si quieres */
+}
+/* CAMBIOS DE COLUMAS POR DIA POR HORA */
+
+.nombre-col {
+  text-align: left;
+  padding-left: 8px;
+  width: 260px;
+}
+
+.nombre-normal .asistencia-cell {
+  width: 22px;
+  height: 20px;
+}
+
+.nombre-pequeno .asistencia-cell {
+  width: 16px;
+  height: 16px;
+}
+
+.nombre-muy-pequeno .asistencia-cell {
+  width: 12px;
+  height: 12px;
 }

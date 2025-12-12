@@ -6,43 +6,76 @@ $model = new SemestresModel($conn);
 
 /* --- SEMESTRES --- */
 if(isset($_POST['accion_semestre'])){
+    $numero = intval($_POST['numero']);
+    $id_semestre = isset($_POST['id_semestre']) ? intval($_POST['id_semestre']) : null;
+
+    if($numero < 1){
+        header("Location: ../views/semestres_grupos.php?msg=error_numero");
+        exit();
+    }
+
     if($_POST['accion_semestre'] == 'agregar'){
-        $model->agregarSemestre($_POST['numero']);
+        if($model->agregarSemestre($numero)){
+            header("Location: ../views/semestres_grupos.php?msg=success");
+        } else {
+            header("Location: ../views/semestres_grupos.php?msg=error_duplicate");
+        }
     }
     if($_POST['accion_semestre'] == 'editar'){
-        $model->editarSemestre($_POST['id_semestre'], $_POST['numero']);
+        if($model->editarSemestre($id_semestre, $numero)){
+            header("Location: ../views/semestres_grupos.php?msg=success");
+        } else {
+            header("Location: ../views/semestres_grupos.php?msg=error_duplicate");
+        }
     }
-    header("Location: ../views/semestres_grupos.php?msg=success");
     exit();
 }
 
 if(isset($_GET['eliminar_semestre'])){
-    $model->eliminarSemestre($_GET['eliminar_semestre']);
-    header("Location: ../views/semestres_grupos.php?msg=deleted");
+    if($model->eliminarSemestre($_GET['eliminar_semestre'])){
+        header("Location: ../views/semestres_grupos.php?msg=deleted");
+    } else {
+        header("Location: ../views/semestres_grupos.php?msg=error_dependencia");
+    }
     exit();
 }
 
 /* --- GRUPOS --- */
 if(isset($_POST['accion_grupo'])){
-    $nombre = $_POST['nombre'];
-    $id_semestre = $_POST['id_semestre'];
-    // Para administradores viene por el select, para coordinadores usamos su propia carrera
-    $id_carrera = !empty($_POST['id_carrera']) ? $_POST['id_carrera'] : $_SESSION['id_carrera'];
+    $nombre = trim($_POST['nombre']);
+    $id_semestre = intval($_POST['id_semestre']);
+    $id_carrera = !empty($_POST['id_carrera']) ? intval($_POST['id_carrera']) : $_SESSION['id_carrera'];
+    $id_grupo = isset($_POST['id_grupo']) ? intval($_POST['id_grupo']) : null;
 
+    if(empty($nombre)){
+        header("Location: ../views/semestres_grupos.php?msg=error_nombre");
+        exit();
+    }
 
     if($_POST['accion_grupo'] == 'agregar'){
-        $model->agregarGrupo($nombre, $id_semestre, $id_carrera);
+        if($model->agregarGrupo($nombre, $id_semestre, $id_carrera)){
+            header("Location: ../views/semestres_grupos.php?msg=success");
+        } else {
+            header("Location: ../views/semestres_grupos.php?msg=error_duplicate");
+        }
     }
+
     if($_POST['accion_grupo'] == 'editar'){
-        $id_grupo = $_POST['id_grupo'];
-        $model->editarGrupo($id_grupo, $nombre, $id_semestre, $id_carrera);
+        if($model->editarGrupo($id_grupo, $nombre, $id_semestre, $id_carrera)){
+            header("Location: ../views/semestres_grupos.php?msg=success");
+        } else {
+            header("Location: ../views/semestres_grupos.php?msg=error_duplicate");
+        }
     }
-    header("Location: ../views/semestres_grupos.php?msg=success");
     exit();
 }
 
 if(isset($_GET['eliminar_grupo'])){
-    $model->eliminarGrupo($_GET['eliminar_grupo']);
-    header("Location: ../views/semestres_grupos.php?msg=deleted");
+    if($model->eliminarGrupo($_GET['eliminar_grupo'])){
+        header("Location: ../views/semestres_grupos.php?msg=deleted");
+    } else {
+        header("Location: ../views/semestres_grupos.php?msg=error_dependencia");
+    }
     exit();
 }
+?>

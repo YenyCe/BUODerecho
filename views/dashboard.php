@@ -26,18 +26,22 @@ $pagina = $pagina ?? 'dashboard'; // Si la página no define $pagina, usar 'dash
                 <li><a href="docentes.php" class="<?= $pagina == 'docentes.php' ? 'active' : '' ?>">Docentes</a></li>
                 <li><a href="materias.php" class="<?= $pagina == 'materias.php' ? 'active' : '' ?>">Materias</a></li>
                 <li><a href="alumnos.php" class="<?= $pagina == 'alumnos.php' ? 'active' : '' ?>">Alumnos</a></li>
+                <li><a href="grupos.php" class="<?= $pagina == 'grupos.php' ? 'active' : '' ?>">Grupos</a></li>
                 <li><a href="semestres_grupos.php" class="<?= $pagina == 'semestres_grupos.php' ? 'active' : '' ?>">Semestres y Grupos</a></li>
                 <li><a href="parciales.php" class="<?= $pagina == 'parciales.php' ? 'active' : '' ?>">Parciales</a></li>
                 <li><a href="generar_listas.php" class="<?= $pagina == 'generar_listas.php' ? 'active' : '' ?>">Listas</a></li>
                 <li><a href="horarios.php" class="<?= $pagina == 'horarios.php' ? 'active' : '' ?>">Horarios</a></li>
+                 <li><a href="alumnos_baja.php" class="<?= $pagina == 'alumnos_baja.php' ? 'active' : '' ?>">alumnos_baja</a></li>
             <?php elseif ($rol === 'coordinador'): ?>
                 <li><a href="docentes.php" class="<?= $pagina == 'docentes.php' ? 'active' : '' ?>">Docentes</a></li>
                 <li><a href="materias.php" class="<?= $pagina == 'materias.php' ? 'active' : '' ?>">Materias</a></li>
                 <li><a href="alumnos.php" class="<?= $pagina == 'alumnos.php' ? 'active' : '' ?>">Alumnos</a></li>
+                <li><a href="grupos.php" class="<?= $pagina == 'grupos.php' ? 'active' : '' ?>">Grupos</a></li>
                 <li><a href="semestres_grupos.php" class="<?= $pagina == 'semestres_grupos.php' ? 'active' : '' ?>">Semestres y Grupos</a></li>
                 <li><a href="parciales.php" class="<?= $pagina == 'parciales.php' ? 'active' : '' ?>">Parciales</a></li>
                 <li><a href="generar_listas.php" class="<?= $pagina == 'generar_listas.php' ? 'active' : '' ?>">Listas</a></li>
                 <li><a href="horarios.php" class="<?= $pagina == 'horarios.php' ? 'active' : '' ?>">Horarios</a></li>
+                <li><a href="alumnos_baja.php" class="<?= $pagina == 'alumnos_baja.php' ? 'active' : '' ?>">alumnos_baja</a></li>
             <?php endif; ?>
 
             <li><a href="salir.php">Cerrar Sesión</a></li>

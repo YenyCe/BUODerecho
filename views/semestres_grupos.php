@@ -34,7 +34,7 @@ ob_start();
         <!-- SEMESTRES -->
         <h2>Semestres</h2>
         <button class="btn-agregar" onclick="abrirModalSemestre()">Agregar Semestre</button>
-        <table class="tabla-docentes">
+        <table id="tablaSemestres" class="tabla-docentes">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -44,18 +44,20 @@ ob_start();
             </thead>
             <tbody>
                 <?php foreach ($semestres as $s): ?>
-                    <tr data-id="<?php echo $s['id_semestre']; ?>" data-numero="<?php echo $s['numero']; ?>">
-                        <td><?php echo $s['id_semestre']; ?></td>
-                        <td><?php echo $s['numero']; ?></td>
+                    <tr data-id="<?= $s['id_semestre'] ?>" data-numero="<?= $s['numero'] ?>">
+                        <td><?= $s['id_semestre'] ?></td>
+                        <td><?= $s['numero'] ?></td>
                         <td>
-                            <button class="btn-editar" onclick="abrirModalSemestre(<?php echo $s['id_semestre']; ?>)">Editar</button>
-                            <a href="../controllers/SemestresController.php?eliminar_semestre=<?php echo $s['id_semestre']; ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar este semestre?')">Eliminar</a>
+                            <button class="btn-editar" onclick="abrirModalSemestre(<?= $s['id_semestre'] ?>)">Editar</button>
+                            <a href="../controllers/SemestresController.php?eliminar_semestre=<?= $s['id_semestre'] ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar este semestre?')">Eliminar</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
+
         <br>
+
         <!-- GRUPOS -->
         <h2>Grupos</h2>
         <?php if ($rol === 'admin'): ?>
@@ -73,7 +75,6 @@ ob_start();
         <button class="btn-agregar" onclick="abrirModalGrupo()">Agregar Grupo</button>
 
         <table id="tablaGrupos" class="tabla-docentes">
-
             <thead>
                 <tr>
                     <th>ID</th>
@@ -86,27 +87,25 @@ ob_start();
             <tbody>
                 <?php foreach ($grupos as $g): ?>
                     <tr
-                        data-id="<?= $g['id_grupo'] ?? '' ?>"
-                        data-nombre="<?= htmlspecialchars($g['nombre'] ?? '') ?>"
-                        data-id_semestre="<?= $g['id_semestre'] ?? '' ?>"
-                        data-id_carrera="<?= $g['id_carrera'] ?? '' ?>">
-                        <td><?= $g['id_grupo'] ?? '' ?></td>
-                        <td><?= htmlspecialchars($g['nombre'] ?? '') ?></td>
-                        <td><?= $g['semestre_num'] ?? '' ?></td>
+                        data-id="<?= $g['id_grupo'] ?>"
+                        data-nombre="<?= htmlspecialchars($g['nombre']) ?>"
+                        data-id_semestre="<?= $g['id_semestre'] ?>"
+                        data-id_carrera="<?= $g['id_carrera'] ?>">
+                        <td><?= $g['id_grupo'] ?></td>
+                        <td><?= htmlspecialchars($g['nombre']) ?></td>
+                        <td><?= $g['semestre_num'] ?></td>
                         <?php if ($rol === 'admin'): ?>
-                            <td><?= htmlspecialchars($g['nombre_carrera'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($g['nombre_carrera']) ?></td>
                         <?php endif; ?>
                         <td>
-                            <button class="btn-editar" onclick="abrirModalGrupo(<?= $g['id_grupo'] ?? '' ?>)">Editar</button>
-                            <a href="../controllers/SemestresController.php?eliminar_grupo=<?= $g['id_grupo'] ?? '' ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar este grupo?')">Eliminar</a>
+                            <button class="btn-editar" onclick="abrirModalGrupo(<?= $g['id_grupo'] ?>)">Editar</button>
+                            <a href="../controllers/SemestresController.php?eliminar_grupo=<?= $g['id_grupo'] ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar este grupo?')">Eliminar</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
-
             </tbody>
         </table>
     </div>
-
 </div>
 
 <!-- Modal Semestre -->
@@ -138,7 +137,7 @@ ob_start();
             <select name="id_semestre" id="id_semestre_grupo" required>
                 <option value="">Seleccione un semestre</option>
                 <?php foreach ($semestres as $s): ?>
-                    <option value="<?php echo $s['id_semestre']; ?>"><?php echo $s['numero']; ?></option>
+                    <option value="<?= $s['id_semestre'] ?>"><?= $s['numero'] ?></option>
                 <?php endforeach; ?>
             </select>
 
@@ -147,14 +146,12 @@ ob_start();
                 <select name="id_carrera" id="id_carrera_grupo" required>
                     <option value="">Seleccione una carrera</option>
                     <?php foreach ($carreras as $c): ?>
-                        <option value="<?php echo $c['id_carrera']; ?>"><?php echo $c['nombre']; ?></option>
+                        <option value="<?= $c['id_carrera'] ?>"><?= $c['nombre'] ?></option>
                     <?php endforeach; ?>
                 </select>
-            <?php endif; ?>
-            <?php if ($rol === 'coordinador'): ?>
+            <?php elseif ($rol === 'coordinador'): ?>
                 <input type="hidden" name="id_carrera" value="<?= $_SESSION['id_carrera'] ?>">
             <?php endif; ?>
-
 
             <button type="submit">Guardar</button>
         </form>
@@ -162,82 +159,108 @@ ob_start();
 </div>
 
 <script>
-    /* Modal Semestre */
-    function abrirModalSemestre(id = null) {
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* --- MODAL SEMESTRE --- */
+    window.abrirModalSemestre = function(id = null) {
         const modal = document.getElementById('modalSemestre');
         modal.style.display = 'block';
+        const titulo = document.getElementById('tituloModalSemestre');
+        const accion = document.getElementById('accion_semestre');
+        const id_input = document.getElementById('id_semestre');
+        const numero_input = document.getElementById('numero_semestre');
+
         if (id) {
-            const row = document.querySelector(`tr[data-id='${id}']`);
-            document.getElementById('tituloModalSemestre').innerText = 'Editar Semestre';
-            document.getElementById('accion_semestre').value = 'editar';
-            document.getElementById('id_semestre').value = id;
-            document.getElementById('numero_semestre').value = row.dataset.numero;
+            const row = document.querySelector(`#tablaSemestres tbody tr[data-id='${id}']`);
+            if (!row) return;
+            titulo.innerText = 'Editar Semestre';
+            accion.value = 'editar';
+            id_input.value = id;
+            numero_input.value = row.dataset.numero;
         } else {
-            document.getElementById('tituloModalSemestre').innerText = 'Agregar Semestre';
-            document.getElementById('accion_semestre').value = 'agregar';
-            document.getElementById('id_semestre').value = '';
-            document.getElementById('numero_semestre').value = '';
+            titulo.innerText = 'Agregar Semestre';
+            accion.value = 'agregar';
+            id_input.value = '';
+            numero_input.value = '';
         }
     }
 
-    function cerrarModalSemestre() {
-        document.getElementById('modalSemestre').style.display = 'none';
+    window.cerrarModal = function(modalId) {
+        document.getElementById(modalId).style.display = 'none';
     }
 
-    /* Modal Grupo */
-    function abrirModalGrupo(id = null) {
+    /* --- MODAL GRUPO --- */
+    window.abrirModalGrupo = function(id = null) {
         const modal = document.getElementById('modalGrupo');
         modal.style.display = 'block';
+        const titulo = document.getElementById('tituloModalGrupo');
+        const accion = document.getElementById('accion_grupo');
+        const id_input = document.getElementById('id_grupo');
+        const nombre_input = document.getElementById('nombre_grupo');
+        const semestre_input = document.getElementById('id_semestre_grupo');
+        const carrera_input = document.getElementById('id_carrera_grupo');
+
         if (id) {
-            const row = document.querySelector(`tr[data-id='${id}']`);
-            document.getElementById('tituloModalGrupo').innerText = 'Editar Grupo';
-            document.getElementById('accion_grupo').value = 'editar';
-            document.getElementById('id_grupo').value = id;
-            document.getElementById('nombre_grupo').value = row.dataset.nombre;
-            document.getElementById('id_semestre_grupo').value = row.dataset.id_semestre;
-            if (document.getElementById('id_carrera_grupo')) {
-                document.getElementById('id_carrera_grupo').value = row.dataset.id_carrera || '';
-            }
+            const rows = document.querySelectorAll("#tablaGrupos tbody tr");
+            let row = null;
+            rows.forEach(r => { if (r.dataset.id == id) row = r; });
+            if (!row) return;
+            titulo.innerText = 'Editar Grupo';
+            accion.value = 'editar';
+            id_input.value = id;
+            nombre_input.value = row.dataset.nombre;
+            semestre_input.value = row.dataset.id_semestre;
+            if (carrera_input) carrera_input.value = row.dataset.id_carrera || '';
         } else {
-            document.getElementById('tituloModalGrupo').innerText = 'Agregar Grupo';
-            document.getElementById('accion_grupo').value = 'agregar';
-            document.getElementById('id_grupo').value = '';
-            document.getElementById('nombre_grupo').value = '';
-            document.getElementById('id_semestre_grupo').value = '';
-            if (document.getElementById('id_carrera_grupo')) {
-                document.getElementById('id_carrera_grupo').value = '';
-            }
+            titulo.innerText = 'Agregar Grupo';
+            accion.value = 'agregar';
+            id_input.value = '';
+            nombre_input.value = '';
+            semestre_input.value = '';
+            if (carrera_input) carrera_input.value = '';
         }
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-        const filtroCarrera = document.getElementById("filtroCarrera");
-        if (!filtroCarrera) return; // Si NO es admin, se sale
-
+    /* --- FILTRO DE CARRERA --- */
+    const filtroCarrera = document.getElementById("filtroCarrera");
+    if (filtroCarrera) {
         const filas = document.querySelectorAll("#tablaGrupos tbody tr");
-
-
         filtroCarrera.addEventListener("change", () => {
             let carrera = filtroCarrera.value;
-
             filas.forEach(fila => {
-                let filaCarrera = fila.dataset.id_carrera;
-
-                if (carrera === "" || filaCarrera === carrera) {
-                    fila.style.display = "";
-                } else {
-                    fila.style.display = "none";
-                }
+                fila.style.display = (carrera === "" || fila.dataset.id_carrera === carrera) ? "" : "none";
             });
         });
-    });
+    }
+
+    /* --- VALIDACIÓN FORMULARIOS --- */
+    const formSemestre = document.querySelector("#modalSemestre form");
+    if (formSemestre) {
+        formSemestre.addEventListener("submit", e => {
+            const num = parseInt(document.getElementById("numero_semestre").value);
+            if (isNaN(num) || num < 1) {
+                alert("Número de semestre inválido");
+                e.preventDefault();
+            }
+        });
+    }
+
+    const formGrupo = document.querySelector("#modalGrupo form");
+    if (formGrupo) {
+        formGrupo.addEventListener("submit", e => {
+            const nombre = document.getElementById("nombre_grupo").value.trim();
+            const semestre = document.getElementById("id_semestre_grupo").value;
+            if (nombre === "" || semestre === "") {
+                alert("Debe completar todos los campos del grupo");
+                e.preventDefault();
+            }
+        });
+    }
+});
 </script>
-<script src="/ASISTENCIAS/js/modales.js"></script>
+
 <?php
-// FIN de la captura
 $content = ob_get_clean();
 $title = "Semestres y Grupos";
-
-// Cargar layout
 include "dashboard.php";
 ?>

@@ -50,7 +50,8 @@ ob_start();
             </div>
         </div>
     <?php endif; ?>
-    <button class="btn-agregar" onclick="abrirModal()">Agregar Docente</button>
+    <button class="btn-agregar" onclick="abrirModalMateria()">Agregar Materia</button>
+
 
     <table class="tabla-docentes">
         <thead>

@@ -157,7 +157,7 @@ ob_start();
 
                 <?php foreach ($grupos as $g): ?>
                     <option value="<?= $g['id_grupo']; ?>">
-                        <?= htmlspecialchars($g['nombre']); ?>
+                        <?= htmlspecialchars($g['nombre_grupo']); ?>
                     </option>
                 <?php endforeach; ?>
             </select>

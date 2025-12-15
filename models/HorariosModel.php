@@ -43,15 +43,19 @@ class HorariosModel
     // =======================
     // Obtener horarios por carrera (coordinador)
     // =======================
-    public function getHorariosByCarrera($id_carrera)
-    {
-        $stmt = $this->conn->prepare("
+public function getHorariosByCarrera($id_carrera)
+{
+    $stmt = $this->conn->prepare("
         SELECT 
             h.id_horario,
+            h.id_carrera,
+            h.id_grupo,
+            h.id_materia,
+            h.id_docente,
             c.nombre AS carrera,
             g.nombre AS grupo,
             m.nombre AS materia,
-            d.nombre AS docente,
+            CONCAT(d.nombre, ' ', d.apellidos) AS docente,
             h.horario_texto,
             GROUP_CONCAT(hd.dia ORDER BY FIELD(hd.dia,'L','M','X','J','V') SEPARATOR '-') AS dias
         FROM horarios h
@@ -60,14 +64,15 @@ class HorariosModel
         INNER JOIN materias m ON h.id_materia = m.id_materia
         INNER JOIN docentes d ON h.id_docente = d.id_docente
         LEFT JOIN horario_dias hd ON hd.id_horario = h.id_horario
-        WHERE c.id_carrera = ?
+        WHERE h.id_carrera = ?
         GROUP BY h.id_horario
         ORDER BY g.nombre, m.nombre
     ");
-        $stmt->bind_param("i", $id_carrera);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }
+    $stmt->bind_param("i", $id_carrera);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+
 
     // =======================
     // Obtener carreras

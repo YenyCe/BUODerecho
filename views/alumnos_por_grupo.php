@@ -60,15 +60,16 @@ ob_start();
     <table class="tabla-docentes">
         <thead>
             <tr>
-             
+             <th style="width:60px;">N°</th>
                 <th>Nombre</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
+            <?php $num = 1; ?>
             <?php foreach ($alumnosGrupo as $a): ?>
                 <tr data-id="<?= $a['id_alumno']; ?>" data-nombre="<?= htmlspecialchars($a['nombre']); ?>" data-id_grupo="<?= $a['id_grupo']; ?>">
-                  
+                   <td style="text-align:center;"><?= $num++; ?></td>
                     <td><?= htmlspecialchars($a['nombre']); ?></td>
                     <td>
                         <button class="btn-editar" onclick="abrirModalAlumno(<?= $a['id_alumno']; ?>)">Editar</button>

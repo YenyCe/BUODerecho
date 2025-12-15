@@ -249,6 +249,8 @@ ob_start();
                 document.getElementById('horario_texto').value = data.horario_texto;
             }
         }
+
+        
     }
 
     // cuando admin cambie de carrera en el modal, recargar selects

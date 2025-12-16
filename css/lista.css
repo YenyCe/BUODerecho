@@ -95,15 +95,12 @@ table td {
 
 /* ===== BLOQUE FINAL DE FIRMAS ===== */
 
-
-
 .pie-final {
-  padding: 15px 30px;   /* ⬇️ menos alto */
-  font-size: 13px;      /* ⬇️ más compacto */
+  padding: 15px 30px; /* ⬇️ menos alto */
+  font-size: 13px; /* ⬇️ más compacto */
   line-height: 1.3;
   margin-top: 10px;
 }
-
 
 .fila-flex {
   display: flex;
@@ -125,15 +122,14 @@ table td {
 /* Celda de nombre de alumno con altura fija y ajuste de texto */
 td.capitalizar {
   text-transform: capitalize;
-  font-weight: normal;   
+  font-weight: normal;
   min-height: 24px;
   height: 24px;
   vertical-align: middle;
-  white-space: nowrap;     
+  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;  /* … */
+  text-overflow: ellipsis; /* … */
 }
-
 
 td.capitalizar.nombre-normal {
   font-size: 15px;
@@ -151,7 +147,7 @@ td.capitalizar.nombre-muy-pequeno {
 }
 
 .info-table {
-    text-transform: uppercase;
+  text-transform: uppercase;
 }
 
 .info-table td[colspan] {
@@ -162,16 +158,16 @@ td.capitalizar.nombre-muy-pequeno {
 }
 
 /* Quitar bordes y ajustar la tabla de info del reporte */
-.info-reporte{
-    width: 100%;
-    border-collapse: collapse; /* evita espacios extra entre celdas */
+.info-reporte {
+  width: 100%;
+  border-collapse: collapse; /* evita espacios extra entre celdas */
 }
 
 .info-reporte td {
-    border: none;       /* quita todos los bordes */
-    padding: 4px 10px;   /* espacio interno para que se vea limpio */
-    text-align: left;   /* puedes ajustar a center si quieres */
-    font-size: 14px;    /* tamaño uniforme, más pequeño si quieres */
+  border: none; /* quita todos los bordes */
+  padding: 4px 10px; /* espacio interno para que se vea limpio */
+  text-align: left; /* puedes ajustar a center si quieres */
+  font-size: 14px; /* tamaño uniforme, más pequeño si quieres */
 }
 /* CAMBIOS DE COLUMAS POR DIA POR HORA */
 
@@ -195,3 +191,11 @@ td.capitalizar.nombre-muy-pequeno {
   width: 12px;
   height: 12px;
 }
+
+/* ===== TABLA REPORTE ===== */
+.table-reporte th {
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+

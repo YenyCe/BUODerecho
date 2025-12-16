@@ -46,21 +46,9 @@ $index_global = 0;
     <meta charset="UTF-8">
     <title>Reporte de Calificaciones</title>
     <link rel="stylesheet" href="../css/lista.css">
-    <style>
-        th,
-        td {
-            text-align: center;
-        }
-
-        .nombre-col {
-            text-align: left !important;
-            padding-left: 4px;
-        }
-    </style>
 </head>
 
 <body>
-
     <button onclick="window.print()" class="print-btn">Imprimir</button>
 
     <?php for ($pagina = 1; $pagina <= $paginas; $pagina++): ?>
@@ -108,29 +96,27 @@ $index_global = 0;
                 </table>
 
                 <!-- ================= TABLA PRINCIPAL ================= -->
-                <table>
-                    <thead>
+                <table >
+                    <thead class="table-reporte">
                         <tr>
                             <th rowspan="2">N.</th>
                             <th rowspan="2">Nombre del alumno</th>
                             <!-- Firma del alumno queda fuera -->
                             <th rowspan="2">Asistencia</th>
                             <!-- Fila que engloba los criterios (solo 6 columnas) -->
-                            <th colspan="6" style="text-align:center; font-weight:bold;">
+                            <th colspan="6">
                                 CRITERIOS A EVALUAR
                             </th>
-
-
                         </tr>
 
                         <tr>
 
-                            <th>Participación</th>
-                            <th>Exposición</th>
-                            <th>Examen</th>
-                            <th>Total de Inasistencias</th>
-                            <th>Total 100%</th>
-                            <th>Firma del alumno</th>
+                            <th>Participación <br> %</th>
+                            <th>TRABAJOS <br> %</th>
+                            <th>Examen<br> %</th>
+                            <th>Total de <br>Inasistencias</th>
+                            <th>Total <br> 100%</th>
+                            <th>Firma del <br> alumno</th>
                         </tr>
                     </thead>
 
@@ -165,7 +151,7 @@ $index_global = 0;
                         NOTA: Los criterios aquí mencionados son enunciativos más no limitativos, por lo que el docente podrá variar los criterios de evaluación acorde a las actividades que considere optimicen el aprendizaje del alumno, pudiendo agregar o disminuir las columnas necesarias. **Borrar esta leyenda antes de entregar**
                     </div>
 
-                    <div style="margin-top:80px; display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:flex-start;">
                         <!-- Firma del docente -->
                         <div style="text-align:center; width:45%;">
                             <p><?= htmlspecialchars($docente['nombre']) ?> <br>TITULAR DE ASIGNATURA</p>

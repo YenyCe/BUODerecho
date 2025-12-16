@@ -177,6 +177,15 @@ function cargarDocentesYGrupos() {
         Generar Reporte de Calificaciones
     </button>
 
+    <!-- CONTROL DE ASISTENCIA DEL DOCENTE -->
+    <button type="submit"
+            formaction="control_asistencia_docente.php"
+            class="btn-agregar"
+            style="background:#6f42c1;">
+        Generar Control de Asistencia Docente
+    </button>
+
+
 </div>
 
     </form>
@@ -188,3 +197,5 @@ $content = ob_get_clean();
 $title = "Generación de Listas";
 include "dashboard.php";
 ?>
+
+

@@ -6,18 +6,18 @@ require_once "../models/CarrerasModel.php";
 $model = new CarrerasModel($conn);
 $carreras = $model->obtenerCarreras();
 
-$alerta = "";
-if (isset($_GET['msg'])) {
-    if ($_GET['msg'] == "success") $alerta = "<div class='alerta success'>Carrera agregada correctamente</div>";
-    if ($_GET['msg'] == "edited")  $alerta = "<div class='alerta success'>Carrera editada correctamente</div>";
-    if ($_GET['msg'] == "deleted") $alerta = "<div class='alerta error'>Carrera eliminada correctamente</div>";
+$alerta = '';
+if (isset($_SESSION['alerta'])) {
+    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
+                {$_SESSION['alerta']['mensaje']}
+               </div>";
+    unset($_SESSION['alerta']);
 }
-
 ob_start();
 ?>
 <div class="container-form">
+    <?= $alerta ?>
     <h2>Carreras</h2>
-    <?php echo $alerta; ?>
 
     <button class="btn-agregar" onclick="abrirModalCarrera()">Agregar Carrera</button>
 

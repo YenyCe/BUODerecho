@@ -15,24 +15,19 @@ $materias = $materiaModel->getMaterias($id_carrera); // Filtra por carrera si es
 // Solo administrador necesita todas las carreras para el select
 $carreras = ($rol === 'admin') ? $carrerasModel->obtenerCarreras() : [];
 
-$alerta = "";
-if (isset($_GET['msg'])) {
-    if ($_GET['msg'] == "success") $alerta = "<div class='alerta success'>Materia agregada correctamente</div>";
-    if ($_GET['msg'] == "edited")  $alerta = "<div class='alerta success'>Materia editada correctamente</div>";
-    if ($_GET['msg'] == "deleted") $alerta = "<div class='alerta error'>Materia eliminada correctamente</div>";
+$alerta = '';
+if (isset($_SESSION['alerta'])) {
+    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
+                {$_SESSION['alerta']['mensaje']}
+               </div>";
+    unset($_SESSION['alerta']);
 }
-
 ob_start();
 ?>
 
 <div class="container-form">
     <h2>Materias</h2>
-    <?php if ($alerta): ?>
-        <div id="alertaMsg" class="alerta <?php echo strpos($alerta, 'success') !== false ? 'success' : 'error'; ?>">
-            <span><?php echo strip_tags($alerta); ?></span>
-            <span class="cerrar-alerta" onclick="cerrarAlerta()">&times;</span>
-        </div>
-    <?php endif; ?>
+    <?= $alerta ?>
 
     <?php if ($rol === 'admin'): ?>
         <div class="filtros-container" style="margin-bottom:15px;">
@@ -56,11 +51,11 @@ ob_start();
     <table class="tabla-docentes">
         <thead>
             <tr>
-                <th>ID</th>
+               
                 <th>Nombre</th>
                 <th>Clave</th>
-                <th>Horas/Semana</th>
-                <th>Horas/Semestre</th>
+                <th>H/Semana</th>
+                <th>H/Semestre</th>
                 <?php if ($rol === 'admin'): ?><th>Carrera</th><?php endif; ?>
                 <th>Acciones</th>
             </tr>
@@ -74,7 +69,6 @@ ob_start();
                     data-horas_semana="<?= $m['horas_semana'] ?>"
                     data-horas_semestre="<?= $m['horas_semestre'] ?>"
                     data-id_carrera="<?= $m['id_carrera'] ?? '' ?>">
-                    <td><?= $m['id_materia'] ?></td>
                     <td><?= htmlspecialchars($m['nombre']) ?></td>
                     <td><?= htmlspecialchars($m['clave']) ?></td>
                     <td><?= $m['horas_semana'] ?></td>
@@ -181,9 +175,10 @@ ob_start();
         });
     });
 </script>
-
+<script src="/ASISTENCIAS/js/modales.js"></script>
 <?php
 $content = ob_get_clean();
 $title = "Materias";
+$pagina = "materias";
 include "dashboard.php";
 ?>

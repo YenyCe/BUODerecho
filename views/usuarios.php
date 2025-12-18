@@ -6,12 +6,12 @@ require_once "../models/UsuariosModel.php";
 $usuarioModel = new UsuariosModel($conn);
 $usuarios = $usuarioModel->getUsuarios();
 $carreras = $usuarioModel->getCarreras();
-
-$alerta = "";
-if (isset($_GET['msg'])) {
-    if ($_GET['msg'] == "success") $alerta = "<div class='alerta success'>Usuario agregado correctamente</div>";
-    if ($_GET['msg'] == "edited") $alerta = "<div class='alerta success'>Usuario editado correctamente</div>";
-    if ($_GET['msg'] == "deleted") $alerta = "<div class='alerta error'>Usuario eliminado correctamente</div>";
+$alerta = '';
+if (isset($_SESSION['alerta'])) {
+    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
+               {$_SESSION['alerta']['mensaje']}
+               </div>";
+    unset($_SESSION['alerta']);
 }
 
 ob_start();
@@ -59,52 +59,76 @@ ob_start();
     </table>
 </div>
 
-<!-- Modal -->
 <div id="modalUsuario" class="modal">
     <div class="modal-content">
         <span class="cerrar" onclick="cerrarModal('modalUsuario')">&times;</span>
         <h2 id="tituloModalUsuario">Agregar Usuario</h2>
+
         <form id="formUsuario" action="../controllers/UsuariosController.php" method="POST">
+
             <input type="hidden" name="accion" value="agregar" id="accionUsuario">
             <input type="hidden" name="id_usuario" id="id_usuario">
 
-            <label>Nombre</label>
-            <input type="text" name="nombre" id="nombreUsuario" required>
+            <div class="form-grid">
 
-            <label>Correo</label>
-            <input type="email" name="correo" id="correoUsuario" required>
+                <div>
+                    <label>Nombre</label>
+                    <input type="text" name="nombre" id="nombreUsuario" required>
+                </div>
 
-            <label>Usuario</label>
-            <input type="text" name="usuario" id="usuarioUsuario" required>
+                <div>
+                    <label>Correo</label>
+                    <input type="email" name="correo" id="correoUsuario" required>
+                </div>
 
-            <label>Contraseña</label>
-            <input type="password" name="password" id="passwordUsuario">
+                <div>
+                    <label>Usuario</label>
+                    <input type="text" name="usuario" id="usuarioUsuario" required>
+                </div>
 
-            <label>Rol</label>
-            <select name="rol" id="rolUsuario" required>
-                <option value="">Seleccione un rol</option>
-                <option value="admin">Administrador</option>
-                <option value="coordinador">Coordinador</option>
-            </select>
+                <div>
+                    <label>Contraseña</label>
+                    <input type="password" name="password" id="passwordUsuario">
+                </div>
 
-            <label>Carrera (Solo coordinadores)</label>
-            <select name="id_carrera" id="id_carreraUsuario">
-                <option value="">Seleccione una carrera</option>
-                <?php foreach ($carreras as $c): ?>
-                    <option value="<?= $c['id_carrera'] ?>"><?= $c['nombre'] ?></option>
-                <?php endforeach; ?>
-            </select>
+                <div>
+                    <label>Rol</label>
+                    <select name="rol" id="rolUsuario" required>
+                        <option value="">Seleccione un rol</option>
+                        <option value="admin">Administrador</option>
+                        <option value="coordinador">Coordinador</option>
+                    </select>
+                </div>
 
-            <label>Estado</label>
-            <select name="estado" id="estadoUsuario">
-                <option value="1">Activo</option>
-                <option value="0">Inactivo</option>
-            </select>
+                <div>
+                    <label>Carrera</label>
+                    <select name="id_carrera" id="id_carreraUsuario">
+                        <option value="">Seleccione una carrera</option>
+                        <?php foreach ($carreras as $c): ?>
+                            <option value="<?= $c['id_carrera'] ?>">
+                                <?= $c['nombre'] ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
-            <button type="submit">Guardar</button>
+                <div class="full-row">
+                    <label>Estado</label>
+                    <select name="estado" id="estadoUsuario">
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+                </div>
+
+                <div class="full-row">
+                    <button type="submit">Guardar</button>
+                </div>
+
+            </div>
         </form>
     </div>
 </div>
+
 
 <script>
     function abrirModalUsuario(id = null) {
@@ -142,5 +166,6 @@ ob_start();
 <?php
 $content = ob_get_clean();
 $title = "Usuarios";
+$pagina = "usuarios";
 include "dashboard.php";
 ?>

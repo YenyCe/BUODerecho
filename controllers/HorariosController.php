@@ -49,32 +49,57 @@ if (isset($_GET['accion']) && $_GET['accion'] === 'getGrupos') {
 // GUARDAR HORARIO
 // =======================
 if (isset($_POST['accion']) && $_POST['accion'] === 'guardar') {
+
     $id_carrera = $_POST['id_carrera'];
     $id_grupo = $_POST['id_grupo'];
     $id_materia = $_POST['id_materia'];
     $id_docente = $_POST['id_docente'];
     $horario_texto = $_POST['horario_texto'];
-    $dias = isset($_POST['dia_semana']) ? $_POST['dia_semana'] : [];
+    $dias = $_POST['dia_semana'] ?? [];
 
-    $model->guardar($id_carrera, $id_grupo, $id_materia, $id_docente, $horario_texto, $dias);
-    header("Location: ../views/horarios.php?msg=success");
+    if ($model->guardar($id_carrera, $id_grupo, $id_materia, $id_docente, $horario_texto, $dias)) {
+        $_SESSION['alerta'] = [
+            'tipo' => 'success',
+            'mensaje' => 'Horario agregado correctamente'
+        ];
+    } else {
+        $_SESSION['alerta'] = [
+            'tipo' => 'error',
+            'mensaje' => 'No se pudo agregar el horario'
+        ];
+    }
+
+    header("Location: ../views/horarios.php");
     exit();
 }
+
 
 // =======================
 // EDITAR HORARIO
 // =======================
 if (isset($_POST['accion']) && $_POST['accion'] === 'editar') {
+
     $id_horario = $_POST['id_horario'];
     $id_carrera = $_POST['id_carrera'];
     $id_grupo = $_POST['id_grupo'];
     $id_materia = $_POST['id_materia'];
     $id_docente = $_POST['id_docente'];
     $horario_texto = $_POST['horario_texto'];
-    $dias = isset($_POST['dia_semana']) ? $_POST['dia_semana'] : [];
+    $dias = $_POST['dia_semana'] ?? [];
 
-    $model->editarHorario($id_horario, $id_docente, $id_materia, $id_grupo, $id_carrera, $horario_texto, $dias);
-    header("Location: ../views/horarios.php?msg=edited");
+    if ($model->editarHorario($id_horario, $id_docente, $id_materia, $id_grupo, $id_carrera, $horario_texto, $dias)) {
+        $_SESSION['alerta'] = [
+            'tipo' => 'success',
+            'mensaje' => 'Horario actualizado correctamente'
+        ];
+    } else {
+        $_SESSION['alerta'] = [
+            'tipo' => 'error',
+            'mensaje' => 'No se pudo actualizar el horario'
+        ];
+    }
+
+    header("Location: ../views/horarios.php");
     exit();
 }
 
@@ -82,9 +107,19 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'editar') {
 // ELIMINAR HORARIO
 // =======================
 if (isset($_GET['accion']) && $_GET['accion'] === 'eliminar') {
-    $id_horario = intval($_GET['id']);
-    $model->eliminar($id_horario);
 
-    header("Location: ../views/horarios.php?msg=deleted");
+    if ($model->eliminar(intval($_GET['id']))) {
+        $_SESSION['alerta'] = [
+            'tipo' => 'success',
+            'mensaje' => 'Horario eliminado correctamente'
+        ];
+    } else {
+        $_SESSION['alerta'] = [
+            'tipo' => 'error',
+            'mensaje' => 'No se pudo eliminar el horario'
+        ];
+    }
+
+    header("Location: ../views/horarios.php");
     exit();
 }

@@ -5,13 +5,12 @@ require_once "../models/MateriasModel.php";
 
 $rol = $_SESSION['rol'];
 $id_carrera_sesion = ($rol === 'coordinador') ? $_SESSION['id_carrera'] : null;
-
 $materiaModel = new MateriasModel($conn);
 
-// Agregar
-if(isset($_POST['accion']) && $_POST['accion'] == 'agregar'){
+// ================= AGREGAR =================
+if (isset($_POST['accion']) && $_POST['accion'] == 'agregar') {
 
-        $id_carrera_final = ($rol === 'coordinador')
+    $id_carrera_final = ($rol === 'coordinador')
         ? $id_carrera_sesion
         : $_POST['id_carrera'];
 
@@ -23,13 +22,18 @@ if(isset($_POST['accion']) && $_POST['accion'] == 'agregar'){
         $_POST['horas_semestre'],
         $id_carrera_final
     );
-    header("Location: ../views/materias.php?msg=success");
+    $_SESSION['alerta'] = [
+        'tipo' => 'success',
+        'mensaje' => 'Materia agregada correctamente'
+    ];
+
+    header("Location: ../views/materias.php");
     exit();
 }
+// ================= EDITAR =================
+if (isset($_POST['accion']) && $_POST['accion'] == 'editar') {
 
-if(isset($_POST['accion']) && $_POST['accion'] == 'editar'){
-
-        $id_carrera_final = ($rol === 'coordinador')
+    $id_carrera_final = ($rol === 'coordinador')
         ? $id_carrera_sesion
         : $_POST['id_carrera'];
 
@@ -42,15 +46,23 @@ if(isset($_POST['accion']) && $_POST['accion'] == 'editar'){
         $_POST['horas_semestre'],
         $id_carrera_final
     );
-    header("Location: ../views/materias.php?msg=edited");
+    $_SESSION['alerta'] = [
+        'tipo' => 'success',
+        'mensaje' => 'Materia editada correctamente'
+    ];
+
+    header("Location: ../views/materias.php");
     exit();
 }
 
-
-// Eliminar
-if(isset($_GET['eliminar'])){
+// ================= ELIMINAR =================
+if (isset($_GET['eliminar'])) {
     $materiaModel->eliminarMateria($_GET['eliminar']);
-    header("Location: ../views/materias.php?msg=deleted");
+    $_SESSION['alerta'] = [
+        'tipo' => 'error',
+        'mensaje' => 'Materia eliminada correctamente'
+    ];
+
+    header("Location: ../views/materias.php");
     exit();
 }
-?>

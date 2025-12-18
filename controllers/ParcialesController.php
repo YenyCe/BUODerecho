@@ -1,45 +1,76 @@
 <?php
+session_start();
 require_once "../config/conexion.php";
 require_once "../models/ParcialesModel.php";
-session_start();
 
 $Parciales = new ParcialesModel($conn);
 $rol = $_SESSION['rol'];
 $id_carrera_sesion = $_SESSION['id_carrera'] ?? null;
 
-if ($_POST['accion'] === "agregar") {
+/* --- AGREGAR --- */
+if (isset($_POST['accion']) && $_POST['accion'] === "agregar") {
 
     $numero = $_POST['numero_parcial'];
     $inicio = $_POST['fecha_inicio'];
     $fin = $_POST['fecha_fin'];
 
-    // Coordinador: usa su carrera automáticamente
-    if ($rol === "coordinador") {
-        $id_carrera = $id_carrera_sesion;
+    $id_carrera = ($rol === "coordinador") ? $id_carrera_sesion : $_POST['id_carrera'];
+
+    if ($Parciales->agregarParcial($numero, $inicio, $fin, $id_carrera)) {
+        $_SESSION['alerta'] = [
+            'tipo' => 'success',
+            'mensaje' => 'Parcial agregado correctamente'
+        ];
     } else {
-        $id_carrera = $_POST['id_carrera'];
+        $_SESSION['alerta'] = [
+            'tipo' => 'error',
+            'mensaje' => 'No se pudo agregar el parcial'
+        ];
     }
 
-    $Parciales->agregarParcial($numero, $inicio, $fin, $id_carrera);
-    header("Location: ../views/parciales.php?msg=success");
+    header("Location: ../views/parciales.php");
     exit();
 }
 
-if ($_POST['accion'] === "editar") {
+/* --- EDITAR --- */
+if (isset($_POST['accion']) && $_POST['accion'] === "editar") {
+
     $id = $_POST['id_parcial'];
     $numero = $_POST['numero_parcial'];
     $inicio = $_POST['fecha_inicio'];
     $fin = $_POST['fecha_fin'];
 
-    $Parciales->editarParcial($id, $numero, $inicio, $fin);
-    header("Location: ../views/parciales.php?msg=edited");
+    if ($Parciales->editarParcial($id, $numero, $inicio, $fin)) {
+        $_SESSION['alerta'] = [
+            'tipo' => 'success',
+            'mensaje' => 'Parcial actualizado correctamente'
+        ];
+    } else {
+        $_SESSION['alerta'] = [
+            'tipo' => 'error',
+            'mensaje' => 'No se pudo actualizar el parcial'
+        ];
+    }
+
+    header("Location: ../views/parciales.php");
     exit();
 }
 
+/* --- ELIMINAR --- */
 if (isset($_GET['eliminar'])) {
-    $id = $_GET['eliminar'];
-    $Parciales->eliminarParcial($id);
-    header("Location: ../views/parciales.php?msg=deleted");
+
+    if ($Parciales->eliminarParcial($_GET['eliminar'])) {
+        $_SESSION['alerta'] = [
+            'tipo' => 'success',
+            'mensaje' => 'Parcial eliminado correctamente'
+        ];
+    } else {
+        $_SESSION['alerta'] = [
+            'tipo' => 'error',
+            'mensaje' => 'No se pudo eliminar el parcial'
+        ];
+    }
+
+    header("Location: ../views/parciales.php");
     exit();
 }
-?>

@@ -9,27 +9,21 @@ $id_carrera = ($rol === 'coordinador') ? $_SESSION['id_carrera'] : null;
 $docenteModel = new DocentesModel($conn);
 $docentes = $docenteModel->getDocentes($id_carrera);
 
-$alerta = "";
-if (isset($_GET['msg'])) {
-    if ($_GET['msg'] == "success") $alerta = "<div class='alerta success'>Docente agregado correctamente</div>";
-    if ($_GET['msg'] == "edited")  $alerta = "<div class='alerta success'>Docente editado correctamente</div>";
-    if ($_GET['msg'] == "deleted") $alerta = "<div class='alerta error'>Docente eliminado correctamente</div>";
+$alerta = '';
+if (isset($_SESSION['alerta'])) {
+    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
+                {$_SESSION['alerta']['mensaje']}
+               </div>";
+    unset($_SESSION['alerta']);
 }
 
 // INICIAR CAPTURA  
 ob_start();
 ?>
 
-
 <div class="container-form">
     <h2>Docentes</h2>
-    <?php if ($alerta): ?>
-        <div id="alertaMsg" class="alerta <?php echo strpos($alerta, 'success') !== false ? 'success' : 'error'; ?>">
-            <span><?php echo strip_tags($alerta); ?></span>
-            <span class="cerrar-alerta" onclick="cerrarAlerta()">&times;</span>
-        </div>
-    <?php endif; ?>
-
+    <?= $alerta ?>
     <?php if ($rol === 'admin'): ?>
         <div class="filtros-container" style="margin-bottom:15px;">
             <div>
@@ -99,42 +93,70 @@ ob_start();
 </div>
 
 <!-- Modal -->
+<!-- Modal Docente -->
 <div id="modalDocente" class="modal">
     <div class="modal-content">
         <span class="cerrar" onclick="cerrarModal('modalDocente')">&times;</span>
         <h2 id="tituloModal">Agregar Docente</h2>
+
         <form id="formDocente" action="../controllers/DocentesController.php" method="POST">
+
             <input type="hidden" name="accion" value="agregar" id="accion">
             <input type="hidden" name="id_docente" id="id_docente">
 
-            <label>Nombre</label>
-            <input type="text" name="nombre" id="nombre" required>
+            <div class="form-grid">
 
-            <label>Apellidos</label>
-            <input type="text" name="apellidos" id="apellidos" required>
+                <!-- Nombre -->
+                <div>
+                    <label>Nombre</label>
+                    <input type="text" name="nombre" id="nombre" required>
+                </div>
 
-            <label>Correo</label>
-            <input type="email" name="correo" id="correo" required>
+                <!-- Apellidos -->
+                <div>
+                    <label>Apellidos</label>
+                    <input type="text" name="apellidos" id="apellidos" required>
+                </div>
 
-            <label>Teléfono</label>
-            <input type="text" name="telefono" id="telefono">
+                <!-- Correo -->
+                <div>
+                    <label>Correo</label>
+                    <input type="email" name="correo" id="correo" required>
+                </div>
 
-            <?php if ($rol === 'admin'): ?>
-                <label>Carrera</label>
-                <select name="id_carrera" id="id_carrera" required>
-                    <option value="">Seleccione una carrera</option>
-                    <?php
-                    $carreras = $conn->query("SELECT id_carrera, nombre FROM carreras ORDER BY nombre ASC")->fetch_all(MYSQLI_ASSOC);
-                    foreach ($carreras as $c): ?>
-                        <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            <?php endif; ?>
+                <!-- Teléfono -->
+                <div>
+                    <label>Teléfono</label>
+                    <input type="text" name="telefono" id="telefono">
+                </div>
 
-            <button type="submit">Guardar</button>
+                <!-- Carrera (solo admin) -->
+                <?php if ($rol === 'admin'): ?>
+                    <div class="full-row">
+                        <label>Carrera</label>
+                        <select name="id_carrera" id="id_carrera" required>
+                            <option value="">Seleccione una carrera</option>
+                            <?php
+                            $carreras = $conn->query("SELECT id_carrera, nombre FROM carreras ORDER BY nombre ASC")->fetch_all(MYSQLI_ASSOC);
+                            foreach ($carreras as $c): ?>
+                                <option value="<?= $c['id_carrera'] ?>">
+                                    <?= htmlspecialchars($c['nombre']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Botón -->
+                <div class="full-row">
+                    <button type="submit">Guardar</button>
+                </div>
+
+            </div>
         </form>
     </div>
 </div>
+
 
 <script>
     function abrirModal(id = null) {

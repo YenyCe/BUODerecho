@@ -34,39 +34,21 @@ if ($rol === 'admin') {
 /* -----------------------------------------------------------
    ALERTAS
 ----------------------------------------------------------- */
-$alerta = "";
-if (isset($_GET['msg'])) {
-
-    if ($_GET['msg'] === "success") {
-        $alerta = "<div class='alerta success'>Alumno agregado correctamente</div>";
-    }
-
-    if ($_GET['msg'] === "edited") {
-        $alerta = "<div class='alerta success'>Alumno editado correctamente</div>";
-    }
-
-    if ($_GET['msg'] === "deleted") {
-        $alerta = "<div class='alerta error'>Alumno eliminado correctamente</div>";
-    }
-
-    if ($_GET['msg'] === "error") {
-        $razon = htmlspecialchars($_GET['reason'] ?? "Error desconocido");
-        $alerta = "<div class='alerta error'>Error: $razon</div>";
-    }
+$alerta = '';
+if (isset($_SESSION['alerta'])) {
+    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
+                {$_SESSION['alerta']['mensaje']}
+               </div>";
+    unset($_SESSION['alerta']);
 }
+
 
 ob_start();
 ?>
 
 <div class="container-form">
     <h2>Alumnos</h2>
-
-    <?php if ($alerta): ?>
-        <div id="alertaMsg" class="alerta <?php echo (strpos($alerta, 'success') ? 'success' : 'error'); ?>">
-            <span><?php echo strip_tags($alerta); ?></span>
-            <span class="cerrar-alerta" onclick="cerrarAlerta()">&times;</span>
-        </div>
-    <?php endif; ?>
+    <?= $alerta ?>
 
     <!-- FILTROS -->
     <div class="filtros-container">
@@ -161,7 +143,6 @@ ob_start();
                     </option>
                 <?php endforeach; ?>
             </select>
-
             <button type="submit">Guardar</button>
         </form>
     </div>

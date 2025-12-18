@@ -28,39 +28,33 @@ $alumnosGrupo = array_filter($alumnos, fn($a) => intval($a['id_grupo']) === $id_
 // Lista de grupos para el select (editar/agregar)
 $grupos = ($rol === 'admin') ? $alumnoModel->getGrupos() : $alumnoModel->getGruposPorCarrera($id_carrera);
 
-// Mensajes
-$alerta = "";
-if (isset($_GET['msg'])) {
-    if ($_GET['msg'] === "success") $alerta = "<div class='alerta success'>Alumno agregado correctamente</div>";
-    if ($_GET['msg'] === "updated") $alerta = "<div class='alerta success'>Alumno actualizado correctamente</div>";
-    if ($_GET['msg'] === "deleted") $alerta = "<div class='alerta error'>Alumno eliminado correctamente</div>";
-    if ($_GET['msg'] === "error") {
-        $razon = htmlspecialchars($_GET['reason'] ?? "Error desconocido");
-        $alerta = "<div class='alerta error'>Error: $razon</div>";
-    }
+$alerta = '';
+if (isset($_SESSION['alerta'])) {
+    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
+                {$_SESSION['alerta']['mensaje']}
+               </div>";
+    unset($_SESSION['alerta']);
 }
+
 
 ob_start();
 ?>
 
-<div class="container">
+<div class="container-form"">
     <h2>Alumnos del Grupo: <?= htmlspecialchars($grupoInfo['nombre']); ?></h2>
 
     <a href="grupos.php" class="btn-agregar">← Volver a Grupos</a>
-
     <?php if ($alerta): ?>
-        <div class="alerta <?= strpos($alerta, 'success') ? 'success' : 'error'; ?>">
-            <?= strip_tags($alerta); ?>
-            <span class="cerrar-alerta" onclick="this.parentElement.style.display='none';">&times;</span>
-        </div>
+        <?= $alerta ?>
     <?php endif; ?>
+
 
     <button class="btn-agregar" onclick="abrirModalAlumno()">Agregar Alumno</button>
 
     <table class="tabla-docentes">
         <thead>
             <tr>
-             <th style="width:60px;">N°</th>
+                <th style="width:60px;">N°</th>
                 <th>Nombre</th>
                 <th>Acciones</th>
             </tr>
@@ -69,19 +63,20 @@ ob_start();
             <?php $num = 1; ?>
             <?php foreach ($alumnosGrupo as $a): ?>
                 <tr data-id="<?= $a['id_alumno']; ?>" data-nombre="<?= htmlspecialchars($a['nombre']); ?>" data-id_grupo="<?= $a['id_grupo']; ?>">
-                   <td style="text-align:center;"><?= $num++; ?></td>
+                    <td style="text-align:center;"><?= $num++; ?></td>
                     <td><?= htmlspecialchars($a['nombre']); ?></td>
                     <td>
                         <button class="btn-editar" onclick="abrirModalAlumno(<?= $a['id_alumno']; ?>)">Editar</button>
                         <form action="../controllers/AlumnosController.php" method="POST" style="display:inline;">
-                            <button type="submit" class="btn-eliminar" onclick="return confirm('¿Dar de baja a este alumno?')">Dar de baja</button>
+                            <button type="submit" class="btn-eliminar" onclick="return confirm('¿Dar de baja a este alumno?')">
+                                Dar de baja
+                            </button>
                             <input type="hidden" name="accion" value="baja">
                             <input type="hidden" name="id_alumno" value="<?= $a['id_alumno'] ?>">
+                            <input type="hidden" name="id_grupo_origen" value="<?= $id_grupo ?>">
+
                             <input type="text" name="motivo" placeholder="Motivo de baja (opcional)">
-
                         </form>
-
-
                     </td>
                 </tr>
             <?php endforeach; ?>

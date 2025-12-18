@@ -161,6 +161,7 @@ function cargarDocentesYGrupos() {
 
         <div class="full-row" style="display:flex; gap:10px; justify-content:center;">
 
+<div class="full-generar">
     <!-- LISTA DE ASISTENCIA -->
     <button type="submit"
             formaction="lista_impresion.php"
@@ -184,6 +185,8 @@ function cargarDocentesYGrupos() {
             style="background:#6f42c1;">
         Generar Control de Asistencia Docente
     </button>
+</div>
+
 
 
 </div>
@@ -195,6 +198,7 @@ function cargarDocentesYGrupos() {
 <?php
 $content = ob_get_clean();
 $title = "Generación de Listas";
+$pagina = "generar_listas";
 include "dashboard.php";
 ?>
 

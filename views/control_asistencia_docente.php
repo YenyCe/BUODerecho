@@ -7,35 +7,28 @@ $id_materia  = (int)($_POST['id_materia'] ?? 0);
 $id_grupo    = (int)($_POST['id_grupo'] ?? 0);
 $id_parcial  = (int)($_POST['id_parcial'] ?? 0);
 
-if (!$id_docente || !$id_materia || !$id_grupo) {
+if (!$id_docente || !$id_materia || !$id_grupo || !$id_parcial) {
     die("Faltan parámetros obligatorios.");
 }
 
-// Fechas según parcial
-if ($id_parcial) {
-    $p = $conn->query("
-        SELECT fecha_inicio, fecha_fin, numero_parcial 
-        FROM parciales 
-        WHERE id_parcial = $id_parcial
-    ")->fetch_assoc();
+/* ================= PARCIAL ================= */
+$p = $conn->query("
+    SELECT fecha_inicio, fecha_fin, numero_parcial
+    FROM parciales
+    WHERE id_parcial = $id_parcial
+")->fetch_assoc();
 
-    $fecha_inicio = $p['fecha_inicio'];
-    $fecha_fin    = $p['fecha_fin'];
-} else {
-    die("El control de asistencia docente requiere un parcial.");
-}
+$fecha_inicio = $p['fecha_inicio'];
+$fecha_fin    = $p['fecha_fin'];
 
-// Datos generales
+/* ================= DATOS ================= */
 $docente = $conn->query("
-    SELECT CONCAT(nombre,' ',apellidos) AS nombre 
-    FROM docentes 
-    WHERE id_docente = $id_docente
+    SELECT CONCAT(nombre,' ',apellidos) AS nombre
+    FROM docentes WHERE id_docente = $id_docente
 ")->fetch_assoc();
 
 $materia = $conn->query("
-    SELECT nombre, clave 
-    FROM materias 
-    WHERE id_materia = $id_materia
+    SELECT nombre FROM materias WHERE id_materia = $id_materia
 ")->fetch_assoc();
 
 $grupo = $conn->query("
@@ -45,161 +38,125 @@ $grupo = $conn->query("
     WHERE g.id_grupo = $id_grupo
 ")->fetch_assoc();
 
-// Horarios del docente (MISMO helper)
+/* ================= HORARIOS ================= */
 $horarios = obtener_horarios_docente($conn, $id_docente, $id_materia, $id_grupo);
-
-// Fechas reales según horario
 $fechas = generar_fechas_y_horas($fecha_inicio, $fecha_fin, $horarios);
-$meses_es = [
-    1 => 'ENERO',
-    2 => 'FEBRERO',
-    3 => 'MARZO',
-    4 => 'ABRIL',
-    5 => 'MAYO',
-    6 => 'JUNIO',
-    7 => 'JULIO',
-    8 => 'AGOSTO',
-    9 => 'SEPTIEMBRE',
-    10 => 'OCTUBRE',
-    11 => 'NOVIEMBRE',
-    12 => 'DICIEMBRE'
+
+/* ================= AGRUPAR POR MES ================= */
+$meses = [
+    1=>'ENERO',2=>'FEBRERO',3=>'MARZO',4=>'ABRIL',
+    5=>'MAYO',6=>'JUNIO',7=>'JULIO',8=>'AGOSTO',
+    9=>'SEPTIEMBRE',10=>'OCTUBRE',11=>'NOVIEMBRE',12=>'DICIEMBRE'
 ];
 
 $fechas_por_mes = [];
-
 foreach ($fechas as $f) {
-    $num_mes = (int)date('m', strtotime($f['fecha']));
-    $anio = date('Y', strtotime($f['fecha']));
-    $mes = $meses_es[$num_mes] . " " . $anio;
+    $m = (int)date('m', strtotime($f['fecha']));
+    $a = date('Y', strtotime($f['fecha']));
+    $fechas_por_mes[$meses[$m]." ".$a][] = $f;
+}
 
-    $fechas_por_mes[$mes][] = $f;
+/* ================= HELPERS ================= */
+function formato_horarios($horarios){
+    if (!$horarios) return '-';
+    return implode(', ', array_column($horarios, 'horario_texto'));
+}
+
+function dia_fecha($fecha){
+    $dias = ['Sun'=>'DOMINGO','Mon'=>'LUNES','Tue'=>'MARTES','Wed'=>'MIERCOLES','Thu'=>'JUEVES','Fri'=>'VIERNES','Sat'=>'SABADO'];
+    return $dias[date('D', strtotime($fecha))]." ".date('d', strtotime($fecha));
 }
 
 
-// Formato horarios (texto para mostrar en encabezado)
-function formato_horarios($horarios)
-{
-    if (empty($horarios)) return '-';
-    $arr = [];
-    foreach ($horarios as $h) {
-        $arr[] = $h['horario_texto'] ?? '-';
-    }
-    return implode(', ', $arr);
-}
-
-function dia_fecha_mayusculas($fecha)
-{
-    $map = [
-        'Mon' => 'LUNES',
-        'Tue' => 'MARTES',
-        'Wed' => 'MIERCOLES',
-        'Thu' => 'JUEVES',
-        'Fri' => 'VIERNES',
-        'Sat' => 'SABADO',
-        'Sun' => 'DOMINGO'
-    ];
-
-    $dia = date('D', strtotime($fecha));
-    $dia_es = $map[$dia] ?? strtoupper($dia);
-
-    return $dia_es . ' ' . date('d', strtotime($fecha));
-}
-
+/* ================= CONFIG ================= */
+$filas_por_hoja = 15;
 ?>
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Control de Asistencia Docente</title>
-    <link rel="stylesheet" href="../css/control_docente.css">
-
+<meta charset="UTF-8">
+<title>Control de Asistencia Docente</title>
+<link rel="stylesheet" href="../css/control_docente.css">
 </head>
 
 <body>
+<button onclick="window.print()" class="print-btn">Imprimir</button>
 
-    <button onclick="window.print()" class="print-btn">Imprimir</button>
+<?php foreach ($fechas_por_mes as $mes => $dias): ?>
 
-    <?php foreach ($fechas_por_mes as $mes => $dias): ?>
+<?php
+$filas = [];
+foreach ($dias as $d) {
+    for ($i=1; $i<=($d['horas'] ?? 1); $i++) {
+        $filas[] = [
+            'fecha'=>$d['fecha'],
+            'hora_inicio'=>$d['hora_inicio'] ?? '',
+            'hora_fin'=>$d['hora_fin'] ?? '',
+            'rowspan'=>($i===1 ? ($d['horas'] ?? 1) : 0)
+        ];
+    }
+}
 
-        <div class="page">
-            <div class="contenido" style="margin-top:60px;">
+$paginas = array_chunk($filas, $filas_por_hoja);
+?>
 
-                <!-- DATOS GENERALES -->
-                <table class="info-table">
-                    <tr>
-                        <td colspan="8"><strong>Materia:</strong> <?= $materia['nombre'] ?></td>
-                        <td colspan="4"><strong>Mes:</strong> <?= $mes ?></td>
-                    </tr>
-                    <tr>
-                        <td colspan="4"> <?= $grupo['semestre'] ?> / <?= $grupo['grupo'] ?></td>
-                        <td colspan="8"><strong>Docente:</strong> <?= $docente['nombre'] ?></td>
-                    </tr>
-                    <tr>
-                        <td colspan="12">
-                            <strong>Horario:</strong> <?= htmlspecialchars(formato_horarios($horarios)) ?>
-                        </td>
-                    </tr>
-                </table>
+<?php foreach ($paginas as $pagina): ?>
+<div class="page">
+<div class="contenido" style="margin-top:60px;">
 
-                <!-- TABLA DE CONTROL -->
-                <table class="table-reporte" style="margin-top:15px;">
-                    <thead>
-                        <tr>
-                            <th colspan="7" style="text-align:center; font-size:14px;">
-                                CONTROL DE ASISTENCIAS
-                            </th>
-                        </tr>
-                        <tr>
-                            <th class="col-dia">Día</th>
-                            <th class="col-asistencia">Asistencia</th>
-                            <th>Hora Entrada</th>
-                            <th>Hora Salida</th>
-                            <th>Inasistencia</th>
-                            <th>Fecha Reposición</th>
-                            <th>Observaciones</th>
-                        </tr>
-                    </thead>
+<table class="info-table">
+<tr>
+    <td colspan="8"><strong>Materia:</strong> <?= $materia['nombre'] ?></td>
+    <td colspan="4"><strong>Mes:</strong> <?= $mes ?></td>
+</tr>
+<tr>
+    <td colspan="4"><?= $grupo['semestre'] ?> / <?= $grupo['grupo'] ?></td>
+    <td colspan="8"><strong>Docente:</strong> <?= $docente['nombre'] ?></td>
+</tr>
+<tr>
+    <td colspan="12"><strong>Horario:</strong> <?= formato_horarios($horarios) ?></td>
+</tr>
+</table>
 
-                  <tbody>
-<?php foreach ($dias as $f): ?>
+<table class="table-reporte" style="margin-top:15px;">
+<thead>
+<tr>
+    <th colspan="7">CONTROL DE ASISTENCIAS</th>
+</tr>
+<tr>
+    <th>DÍA</th>
+    <th>ASISTENCIA</th>
+    <th>HORA ENTRADA</th>
+    <th>HORA SALIDA</th>
+    <th>INASISTENCIA</th>
+    <th>REPOSICIÓN</th>
+    <th>OBSERVACIONES</th>
+</tr>
+</thead>
 
-    <?php
-    $horas = $f['horas'] ?? 1;
-    ?>
-
-    <?php for ($i = 1; $i <= $horas; $i++): ?>
-        <tr>
-            <?php if ($i === 1): ?>
-                <td class="col-dia" rowspan="<?= $horas ?>">
-                    <?= dia_fecha_mayusculas($f['fecha']) ?>
-                </td>
-            <?php endif; ?>
-
-            <td class="col-asistencia"></td>
-
-            <td><?= $f['hora_inicio'] ?? '' ?></td>
-            <td><?= $f['hora_fin'] ?? '' ?></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-    <?php endfor; ?>
-
+<tbody>
+<?php foreach ($pagina as $f): ?>
+<tr>
+    <?php if ($f['rowspan']): ?>
+        <td rowspan="<?= $f['rowspan'] ?>"><?= dia_fecha($f['fecha']) ?></td>
+    <?php endif; ?>
+    <td></td>
+    <td><?= $f['hora_inicio'] ?></td>
+    <td><?= $f['hora_fin'] ?></td>
+    <td></td>
+    <td></td>
+    <td></td>
+</tr>
 <?php endforeach; ?>
 </tbody>
+</table>
 
-                </table>
+</div>
+</div>
+<div class="page-break"></div>
+<?php endforeach; ?>
 
-
-            </div>
-        </div>
-
-        <div class="page-break"></div>
-
-    <?php endforeach; ?>
-
+<?php endforeach; ?>
 
 </body>
-
 </html>

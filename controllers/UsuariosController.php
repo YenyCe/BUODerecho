@@ -1,11 +1,13 @@
 <?php
+session_start();
 require_once "../config/conexion.php";
 require_once "../models/UsuariosModel.php";
 
 $usuarioModel = new UsuariosModel($conn);
 
-// Agregar
-if(isset($_POST['accion']) && $_POST['accion'] == 'agregar'){
+/* ================= AGREGAR ================= */
+if (isset($_POST['accion']) && $_POST['accion'] === 'agregar') {
+
     $usuarioModel->agregarUsuario(
         $_POST['nombre'],
         $_POST['correo'],
@@ -14,28 +16,47 @@ if(isset($_POST['accion']) && $_POST['accion'] == 'agregar'){
         $_POST['rol'],
         $_POST['id_carrera'] ?? null
     );
-    header("Location: ../views/usuarios.php?msg=success");
+
+    $_SESSION['alerta'] = [
+        'tipo' => 'success',
+        'mensaje' => 'Usuario agregado correctamente'
+    ];
+
+    header("Location: ../views/usuarios.php");
     exit();
 }
 
 // Editar
-if(isset($_POST['accion']) && $_POST['accion'] == 'editar'){
+if (isset($_POST['accion']) && $_POST['accion'] == 'editar') {
     $usuarioModel->editarUsuario(
         $_POST['id_usuario'],
         $_POST['nombre'],
         $_POST['correo'],
         $_POST['usuario'],
+        $_POST['password'] ?? '',
         $_POST['rol'],
         $_POST['estado'],
         $_POST['id_carrera'] ?? null
     );
-    header("Location: ../views/usuarios.php?msg=edited");
+
+    $_SESSION['alerta'] = [
+        'tipo' => 'success',
+        'mensaje' => 'Usuario editado correctamente'
+    ];
+    header("Location: ../views/usuarios.php");
     exit();
 }
 
-// Eliminar
-if(isset($_GET['eliminar'])){
+/* ================= ELIMINAR ================= */
+if (isset($_GET['eliminar'])) {
+
     $usuarioModel->eliminarUsuario($_GET['eliminar']);
-    header("Location: ../views/usuarios.php?msg=deleted");
+
+    $_SESSION['alerta'] = [
+        'tipo' => 'error',
+        'mensaje' => 'Usuario eliminado correctamente'
+    ];
+
+    header("Location: ../views/usuarios.php");
     exit();
 }

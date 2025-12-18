@@ -139,6 +139,10 @@ function fecha_larga_es($fecha)
     $paginas = max(1, ceil($total_alumnos / $por_pagina));
 
     $index_global = 0;
+$alumnos_ultima_pagina = $total_alumnos % $por_pagina;
+if ($alumnos_ultima_pagina == 0) {
+    $alumnos_ultima_pagina = $por_pagina;
+}
 
     for ($pagina = 1; $pagina <= $paginas; $pagina++):
     ?>
@@ -150,11 +154,11 @@ function fecha_larga_es($fecha)
                     <tr>
                         <td colspan="7"><strong>Materia:</strong> <?= htmlspecialchars($materia['nombre'] ?? '-') ?></td>
                         <td colspan="2"><strong>Clave:</strong> <?= htmlspecialchars($materia['clave'] ?? '-') ?></td>
-                        <td colspan="2"><strong>Horas por semestre:</strong> <?= htmlspecialchars($materia['horas_semestre'] ?? '-') ?></td>
-                        <td colspan="2"><strong>Horas por semana:</strong> <?= htmlspecialchars($materia['horas_semana'] ?? '-') ?></td>
+                        <td colspan="2"><strong>Horas semestre:</strong> <?= htmlspecialchars($materia['horas_semestre'] ?? '-') ?></td>
+                        <td colspan="2"><strong>Horas semana:</strong> <?= htmlspecialchars($materia['horas_semana'] ?? '-') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="4"> <?= ($grupo['semestre_num'] ?? '-') . ' / ' . ($grupo['nombre_grupo'] ?? '-') ?></td>
+                        <td colspan="3"> <?= ($grupo['semestre_num'] ?? '-') . ' / ' . ($grupo['nombre_grupo'] ?? '-') ?></td>
                         <td colspan="2">Parcial </strong> <?= ($p['numero_parcial'] ?? '-')  ?></td>
                         <td colspan="2">
                             <?php
@@ -167,7 +171,7 @@ function fecha_larga_es($fecha)
                             ?>
                         </td>
 
-                        <td colspan="4"><strong>Docente:</strong> <?= htmlspecialchars($docente['nombre'] ?? '-') ?></td>
+                        <td colspan="5"><strong>Docente:</strong> <?= htmlspecialchars($docente['nombre'] ?? '-') ?></td>
                     </tr>
                     <tr>
                         <td colspan="12"><strong>Horario:</strong> <?= htmlspecialchars(formato_horarios($horarios)) ?></td>
@@ -251,36 +255,47 @@ function fecha_larga_es($fecha)
 
                 <?php if ($pagina == $paginas): ?>
 
-                    <div class="pie-final">
-                        <div class="fila-flex">
-                            <div class="pie-col">
-                                <p style="margin:0;">
-                                    <?= htmlspecialchars($docente['nombre'] ?? '-') ?>
-                                </p>
-                                <div class="linea-firma"></div>
-                                <p style="margin:0;"><strong>NOMBRE Y FIRMA DEL DOCENTE</strong></p>
-                            </div>
-                            <div class="pie-col">
-                                <p><strong>CALF. APROBATORIA</strong> (Usar tinta negra)</p>
-                                <p><strong>CALF. REPROBATORIA</strong> (Usar tinta roja)</p>
-                            </div>
+    <?php
+    // Si la última página está llena (15 alumnos),
+    // las firmas van en hoja aparte
+    if ($alumnos_ultima_pagina == $por_pagina):
+    ?>
+            </div>
+        </div>
+        <div class="page-break"></div>
+        <div class="page">
+            <div class="contenido" style="margin-top:40px;">
+    <?php endif; ?>
 
-                        </div>
+    <div class="pie-final">
+        <div class="fila-flex">
+            <div class="pie-col">
+                <p style="margin:0;">
+                    <?= htmlspecialchars($docente['nombre'] ?? '-') ?>
+                </p>
+                <div class="linea-firma"></div>
+                <p style="margin:0;"><strong>NOMBRE Y FIRMA DEL DOCENTE</strong></p>
+            </div>
+            <div class="pie-col">
+                <p><strong>CALF. APROBATORIA</strong> (Usar tinta negra)</p>
+                <p><strong>CALF. REPROBATORIA</strong> (Usar tinta roja)</p>
+            </div>
+        </div>
 
-                        <div class="fila-flex">
-                            <div class="pie-col">
-                                <div class="linea-firma"></div>
-                                <p><strong>FECHA DE ENTREGA</strong></p>
-                            </div>
-                            <div class="pie-col">
-                                <div class="linea-firma"></div>
-                                <p><strong>NOMBRE DE QUIEN RECIBE</strong></p>
-                            </div>
-                        </div>
-                    </div>
+        <div class="fila-flex">
+            <div class="pie-col">
+                <div class="linea-firma"></div>
+                <p><strong>FECHA DE ENTREGA</strong></p>
+            </div>
+            <div class="pie-col">
+                <div class="linea-firma"></div>
+                <p><strong>NOMBRE DE QUIEN RECIBE</strong></p>
+            </div>
+        </div>
+    </div>
 
+<?php endif; ?>
 
-                <?php endif; ?>
 
             </div>
         </div>

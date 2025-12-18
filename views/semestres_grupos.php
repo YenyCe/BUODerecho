@@ -16,11 +16,14 @@ $grupos = $semModel->getGrupos($id_carrera); // Filtra por carrera si es coordin
 
 // Solo administrador necesita todas las carreras para el select
 $carreras = ($rol === 'admin') ? $carrerasModel->obtenerCarreras() : [];
-
-$alerta = "";
-if (isset($_GET['msg'])) {
-    $alerta = "<div class='alerta success'>Acción realizada correctamente</div>";
+$alerta = '';
+if (isset($_SESSION['alerta'])) {
+    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
+                {$_SESSION['alerta']['mensaje']}
+               </div>";
+    unset($_SESSION['alerta']);
 }
+
 
 // INICIAR CAPTURA  
 ob_start();
@@ -28,7 +31,7 @@ ob_start();
 
 <div class="container-form">
 
-    <?php echo $alerta; ?>
+      <?= $alerta ?>
 
     <div class="tablas-pequenas">
         <!-- SEMESTRES -->
@@ -258,9 +261,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 </script>
-
+<script src="/ASISTENCIAS/js/modales.js"></script>
 <?php
 $content = ob_get_clean();
 $title = "Semestres y Grupos";
+$pagina = "semestres_grupos";
 include "dashboard.php";
 ?>

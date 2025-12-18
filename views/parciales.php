@@ -9,16 +9,21 @@ $id_carrera = ($rol === 'coordinador') ? $_SESSION['id_carrera'] : null;
 $model = new ParcialesModel($conn);
 $parciales = $model->getParciales($id_carrera);
 
+$alerta = '';
+if (isset($_SESSION['alerta'])) {
+    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
+                {$_SESSION['alerta']['mensaje']}
+               </div>";
+    unset($_SESSION['alerta']);
+}
 
 
 ob_start();
 ?>
 
 <div class="container-form">
+        <?= $alerta ?>
     <h2>Parciales</h2>
-
-
-
     <?php if ($rol === 'admin'): ?>
         <div class="filtros-container" style="margin-bottom:15px;">
             <div>

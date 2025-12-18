@@ -1,26 +1,69 @@
 <?php
+session_start();
 require_once "../config/conexion.php";
 require_once "../models/CarrerasModel.php";
 
 $carreraModel = new CarrerasModel($conn);
 
-// Agregar
-if (isset($_POST['accion']) && $_POST['accion'] == 'agregar') {
-    $carreraModel->agregarCarrera($_POST['nombre'], $_POST['clave']);
-    header("Location: ../views/carreras.php?msg=success");
+// =======================
+// AGREGAR
+// =======================
+if (isset($_POST['accion']) && $_POST['accion'] === 'agregar') {
+
+    if ($carreraModel->agregarCarrera($_POST['nombre'], $_POST['clave'])) {
+        $_SESSION['alerta'] = [
+            'tipo' => 'success',
+            'mensaje' => 'Carrera agregada correctamente'
+        ];
+    } else {
+        $_SESSION['alerta'] = [
+            'tipo' => 'error',
+            'mensaje' => 'No se pudo agregar la carrera'
+        ];
+    }
+
+    header("Location: ../views/carreras.php");
     exit();
 }
 
-// Editar
-if (isset($_POST['accion']) && $_POST['accion'] == 'editar') {
-    $carreraModel->editarCarrera($_POST['id_carrera'], $_POST['nombre'], $_POST['clave']);
-    header("Location: ../views/carreras.php?msg=edited");
+// =======================
+// EDITAR
+// =======================
+if (isset($_POST['accion']) && $_POST['accion'] === 'editar') {
+
+    if ($carreraModel->editarCarrera($_POST['id_carrera'], $_POST['nombre'], $_POST['clave'])) {
+        $_SESSION['alerta'] = [
+            'tipo' => 'success',
+            'mensaje' => 'Carrera editada correctamente'
+        ];
+    } else {
+        $_SESSION['alerta'] = [
+            'tipo' => 'error',
+            'mensaje' => 'No se pudo editar la carrera'
+        ];
+    }
+
+    header("Location: ../views/carreras.php");
     exit();
 }
 
-// Eliminar
+// =======================
+// ELIMINAR
+// =======================
 if (isset($_GET['eliminar'])) {
-    $carreraModel->eliminarCarrera($_GET['eliminar']);
-    header("Location: ../views/carreras.php?msg=deleted");
+
+    if ($carreraModel->eliminarCarrera($_GET['eliminar'])) {
+        $_SESSION['alerta'] = [
+            'tipo' => 'success',
+            'mensaje' => 'Carrera eliminada correctamente'
+        ];
+    } else {
+        $_SESSION['alerta'] = [
+            'tipo' => 'error',
+            'mensaje' => 'No se pudo eliminar la carrera'
+        ];
+    }
+
+    header("Location: ../views/carreras.php");
     exit();
 }

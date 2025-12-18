@@ -21,27 +21,27 @@ $pagina = $pagina ?? 'dashboard'; // Si la página no define $pagina, usar 'dash
             <li><a href="inicio.php" class="<?= $pagina == 'inicio' ? 'active' : '' ?>">Inicio</a></li>
 
             <?php if ($rol === 'admin'): ?>
-                <li><a href="usuarios.php" class="<?= $pagina == 'usuarios.php' ? 'active' : '' ?>">Usuarios</a></li>
-                <li><a href="carreras.php" class="<?= $pagina == 'carreras.php' ? 'active' : '' ?>">Carreras</a></li>
-                <li><a href="docentes.php" class="<?= $pagina == 'docentes.php' ? 'active' : '' ?>">Docentes</a></li>
-                <li><a href="materias.php" class="<?= $pagina == 'materias.php' ? 'active' : '' ?>">Materias</a></li>
-                <li><a href="alumnos.php" class="<?= $pagina == 'alumnos.php' ? 'active' : '' ?>">Alumnos</a></li>
-                <li><a href="grupos.php" class="<?= $pagina == 'grupos.php' ? 'active' : '' ?>">Grupos</a></li>
-                <li><a href="semestres_grupos.php" class="<?= $pagina == 'semestres_grupos.php' ? 'active' : '' ?>">Semestres y Grupos</a></li>
-                <li><a href="parciales.php" class="<?= $pagina == 'parciales.php' ? 'active' : '' ?>">Parciales</a></li>
-                <li><a href="generar_listas.php" class="<?= $pagina == 'generar_listas.php' ? 'active' : '' ?>">Listas</a></li>
-                <li><a href="horarios.php" class="<?= $pagina == 'horarios.php' ? 'active' : '' ?>">Horarios</a></li>
-                 <li><a href="alumnos_baja.php" class="<?= $pagina == 'alumnos_baja.php' ? 'active' : '' ?>">alumnos_baja</a></li>
+                <li><a href="usuarios.php" class="<?= $pagina == 'usuarios' ? 'active' : '' ?>">Usuarios</a></li>
+                <li><a href="carreras.php" class="<?= $pagina == 'carreras' ? 'active' : '' ?>">Carreras</a></li>
+                <li><a href="docentes.php" class="<?= $pagina == 'docentes' ? 'active' : '' ?>">Docentes</a></li>
+                <li><a href="materias.php" class="<?= $pagina == 'materias' ? 'active' : '' ?>">Materias</a></li>
+                <li><a href="alumnos.php" class="<?= $pagina == 'alumnos' ? 'active' : '' ?>">Alumnos</a></li>
+                <li><a href="grupos.php" class="<?= $pagina == 'grupos' ? 'active' : '' ?>">Grupos</a></li>
+                <li><a href="semestres_grupos.php" class="<?= $pagina == 'semestres_grupos' ? 'active' : '' ?>">Semestres y Grupos</a></li>
+                <li><a href="parciales.php" class="<?= $pagina == 'parciales' ? 'active' : '' ?>">Parciales</a></li>
+                <li><a href="generar_listas.php" class="<?= $pagina == 'generar_listas' ? 'active' : '' ?>">Listas</a></li>
+                <li><a href="horarios.php" class="<?= $pagina == 'horarios' ? 'active' : '' ?>">Horarios</a></li>
+                 <li><a href="alumnos_baja.php" class="<?= $pagina == 'alumnos_baja' ? 'active' : '' ?>">alumnos_baja</a></li>
             <?php elseif ($rol === 'coordinador'): ?>
-                <li><a href="docentes.php" class="<?= $pagina == 'docentes.php' ? 'active' : '' ?>">Docentes</a></li>
-                <li><a href="materias.php" class="<?= $pagina == 'materias.php' ? 'active' : '' ?>">Materias</a></li>
-                <li><a href="alumnos.php" class="<?= $pagina == 'alumnos.php' ? 'active' : '' ?>">Alumnos</a></li>
-                <li><a href="grupos.php" class="<?= $pagina == 'grupos.php' ? 'active' : '' ?>">Grupos</a></li>
-                <li><a href="semestres_grupos.php" class="<?= $pagina == 'semestres_grupos.php' ? 'active' : '' ?>">Semestres y Grupos</a></li>
-                <li><a href="parciales.php" class="<?= $pagina == 'parciales.php' ? 'active' : '' ?>">Parciales</a></li>
-                <li><a href="generar_listas.php" class="<?= $pagina == 'generar_listas.php' ? 'active' : '' ?>">Listas</a></li>
-                <li><a href="horarios.php" class="<?= $pagina == 'horarios.php' ? 'active' : '' ?>">Horarios</a></li>
-                <li><a href="alumnos_baja.php" class="<?= $pagina == 'alumnos_baja.php' ? 'active' : '' ?>">alumnos_baja</a></li>
+                <li><a href="docentes.php" class="<?= $pagina == 'docentes' ? 'active' : '' ?>">Docentes</a></li>
+                <li><a href="materias.php" class="<?= $pagina == 'materias' ? 'active' : '' ?>">Materias</a></li>
+                <li><a href="alumnos.php" class="<?= $pagina == 'alumnos' ? 'active' : '' ?>">Alumnos</a></li>
+                <li><a href="grupos.php" class="<?= $pagina == 'grupos' ? 'active' : '' ?>">Grupos</a></li>
+                <li><a href="semestres_grupos.php" class="<?= $pagina == 'semestres_grupos' ? 'active' : '' ?>">Semestres y Grupos</a></li>
+                <li><a href="parciales.php" class="<?= $pagina == 'parciales' ? 'active' : '' ?>">Parciales</a></li>
+                <li><a href="generar_listas.php" class="<?= $pagina == 'generar_listas' ? 'active' : '' ?>">Listas</a></li>
+                <li><a href="horarios.php" class="<?= $pagina == 'horarios' ? 'active' : '' ?>">Horarios</a></li>
+                <li><a href="alumnos_baja.php" class="<?= $pagina == 'alumnos_baja' ? 'active' : '' ?>">alumnos_baja</a></li>
             <?php endif; ?>
 
             <li><a href="salir.php">Cerrar Sesión</a></li>

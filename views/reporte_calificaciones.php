@@ -38,6 +38,11 @@ $por_pagina = 15;
 $paginas = ceil($total_alumnos / $por_pagina);
 $index_global = 0;
 
+$alumnos_ultima_pagina = $total_alumnos % $por_pagina;
+if ($alumnos_ultima_pagina == 0) {
+    $alumnos_ultima_pagina = $por_pagina;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -96,7 +101,7 @@ $index_global = 0;
                 </table>
 
                 <!-- ================= TABLA PRINCIPAL ================= -->
-                <table >
+                <table>
                     <thead class="table-reporte">
                         <tr>
                             <th rowspan="2">N.</th>
@@ -144,27 +149,41 @@ $index_global = 0;
                         ?>
                     </tbody>
                 </table>
+               <?php if ($pagina == $paginas): ?>
 
+    <?php
+    // Si la última página está llena (15 alumnos),
+    // mandamos firmas a hoja nueva
+    if ($alumnos_ultima_pagina == $por_pagina):
+    ?>
+        </div></div>
+        <div class="page-break"></div>
+        <div class="page">
+            <div class="contenido" style="margin-top:40px;">
+    <?php endif; ?>
 
-                <?php if ($pagina == $paginas): ?>
-                    <div style="margin-top:20px; width:90%; font-size:0.75em; text-align:justify;">
-                        NOTA: Los criterios aquí mencionados son enunciativos más no limitativos, por lo que el docente podrá variar los criterios de evaluación acorde a las actividades que considere optimicen el aprendizaje del alumno, pudiendo agregar o disminuir las columnas necesarias. **Borrar esta leyenda antes de entregar**
-                    </div>
+    <div style="margin-top:20px; width:90%; font-size:0.75em; text-align:justify;">
+        NOTA: Los criterios aquí mencionados son enunciativos más no limitativos,
+        por lo que el docente podrá variar los criterios de evaluación acorde a las
+        actividades que considere optimicen el aprendizaje del alumno, pudiendo
+        agregar o disminuir las columnas necesarias.
+    </div>
 
-                    <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:flex-start;">
-                        <!-- Firma del docente -->
-                        <div style="text-align:center; width:45%;">
-                            <p><?= htmlspecialchars($docente['nombre']) ?> <br>TITULAR DE ASIGNATURA</p>
-                        </div>
-                        <!-- Firma del control escolar -->
-                        <div style="text-align:center; width:45%;">
-                            <br>
-                            <div>
-                                CONTROL ESCOLAR DE <br> LICENCIATURA EN DERECHO
-                            </div>
-                        </div>
-                    </div>
-                <?php endif; ?>
+    <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:flex-start;">
+        <div style="text-align:center; width:45%;">
+            <p><?= htmlspecialchars($docente['nombre']) ?><br>TITULAR DE ASIGNATURA</p>
+        </div>
+
+        <div style="text-align:center; width:45%;">
+            <br>
+            <div>
+                CONTROL ESCOLAR DE <br> LICENCIATURA EN DERECHO
+            </div>
+        </div>
+    </div>
+
+<?php endif; ?>
+
 
 
             </div>

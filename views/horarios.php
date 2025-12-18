@@ -47,10 +47,22 @@ foreach ($todas as $c) {
 $carrerasMap = [];
 foreach ($todas as $c) $carrerasMap[$c['id_carrera']] = $c['nombre'];
 
+$alerta = '';
+if (isset($_SESSION['alerta'])) {
+    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
+                {$_SESSION['alerta']['mensaje']}
+               </div>";
+    unset($_SESSION['alerta']);
+}
+var_dump($_SESSION['id_carrera']);
+
+
 ob_start();
 ?>
 
 <div class="container-form">
+    <?= $alerta ?>
+    
     <h2>Horarios</h2>
     <?php if ($_SESSION['rol'] === 'admin'): ?>
         <div class="filtros-container" style="margin-bottom:15px;">
@@ -107,64 +119,87 @@ ob_start();
     <div class="modal-content">
         <span class="cerrar" onclick="cerrarModal('modalHorario')">&times;</span>
         <h2 id="tituloModalHorario">Agregar Horario</h2>
+
         <form action="../controllers/horariosController.php" method="POST" id="formHorario">
+
             <input type="hidden" name="accion" id="accion" value="guardar">
             <input type="hidden" name="id_horario" id="id_horario">
 
-            <!-- Carrera -->
-            <?php if ($_SESSION['rol'] === 'admin'): ?>
-                <label>Carrera:</label>
-                <select name="id_carrera" id="id_carrera" required onchange="cambiarCarrera(this.value)">
-                    <option value="">Seleccione...</option>
-                    <?php foreach ($carreras as $c): ?>
-                        <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            <?php else: ?>
-                <!-- para coordinador: select oculto pero con el valor correcto y texto -->
-                <select name="id_carrera" id="id_carrera" required style="display:none;">
-                    <option value="<?= $id_carrera_usuario ?>" selected><?= htmlspecialchars($carrerasMap[$id_carrera_usuario] ?? $id_carrera_usuario) ?></option>
-                </select>
-            <?php endif; ?>
+            <div class="form-grid">
 
-            <!-- Grupo -->
-            <label>Grupo:</label>
-            <select name="id_grupo" id="id_grupo" required>
-                <option value="">Seleccione grupo...</option>
-            </select>
+                <!-- Carrera -->
+                <?php if ($_SESSION['rol'] === 'admin'): ?>
+                    <div>
+                        <label>Carrera</label>
+                        <select name="id_carrera" id="id_carrera" required onchange="cambiarCarrera(this.value)">
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($carreras as $c): ?>
+                                <option value="<?= $c['id_carrera'] ?>">
+                                    <?= htmlspecialchars($c['nombre']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                <?php else: ?>
+                    <!-- Coordinador -->
+                    <input type="hidden" name="id_carrera" id="id_carrera"
+                           value="<?= $id_carrera_usuario ?>">
+                <?php endif; ?>
 
-            <!-- Materia -->
-            <label>Materia:</label>
-            <select name="id_materia" id="id_materia" required>
-                <option value="">Seleccione materia...</option>
-            </select>
+                <!-- Grupo -->
+                <div>
+                    <label>Grupo</label>
+                    <select name="id_grupo" id="id_grupo" required>
+                        <option value="">Seleccione grupo...</option>
+                    </select>
+                </div>
 
-            <!-- Docente -->
-            <label>Docente:</label>
-            <select name="id_docente" id="id_docente" required>
-                <option value="">Seleccione...</option>
-                <?php foreach ($docentes as $d): ?>
-                    <option value="<?= $d['id_docente'] ?>">
-                        <?= htmlspecialchars($d['nombre'] . ' ' . ($d['apellidos'] ?? '')) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+                <!-- Materia -->
+                <div>
+                    <label>Materia</label>
+                    <select name="id_materia" id="id_materia" required>
+                        <option value="">Seleccione materia...</option>
+                    </select>
+                </div>
 
-            <!-- Días -->
-            <label>Días:</label>
-            <div class="checkbox-group">
-                <label><input type="checkbox" name="dia_semana[]" value="L"> Lun</label>
-                <label><input type="checkbox" name="dia_semana[]" value="M"> Mar</label>
-                <label><input type="checkbox" name="dia_semana[]" value="X"> Mie</label>
-                <label><input type="checkbox" name="dia_semana[]" value="J"> Jue</label>
-                <label><input type="checkbox" name="dia_semana[]" value="V"> Vie</label>
+                <!-- Docente -->
+                <div>
+                    <label>Docente</label>
+                    <select name="id_docente" id="id_docente" required>
+                        <option value="">Seleccione...</option>
+                        <?php foreach ($docentes as $d): ?>
+                            <option value="<?= $d['id_docente'] ?>">
+                                <?= htmlspecialchars($d['nombre'] . ' ' . ($d['apellidos'] ?? '')) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <!-- Días -->
+                <div class="full-row">
+                    <label>Días</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="dia_semana[]" value="L"> Lun</label>
+                        <label><input type="checkbox" name="dia_semana[]" value="M"> Mar</label>
+                        <label><input type="checkbox" name="dia_semana[]" value="X"> Mié</label>
+                        <label><input type="checkbox" name="dia_semana[]" value="J"> Jue</label>
+                        <label><input type="checkbox" name="dia_semana[]" value="V"> Vie</label>
+                    </div>
+                </div>
+
+                <!-- Horario -->
+                <div class="full-row">
+                    <label>Horario</label>
+                    <input type="text" name="horario_texto" id="horario_texto"
+                           placeholder="Ej: LUNES DE 07:00 A 08:50, MARTES DE 07:00 A 07:50" required>
+                </div>
+
+                <!-- Botón -->
+                <div class="full-row">
+                    <button type="submit">Guardar</button>
+                </div>
+
             </div>
-
-            <!-- Horario en texto -->
-            <label>Horario:</label>
-            <input type="text" name="horario_texto" id="horario_texto" placeholder="Ej: 8:00-10:00" required>
-
-            <button type="submit">Guardar</button>
         </form>
     </div>
 </div>
@@ -220,16 +255,18 @@ ob_start();
             return;
         }
 
-        // si existe el select de carrera, setear su valor y si hace falta crear option (coordinador oculto)
-        if (carreraSelect) {
-            if (!Array.from(carreraSelect.options).some(o => o.value == carreraId)) {
-                const opt = document.createElement('option');
-                opt.value = carreraId;
-                opt.textContent = carrerasMap[carreraId] || '';
-                carreraSelect.appendChild(opt);
-            }
-            carreraSelect.value = carreraId;
-        }
+if (carreraSelect && carreraSelect.options) {
+    if (!Array.from(carreraSelect.options).some(o => o.value == carreraId)) {
+        const opt = document.createElement('option');
+        opt.value = carreraId;
+        opt.textContent = carrerasMap[carreraId] || '';
+        carreraSelect.appendChild(opt);
+    }
+    carreraSelect.value = carreraId;
+} else {
+    console.error("El select de carrera no está disponible en el DOM.");
+}
+
 
         // cargar grupos/materias y docentes para la carrera
         cargarSelects(carreraId, data?.id_grupo, data?.id_materia);
@@ -347,5 +384,6 @@ ob_start();
 <?php
 $content = ob_get_clean();
 $title = "Horarios";
+$pagina = "horarios";
 include "dashboard.php";
 ?>

@@ -129,16 +129,6 @@ body {
   transition: opacity 0.6s, transform 0.3s;
 }
 
-.alerta.success {
-  background-color: #27ae60;
-  color: #fff;
-}
-
-.alerta.error {
-  background-color: #c0392b;
-  color: #fff;
-}
-
 .cerrar-alerta {
   cursor: pointer;
   font-weight: bold;
@@ -218,6 +208,29 @@ button,
   background: #c0392b;
 }
 
+
+/* Contenedor de los botones */
+.full-generar {
+    display: flex;
+    gap: 10px; /* espacio entre los botones */
+    justify-content: center; /* centrar los botones */
+    align-items: center; /* asegurar que los botones estén alineados verticalmente */
+    flex-wrap: wrap; /* en caso de que los botones no caben, se ajustan a la siguiente línea */
+}
+
+/* Estilo para los botones */
+.btn-generar {
+    padding: 8px 16px; /* Ajusta el tamaño de los botones */
+    font-size: 14px; /* Tamaño de la fuente más pequeño */
+    width: auto; /* Asegura que los botones no sean demasiado grandes */
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+
 /* Tabla */
 .tabla-docentes {
   width: 100%;
@@ -242,89 +255,6 @@ button,
 
 .tabla-docentes tr:hover {
   background-color: #f1f1f1;
-}
-
-/* Modal */
-.modal {
-  position: fixed;
-  z-index: 2000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: none;
-}
-
-.modal-content {
-  background: #fff;
-  margin: 8% auto;
-  padding: 20px 25px;
-  border-radius: 12px;
-  width: 520px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-  position: relative;
-}
-
-.cerrar {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.modal-content label {
-  display: block;
-  margin-top: 10px;
-  margin-bottom: 5px;
-  font-weight: 600;
-}
-
-.modal-content input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  margin-bottom: 12px;
-}
-
-.modal-content button {
-  width: 100%;
-  padding: 12px;
-  background: #2980b9;
-  color: #fff;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.modal-content button:hover {
-  background: #1f618d;
-}
-
-/* SELECT estilo igual que los inputs */
-.modal-content select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  margin-bottom: 12px;
-  font-size: 15px;
-  background: #fff;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.modal-content select:focus {
-  border-color: #2980b9;
-  box-shadow: 0 0 4px rgba(41, 128, 185, 0.5);
-  outline: none;
-}
-
-/* Opciones */
-.modal-content select option {
-  padding: 10px;
 }
 
 /* Caja de días */
@@ -405,7 +335,9 @@ button,
   flex-direction: column;
   align-items: center;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  overflow-y: auto; /* Permite el desplazamiento vertical */
 }
+
 
 .sidebar img {
   width: 240px;
@@ -486,35 +418,6 @@ button,
   min-height: 100vh;
 }
 
-/* GRID DEL FORM */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 20px;
-  /* separación horizontal */
-  row-gap: 20px;
-  /* separación vertical */
-}
-
-/* Hacer que SELECT y INPUT ocupen todo su espacio dentro del grid */
-.form-grid input,
-.form-grid select {
-  width: 100%;
-}
-
-/* Si un elemento debe ocupar toda la fila */
-.full-row {
-  grid-column: span 2;
-}
-
-/* Labels dentro del grid */
-.form-grid label,
-.form-grid div label {
-  display: block;
-  margin-bottom: 4px;
-  /* puedes dejar 3px si prefieres más compacto */
-}
-
 /* ============================= */
 /* LOGIN   */
 /* ============================= */
@@ -577,10 +480,6 @@ body.login-body {
   font-size: 0.9rem;
 }
 
-
-
-
-
 /* Contenedor principal de la lista de grupos */
 .container ul {
   list-style: none;
@@ -595,18 +494,16 @@ body.login-body {
   background-color: #fff;
   padding: 20px 25px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   flex: 1 1 200px; /* ancho mínimo 200px, flexible */
   text-align: center;
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
-
 .container ul li:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
-
 
 /* Contenedor */
 .container h2 {
@@ -633,3 +530,115 @@ body.login-body {
 }
 
 /* Tabla */
+.alerta {
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.alerta.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.alerta.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* ============================= */
+/* form   */
+/* ============================= */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 20px; /* separación horizontal */
+  row-gap: 22px; /* separación vertical */
+  max-width: 100%; /* Asegura que no se desborden */
+}
+
+.form-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* separación REAL entre label e input */
+}
+.modal {
+  position: fixed;
+  z-index: 2000; /* Asegúrate de que sea un valor alto para que esté encima */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+  display: none; /* Inicialmente oculto */
+}
+
+.modal-content input,
+.modal-content select {
+  width: 100%;
+  padding: 12px; /* Más padding para asegurar que se vean más grandes y cómodos */
+  border-radius: 8px;
+  border: 1px solid #ccc; /* Borde gris */
+  margin-bottom: 5px; /* Espacio entre campos */
+  font-size: 16px; /* Tamaño de la fuente más grande para mejor legibilidad */
+  box-sizing: border-box; /* Importante para evitar el desbordamiento */
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 5px; /* Espacio entre el label y el input/select */
+  font-weight: 600;
+  color: #34495e;
+}
+
+.modal-content button {
+  width: 100%; /* Hace que el botón ocupe todo el ancho */
+  padding: 12px;
+  background-color: #2980b9;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  transition: background-color 0.3s;
+  margin-top: 10px; /* Agrega un espacio arriba del botón para separar un poco */
+}
+
+.modal-content button:hover {
+  background-color: #1f618d;
+}
+
+/* Asegura que el botón esté al final de su contenedor */
+.full-row {
+  grid-column: span 2;
+  display: flex;
+  justify-content: center;
+}
+
+.modal-content {
+  background: #fff;
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%; /* Ajusta el ancho para asegurar que sea proporcional */
+  max-width: 600px; /* Ajusta el máximo para que no se expanda demasiado */
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden; /* Evita que los elementos se desborden fuera del modal */
+}
+
+/* Estilo para el botón de cerrar (X) */
+.cerrar {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+  font-weight: bold;
+  z-index: 2010; /* Asegúrate de que esté por encima del contenido del modal */
+}

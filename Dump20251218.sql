@@ -32,7 +32,7 @@ CREATE TABLE `alumnos` (
   PRIMARY KEY (`id_alumno`),
   KEY `id_grupo` (`id_grupo`),
   KEY `fk_alumno_carrera` (`id_carrera`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `alumnos` (
 
 LOCK TABLES `alumnos` WRITE;
 /*!40000 ALTER TABLE `alumnos` DISABLE KEYS */;
-INSERT INTO `alumnos` VALUES (1,'Campos Silva Luis Antonio',1,1,'activo',NULL),(2,'García Lázaro Iván Alexander',1,1,'activo',NULL),(3,'García Lázaro José Manuel',1,1,'activo',NULL),(4,'García Matías Luis Antonio',1,1,'activo',NULL),(5,'García Méndez Idali Adriana',1,1,'activo',NULL),(6,'Guerrero Carrasco Emilio De Jesús',1,1,'activo',NULL),(7,'Hernández Soriano Caleb',1,1,'activo',NULL),(8,'López López Daniel Gilberto',1,1,'activo',NULL),(9,'Lucas Matadamas Vanesa',1,1,'activo',NULL),(10,'Miguel Ortega Sandra Nidia',1,1,'activo',NULL),(11,'Osorio Ramírez Karol Sinaí',1,1,'activo',NULL),(12,'Pérez Guzmán Karen Linette',1,1,'activo',NULL),(13,'Ramos Sumano Stefany Alin',1,1,'activo',NULL),(14,'Sánchez Martínez Karla Denisse',1,1,'activo',NULL),(15,'Solís Velásquez Ytzel Yamilet',NULL,1,'baja','Se retiró del grupo'),(17,'Caballero Luján Sol',2,1,'activo',NULL),(18,'Campos Silva Luis Antonio',2,1,'activo',NULL),(19,'Días Ríos Geymmy Lawmy',2,1,'activo',NULL),(20,'García Lázaro Iván Alexander',2,1,'activo',NULL),(21,'García Lázaro José Manuel',2,1,'activo',NULL),(22,'García Matías Luis Antonio',2,1,'activo',NULL),(23,'García Méndez Idali Adriana',2,1,'activo',NULL),(24,'Gualberto Herrera Zurisadai',2,1,'activo',NULL),(25,'Guerrero Carrasco Emilio De Jesús',2,1,'activo',NULL),(26,'Hernández Soriano Caleb',2,1,'activo',NULL),(27,'López López Daniel Gilberto',2,1,'activo',NULL),(28,'Miguel Ortega Sandra Nidia',2,1,'activo',NULL),(29,'Osorio Ramírez Karol Sinaí',2,1,'activo',NULL),(30,'Pérez Guzmán Karen Linette',2,1,'activo',NULL),(31,'Ramos Sumano Stefany Alin',2,1,'activo',NULL),(32,'Rodríguez Altamirano Uriel',2,1,'activo',NULL),(33,'Sánchez Martínez Karla Denisse',2,1,'activo',NULL),(34,'Solís Velásquez Ytzel Yamilet',2,1,'activo',NULL),(35,'Velásquez Cortes Ashley Getsemaní',2,1,'activo',NULL),(37,'Lucas Matadamas Vanesa',2,1,'activo',NULL),(38,'aa',5,2,'activo',NULL),(39,'Velásquez Cortes Ashley Getsemaní',NULL,1,'baja',NULL),(40,'yeby',NULL,1,'baja','x');
+INSERT INTO `alumnos` VALUES (1,'Caballero Luján Sol',1,1,'activo',NULL),(2,'Campos Silva Luis Antonio',1,1,'activo',NULL),(3,'Días Ríos Geymmy Lawmy',1,1,'activo',NULL),(4,'García Lázaro Iván Alexander',1,1,'activo',NULL),(5,'García Lázaro José Manuel',1,1,'activo',NULL),(6,'García Matías Luis Antonio',1,1,'activo',NULL),(7,'García Méndez Idali Adriana',1,1,'activo',NULL),(8,'Gualberto Herrera Zurisadai',1,1,'activo',NULL),(9,'Guerrero Carrasco Emilio De Jesús',1,1,'activo',NULL),(10,'Hernández Soriano Caleb',1,1,'activo',NULL),(11,'López López Daniel Gilberto',1,1,'activo',NULL),(12,'Miguel Ortega Sandra Nidia',1,1,'activo',NULL),(13,'Osorio Ramírez Karol Sinaí',1,1,'activo',NULL),(14,'Pérez Guzmán Karen Linette',1,1,'activo',NULL),(15,'Ramos Sumano Stefany Alin',1,1,'activo',NULL),(16,'Rodríguez Altamirano Uriel',1,1,'activo',NULL),(17,'Sánchez Martínez Karla Denisse',1,1,'activo',NULL),(18,'Solís Velásquez Ytzel Yamilet',1,1,'activo',NULL),(19,'Velásquez Cortes Ashley Getsemaní',1,1,'activo',NULL),(20,'Lucas Matadamas Vanesa',1,1,'activo',NULL),(21,'Beteta Cuevas Maxley Ryan',2,1,'activo',NULL),(22,'Blanco Morales Jesús',2,1,'activo',NULL),(23,'Canseco Meixueiro Juan Alberto',2,1,'activo',NULL),(24,'Carbajal Diaz Casandra Ameli',2,1,'activo',NULL),(25,'Castellanos Ramirez Karla Desire',2,1,'activo',NULL),(26,'Fuentes Santiago Josué Israel',2,1,'activo',NULL),(27,'Garcia Felipe Zeus Kenedy',2,1,'activo',NULL),(28,'Garcia Lopez Ailin Meritxell',2,1,'activo',NULL),(29,'Gómez Antonio Carlos Guadalupe',2,1,'activo',NULL),(30,'González Aragón Fernanda',2,1,'activo',NULL),(31,'Hernández Cabrera Jaqueline',2,1,'activo',NULL),(32,'Martinez Cerqueda Zoé Zurisadai',2,1,'activo',NULL),(33,'Morales Celaya Anahi',2,1,'activo',NULL),(34,'Porras Sánchez Carlos Fernando',2,1,'activo',NULL),(35,'Sánchez Millán Ximena Tunikj',NULL,1,'baja',''),(36,'Sánchez Millán Ximena Tunikj',2,1,'activo',NULL),(40,'qqqq',NULL,1,'baja',''),(43,'prueba',NULL,1,'baja','prueba baja');
 /*!40000 ALTER TABLE `alumnos` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -124,7 +124,7 @@ CREATE TABLE `carreras` (
 
 LOCK TABLES `carreras` WRITE;
 /*!40000 ALTER TABLE `carreras` DISABLE KEYS */;
-INSERT INTO `carreras` VALUES (1,'Derecho','DERECHO2025'),(2,'Teología','TEOLOGIA2025'),(3,'Médico cirujano','MED2025'),(4,'Enfermería','ENFER2025'),(5,'Psicología','PSICO2025');
+INSERT INTO `carreras` VALUES (1,'Derecho','DER2025'),(2,'Teología','TEO2025'),(3,'Medicina','MED2025'),(4,'Enfermería','ENF2025'),(5,'Psicología','PSI2025');
 /*!40000 ALTER TABLE `carreras` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -145,7 +145,7 @@ CREATE TABLE `docentes` (
   PRIMARY KEY (`id_docente`),
   KEY `fk_docente_carrera` (`id_carrera`),
   CONSTRAINT `fk_docente_carrera` FOREIGN KEY (`id_carrera`) REFERENCES `carreras` (`id_carrera`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -154,7 +154,7 @@ CREATE TABLE `docentes` (
 
 LOCK TABLES `docentes` WRITE;
 /*!40000 ALTER TABLE `docentes` DISABLE KEYS */;
-INSERT INTO `docentes` VALUES (1,'MTRA. CORAL DEL CARMEN ','ORDAZ FUENTES  ','CORALCARMEN@gmail.com','951124780',1),(2,'Carlos Alberto','Moreno Alcántara','carlos.moreno@escuela.local','951478545',1),(3,'María del Carmen','Avendaño Rito','maria.avendano@escuela.local','111111',1),(4,'DR. JOSÉ ANTONIO ','ALVAREZ HERNÁNDEZ  ','prueba@gmail.com','951254',1),(5,'MTRO. ADRIÁN ','QUIROGA AVENDAÑO ','aa@gmail.com','951478545',1),(6,'MTRO. ISAÍAS','HERNÁNDEZ SANTIAGO  ','aa@gmail.com','95114578924',1),(7,'MTRO. PEDRO ','CELESTINO GUZMAN  ','p@gmail.com','951000000',1),(9,'nuevos ','vvv','QQ@GMAIL.COM','11111',4),(10,'NUEVOS CMABIOS','QQ','aa@gmail.com','951478545',1);
+INSERT INTO `docentes` VALUES (1,'MTRO. CARLOS ALBERTO ','MORENO ALCANTARA ','aa@gmail.com','951478545',1),(2,'DRA. MARÍA DEL CARMEN ','AVENDAÑO RITO  ','aa@gmail.com','951478545',1),(3,'MTRA. CORAL DEL CARMEN ','ORDAZ FUENTES   ','aa@gmail.com','951478545',1),(4,'DRA. JESSICA MARIBEL',' ARANGO BRAVO','aa@gmail.com','951478545',1);
 /*!40000 ALTER TABLE `docentes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -175,7 +175,7 @@ CREATE TABLE `grupos` (
   KEY `fk_grupos_carreras` (`id_carrera`),
   CONSTRAINT `fk_grupos_carreras` FOREIGN KEY (`id_carrera`) REFERENCES `carreras` (`id_carrera`),
   CONSTRAINT `grupos_ibfk_1` FOREIGN KEY (`id_semestre`) REFERENCES `semestres` (`id_semestre`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -184,7 +184,7 @@ CREATE TABLE `grupos` (
 
 LOCK TABLES `grupos` WRITE;
 /*!40000 ALTER TABLE `grupos` DISABLE KEYS */;
-INSERT INTO `grupos` VALUES (1,'1ER SEMESTRE',1,1),(2,'3er semestre',2,1),(3,'5to semestre',3,1),(4,'primer semestre psic',1,5),(5,'grupo de tecnologia',2,2),(6,'G-Medicina',3,3);
+INSERT INTO `grupos` VALUES (1,'1ER SEMESTRE',1,1),(2,'7MO SEMESTRE',2,1);
 /*!40000 ALTER TABLE `grupos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -202,7 +202,7 @@ CREATE TABLE `horario_dias` (
   PRIMARY KEY (`id_dia`),
   KEY `id_horario` (`id_horario`),
   CONSTRAINT `horario_dias_ibfk_1` FOREIGN KEY (`id_horario`) REFERENCES `horarios` (`id_horario`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -211,7 +211,7 @@ CREATE TABLE `horario_dias` (
 
 LOCK TABLES `horario_dias` WRITE;
 /*!40000 ALTER TABLE `horario_dias` DISABLE KEYS */;
-INSERT INTO `horario_dias` VALUES (10,1,'L'),(11,1,'M'),(21,3,'L'),(22,5,'L'),(23,5,'M'),(25,7,'L'),(35,2,'L'),(36,2,'X'),(37,2,'V');
+INSERT INTO `horario_dias` VALUES (1,1,'L'),(2,1,'X'),(3,1,'V'),(4,2,'L'),(5,3,'L'),(6,3,'V'),(22,4,'L'),(23,4,'M'),(24,4,'X'),(25,4,'J'),(26,4,'V'),(29,5,'L'),(30,6,'L');
 /*!40000 ALTER TABLE `horario_dias` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -228,7 +228,8 @@ CREATE TABLE `horarios` (
   `id_carrera` int(11) NOT NULL,
   `id_materia` int(11) NOT NULL,
   `id_grupo` int(11) NOT NULL,
-  `horario_texto` varchar(100) DEFAULT NULL,
+  `horario_texto` varchar(200) DEFAULT NULL,
+  `horarioscol` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id_horario`),
   KEY `id_docente` (`id_docente`),
   KEY `id_materia` (`id_materia`),
@@ -236,7 +237,7 @@ CREATE TABLE `horarios` (
   CONSTRAINT `horarios_ibfk_1` FOREIGN KEY (`id_docente`) REFERENCES `docentes` (`id_docente`),
   CONSTRAINT `horarios_ibfk_2` FOREIGN KEY (`id_materia`) REFERENCES `materias` (`id_materia`),
   CONSTRAINT `horarios_ibfk_3` FOREIGN KEY (`id_grupo`) REFERENCES `grupos` (`id_grupo`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -245,7 +246,7 @@ CREATE TABLE `horarios` (
 
 LOCK TABLES `horarios` WRITE;
 /*!40000 ALTER TABLE `horarios` DISABLE KEYS */;
-INSERT INTO `horarios` VALUES (1,1,1,1,1,'LUNES DE 07:00 A 08:50, MARTES DE 07:00 A 07:50'),(2,2,1,2,2,'LUNES DE 11:00 A 11:50, MIÉRCOLES DE 13:00 A 13:50, VIERNES DE 12:00 A 12:50 HRS '),(3,3,1,3,3,'LUNES DE 12:00 A 14:50 HRS   '),(5,2,1,4,2,'LUNES DE 07:00 A 08:50, MARTES DE 07:00 A 07:50'),(7,4,1,2,2,'LUNES DE 12:00 A 14:50 HRS');
+INSERT INTO `horarios` VALUES (1,1,1,1,1,'LUNES DE 11:00 A 11:50, MIÉRCOLES DE 13:00 A 13:50, VIERNES DE 12:00 A 12:50 HRS ',NULL),(2,2,1,2,1,'LUNES DE 12:00 A 14:50 HRS   ',NULL),(3,3,1,3,1,'martes de 08:00 a 08:50, viernes de 07:00 a 08:50',NULL),(4,4,1,4,2,'MARTES DE 08:00 A 14:00, MIÉRCOLES DE 08:00 A 14:00, JUEVES DE 08:00 A 14:00, VIERNES DE 08:00 A 14:00 HRS',NULL),(5,4,1,1,1,'LUNES DE 07:00 A 08:50, MARTES DE 07:00 A 07:50',NULL),(6,1,1,3,2,'LUNES DE 12:00 A 13:50 HRS',NULL);
 /*!40000 ALTER TABLE `horarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -264,7 +265,7 @@ CREATE TABLE `materias` (
   `horas_semestre` int(11) DEFAULT NULL,
   `id_carrera` int(11) NOT NULL,
   PRIMARY KEY (`id_materia`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -273,7 +274,7 @@ CREATE TABLE `materias` (
 
 LOCK TABLES `materias` WRITE;
 /*!40000 ALTER TABLE `materias` DISABLE KEYS */;
-INSERT INTO `materias` VALUES (1,'Teoría Económica','BUOLD07',3,72,1),(2,'Cultura General del Abogado','BUOLD 08',3,54,1),(3,'Metodología para la Investigación y Redacción Jurídica','BUOLD 03 ',3,54,1),(4,'materia prueba','prue228',10,50,1),(5,'materia prueba psicilogia','pssii3',2,20,5),(6,'psicilogia','pssii3222',2,20,5),(7,'xxxxx','xx1x1x1',1,12,2),(8,'mental','ment22',1,20,5),(9,'QWQWQWQW','QWQWQ',2,20,3);
+INSERT INTO `materias` VALUES (1,'CULTURA GENERAL DEL ABOGADO ','BUOLD 08',3,54,1),(2,'METODOLOGÍA PARA LA INVESTIGACIÓN Y REDACCIÓN JURÍDICA ','BUOLD 03 ',3,54,1),(3,'SOCIOLOGÍA JURÍDICA  ','BUOLD 06 ',3,54,1),(4,'JUICIOS ORALES EN MATERIA MERCANTIL',' BLD54',4,72,1);
 /*!40000 ALTER TABLE `materias` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -293,7 +294,7 @@ CREATE TABLE `parciales` (
   PRIMARY KEY (`id_parcial`),
   KEY `fk_parcial_carrera` (`id_carrera`),
   CONSTRAINT `fk_parcial_carrera` FOREIGN KEY (`id_carrera`) REFERENCES `carreras` (`id_carrera`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -302,7 +303,7 @@ CREATE TABLE `parciales` (
 
 LOCK TABLES `parciales` WRITE;
 /*!40000 ALTER TABLE `parciales` DISABLE KEYS */;
-INSERT INTO `parciales` VALUES (1,1,2,'2025-09-15','2025-10-17'),(2,1,1,'2025-08-18','2025-09-12'),(4,5,4,'2025-12-19','2026-01-10'),(5,5,5,'2026-01-02','2026-02-07'),(6,3,1,'2026-03-12','2026-04-12'),(7,1,3,'2025-12-19','2026-01-09'),(8,1,4,'2025-12-18','2026-01-02');
+INSERT INTO `parciales` VALUES (1,1,3,'2025-10-20','2025-11-22'),(2,1,2,'2025-09-15','2025-10-18'),(3,1,1,'2025-08-18','2025-09-12'),(4,1,3,'2025-12-16','2025-12-19');
 /*!40000 ALTER TABLE `parciales` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -329,7 +330,7 @@ CREATE TABLE `semestres` (
 
 LOCK TABLES `semestres` WRITE;
 /*!40000 ALTER TABLE `semestres` DISABLE KEYS */;
-INSERT INTO `semestres` VALUES (1,1,NULL),(2,3,NULL),(3,5,NULL),(4,7,NULL);
+INSERT INTO `semestres` VALUES (1,1,NULL),(2,7,NULL);
 /*!40000 ALTER TABLE `semestres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -380,7 +381,7 @@ CREATE TABLE `usuarios` (
   UNIQUE KEY `usuario` (`usuario`),
   KEY `fk_usuario_carrera` (`id_carrera`),
   CONSTRAINT `fk_usuario_carrera` FOREIGN KEY (`id_carrera`) REFERENCES `carreras` (`id_carrera`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -389,16 +390,12 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'Administrador General','admin1@local','admin','$2y$10$gaPQhy4DXJ06uYJ9cdodUuh5ytXtVVAgEzEp5R66ibRn0ByPctsim','admin',1,1),(2,'Coordinador Derecho','coord_derecho@local','coord_derecho','$2y$10$Bp14c3V6BuF4RWM/.xkAcefYLqqOyma0RaLnXeCzw17AKlA7eERgu','coordinador',1,1),(3,'Coordinador Enfermería','coord_enfermeria@local','coord_enfermeria','$2y$10$v5m1NWhyR6TPVvqRZ4kjfOszH7TsNtb24gy8QX3493LwH.mRL/Do6','coordinador',4,1),(5,'Coordinador Psicología','coord_psicologia@local','coord_psicologia','$2y$10$dVTV7IlhWJdCVmWIFBHaBeXM0c.jg2m7VLxjBikQsNETEbv8BSDm6','coordinador',5,1),(6,'Coordinador Medicina','coord_medicina@local','coord_medicina','$2y$10$YTDEG4RyguakS/PSCBf1EeKnYZLm8TYLNV5ZNdMObPJL5ah7.dQEa','coordinador',3,1),(7,'cordi derecho 2','coord_derecho2@local','coord_derecho2','$2y$10$PTosKOm9kzTuisL0OuOMvethS.J765WgVpon4IPk6Nn1jM4H8CZjy','coordinador',1,1);
+INSERT INTO `usuarios` VALUES (1,'Administrador General','admin1@local','admin','$2y$10$gaPQhy4DXJ06uYJ9cdodUuh5ytXtVVAgEzEp5R66ibRn0ByPctsim','admin',1,1),(2,'Coordinador Derecho','coord_derecho@local','coord_derecho','$2y$10$Bp14c3V6BuF4RWM/.xkAcefYLqqOyma0RaLnXeCzw17AKlA7eERgu','coordinador',1,1),(3,'Coordinador Enfermería','coord_enfermeria@local','coord_enfermeria','$2y$10$v5m1NWhyR6TPVvqRZ4kjfOszH7TsNtb24gy8QX3493LwH.mRL/Do6','coordinador',4,1),(5,'Coordinador Psicología','coord_psicologia@local','coord_psicologia','$2y$10$dVTV7IlhWJdCVmWIFBHaBeXM0c.jg2m7VLxjBikQsNETEbv8BSDm6','coordinador',5,1),(6,'Coordinador Medicina','coord_medicina@local','coord_medicina','$2y$10$YTDEG4RyguakS/PSCBf1EeKnYZLm8TYLNV5ZNdMObPJL5ah7.dQEa','coordinador',3,1),(7,'cordinador de derecho 2','coord_derecho2@local','coord_derecho2','$2y$10$UE4aiGXM0TBdZLCbasZ/S.UHOdgcKBIPrvUvV.UAwVt0Hk.kdzhsa','coordinador',1,1);
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
 -- Dumping events for database 'escuela'
---
-
---
--- Dumping routines for database 'escuela'
 --
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -410,4 +407,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-12 12:15:56
+-- Dump completed on 2025-12-18 14:24:19

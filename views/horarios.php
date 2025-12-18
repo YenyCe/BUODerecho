@@ -62,7 +62,7 @@ ob_start();
 
 <div class="container-form">
     <?= $alerta ?>
-    
+
     <h2>Horarios</h2>
     <?php if ($_SESSION['rol'] === 'admin'): ?>
         <div class="filtros-container" style="margin-bottom:15px;">
@@ -143,7 +143,7 @@ ob_start();
                 <?php else: ?>
                     <!-- Coordinador -->
                     <input type="hidden" name="id_carrera" id="id_carrera"
-                           value="<?= $id_carrera_usuario ?>">
+                        value="<?= $id_carrera_usuario ?>">
                 <?php endif; ?>
 
                 <!-- Grupo -->
@@ -191,14 +191,13 @@ ob_start();
                 <div class="full-row">
                     <label>Horario</label>
                     <input type="text" name="horario_texto" id="horario_texto"
-                           placeholder="Ej: LUNES DE 07:00 A 08:50, MARTES DE 07:00 A 07:50" required>
+                        placeholder="Ej: LUNES DE 07:00 A 08:50, MARTES DE 07:00 A 07:50" required>
                 </div>
 
                 <!-- Botón -->
                 <div class="full-row">
                     <button type="submit">Guardar</button>
                 </div>
-
             </div>
         </form>
     </div>
@@ -255,17 +254,17 @@ ob_start();
             return;
         }
 
-if (carreraSelect && carreraSelect.options) {
-    if (!Array.from(carreraSelect.options).some(o => o.value == carreraId)) {
-        const opt = document.createElement('option');
-        opt.value = carreraId;
-        opt.textContent = carrerasMap[carreraId] || '';
-        carreraSelect.appendChild(opt);
-    }
-    carreraSelect.value = carreraId;
-} else {
-    console.error("El select de carrera no está disponible en el DOM.");
-}
+        if (carreraSelect && carreraSelect.options) {
+            if (!Array.from(carreraSelect.options).some(o => o.value == carreraId)) {
+                const opt = document.createElement('option');
+                opt.value = carreraId;
+                opt.textContent = carrerasMap[carreraId] || '';
+                carreraSelect.appendChild(opt);
+            }
+            carreraSelect.value = carreraId;
+        } else {
+            console.error("El select de carrera no está disponible en el DOM.");
+        }
 
 
         // cargar grupos/materias y docentes para la carrera
@@ -286,8 +285,6 @@ if (carreraSelect && carreraSelect.options) {
                 document.getElementById('horario_texto').value = data.horario_texto;
             }
         }
-
-        
     }
 
     // cuando admin cambie de carrera en el modal, recargar selects
@@ -387,3 +384,4 @@ $title = "Horarios";
 $pagina = "horarios";
 include "dashboard.php";
 ?>
+

@@ -642,3 +642,9 @@ body.login-body {
   font-weight: bold;
   z-index: 2010; /* Asegúrate de que esté por encima del contenido del modal */
 }
+
+
+/* Convierte todo el texto dentro del input a mayúsculas */
+#horario_texto {
+    text-transform: uppercase;
+}

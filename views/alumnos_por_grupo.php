@@ -41,9 +41,15 @@ ob_start();
 ?>
 
 <div class="container-form"">
-    <h2>Alumnos del Grupo: <?= htmlspecialchars($grupoInfo['nombre']); ?></h2>
+<h2>
+   Alumnos del Semestre:   <?= htmlspecialchars($grupoInfo['semestre']); ?>  -
+ Grupo: <?= htmlspecialchars($grupoInfo['grupo']); ?>
+  
+</h2>
 
-    <a href="grupos.php" class="btn-agregar">← Volver a Grupos</a>
+
+
+    <a href=" grupos.php" class="btn-agregar">← Volver a Grupos</a>
     <?php if ($alerta): ?>
         <?= $alerta ?>
     <?php endif; ?>
@@ -132,7 +138,7 @@ ob_start();
             document.getElementById('id_alumno').value = '';
             document.getElementById('nombreAlumno').value = '';
             document.getElementById('id_grupoAlumno').value = '<?= $id_grupo; ?>';
-        }
+        }   
     }
 </script>
 

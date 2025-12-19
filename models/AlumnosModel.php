@@ -213,7 +213,17 @@ $sql = "SELECT
 
     // Obtener información de un grupo por su ID
 public function getGrupo($id_grupo){
-    $stmt = $this->conn->prepare("SELECT id_grupo, nombre, id_carrera FROM grupos WHERE id_grupo = ?");
+    $stmt = $this->conn->prepare("
+        SELECT 
+            g.id_grupo,
+            g.nombre AS grupo,
+            g.id_carrera,
+            s.id_semestre,
+            s.numero AS semestre
+        FROM grupos g
+        INNER JOIN semestres s ON g.id_semestre = s.id_semestre
+        WHERE g.id_grupo = ?
+    ");
     $stmt->bind_param("i", $id_grupo);
     $stmt->execute();
     $res = $stmt->get_result();

@@ -40,7 +40,6 @@ ob_start();
     <h2>Materias</h2>
     <?= $alerta ?>
 
-    <?php if ($rol === 'admin'): ?>
 <div class="filtros-container" style="margin-bottom:15px;">
     <?php if ($rol === 'admin'): ?>
         <div>
@@ -65,7 +64,6 @@ ob_start();
     </div>
 </div>
 
-    <?php endif; ?>
 
     <button class="btn-agregar" onclick="abrirModalMateria()">Agregar Materia</button>
 

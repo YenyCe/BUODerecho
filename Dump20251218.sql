@@ -19,9 +19,6 @@
 -- Table structure for table `alumnos`
 --
 
-SET FOREIGN_KEY_CHECKS = 0;
-
-
 DROP TABLE IF EXISTS `alumnos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;

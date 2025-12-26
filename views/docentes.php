@@ -56,39 +56,48 @@ ob_start();
                 <th>Acciones</th>
             </tr>
         </thead>
-        <tbody>
-            <?php foreach ($docentes as $d): ?>
-                <tr data-id="<?= $d['id_docente'] ?>"
-                    data-nombre="<?= htmlspecialchars($d['nombre']) ?>"
-                    data-apellidos="<?= htmlspecialchars($d['apellidos']) ?>"
-                    data-correo="<?= htmlspecialchars($d['correo']) ?>"
-                    data-telefono="<?= htmlspecialchars($d['telefono']) ?>"
-                    data-id_carrera="<?= $d['id_carrera'] ?? '' ?>">
-                    <td><?= $d['id_docente'] ?></td>
-                    <td><?= htmlspecialchars($d['nombre'] . ' ' . $d['apellidos']) ?></td>
-                    <td><?= htmlspecialchars($d['correo']) ?></td>
-                    <td><?= htmlspecialchars($d['telefono']) ?></td>
-                    <?php if ($rol === 'admin'): ?>
-                        <td>
-                            <?php
-                            if ($d['id_carrera']) {
-                                $carrera = $conn->query("SELECT nombre FROM carreras WHERE id_carrera={$d['id_carrera']}")->fetch_assoc();
-                                echo htmlspecialchars($carrera['nombre']);
-                            } else {
-                                echo "-";
-                            }
-                            ?>
-                        </td>
-                    <?php endif; ?>
+       <tbody>
+    <?php if (empty($docentes)): ?>
+        <tr>
+            <td colspan="<?= ($rol === 'admin') ? 6 : 5 ?>" style="text-align:center; padding:20px;">
+                No hay docentes registrados.
+            </td>
+        </tr>
+    <?php else: ?>
+        <?php foreach ($docentes as $d): ?>
+            <tr data-id="<?= $d['id_docente'] ?>"
+                data-nombre="<?= htmlspecialchars($d['nombre']) ?>"
+                data-apellidos="<?= htmlspecialchars($d['apellidos']) ?>"
+                data-correo="<?= htmlspecialchars($d['correo']) ?>"
+                data-telefono="<?= htmlspecialchars($d['telefono']) ?>"
+                data-id_carrera="<?= $d['id_carrera'] ?? '' ?>">
+                <td><?= $d['id_docente'] ?></td>
+                <td><?= htmlspecialchars($d['nombre'] . ' ' . $d['apellidos']) ?></td>
+                <td><?= htmlspecialchars($d['correo']) ?></td>
+                <td><?= htmlspecialchars($d['telefono']) ?></td>
+                <?php if ($rol === 'admin'): ?>
                     <td>
-                        <button class="btn-editar" onclick="abrirModal(<?= $d['id_docente'] ?>)">Editar</button>
-                        <a href="../controllers/DocentesController.php?eliminar=<?= $d['id_docente'] ?>"
-                            class="btn-eliminar"
-                            onclick="return confirm('¿Eliminar este docente?')">Eliminar</a>
+                        <?php
+                        if ($d['id_carrera']) {
+                            $carrera = $conn->query("SELECT nombre FROM carreras WHERE id_carrera={$d['id_carrera']}")->fetch_assoc();
+                            echo htmlspecialchars($carrera['nombre']);
+                        } else {
+                            echo "-";
+                        }
+                        ?>
                     </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
+                <?php endif; ?>
+                <td>
+                    <button class="btn-editar" onclick="abrirModal(<?= $d['id_docente'] ?>)">Editar</button>
+                    <a href="../controllers/DocentesController.php?eliminar=<?= $d['id_docente'] ?>"
+                       class="btn-eliminar"
+                       onclick="return confirm('¿Eliminar este docente?')">Eliminar</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</tbody>
+
     </table>
 </div>
 

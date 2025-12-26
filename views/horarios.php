@@ -110,7 +110,7 @@ ob_start();
                             onclick='abrirModalHorario(<?= $h["id_horario"] ?>, <?= json_encode($h, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)'>
                             Editar
                         </button>
-                        <a class="btn-eliminar" href="../controllers/horariosController.php?accion=eliminar&id=<?= $h['id_horario'] ?>" onclick="return confirm('¿Eliminar?')">Eliminar</a>
+                        <a class="btn-eliminar" href="/controllers/HorariosController.php?accion=eliminar&id=<?= $h['id_horario'] ?>" onclick="return confirm('¿Eliminar?')">Eliminar</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -123,8 +123,7 @@ ob_start();
     <div class="modal-content">
         <span class="cerrar" onclick="cerrarModal('modalHorario')">&times;</span>
         <h2 id="tituloModalHorario">Agregar Horario</h2>
-
-        <form action="../controllers/horariosController.php" method="POST" id="formHorario">
+        <form action="../controllers/HorariosController.php" method="POST" id="formHorario">
 
             <input type="hidden" name="accion" id="accion" value="guardar">
             <input type="hidden" name="id_horario" id="id_horario">

@@ -40,30 +40,29 @@ ob_start();
     <h2>Materias</h2>
     <?= $alerta ?>
 
-<div class="filtros-container" style="margin-bottom:15px;">
-    <?php if ($rol === 'admin'): ?>
+    <div class="filtros-container" style="margin-bottom:15px;">
+        <?php if ($rol === 'admin'): ?>
+            <div>
+                <label>Filtrar por carrera:</label>
+                <select id="filtroCarrera">
+                    <option value="">Todas</option>
+                    <?php foreach ($carreras as $c): ?>
+                        <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        <?php endif; ?>
+
         <div>
-            <label>Filtrar por carrera:</label>
-            <select id="filtroCarrera">
-                <option value="">Todas</option>
-                <?php foreach ($carreras as $c): ?>
-                    <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
+            <label>Filtrar por semestre:</label>
+            <select id="filtroSemestre">
+                <option value="">Todos</option>
+                <?php foreach ($semestres as $s): ?>
+                    <option value="<?= $s['id_semestre'] ?>"><?= $s['numero'] ?>°</option>
                 <?php endforeach; ?>
             </select>
         </div>
-    <?php endif; ?>
-
-    <div>
-        <label>Filtrar por semestre:</label>
-        <select id="filtroSemestre">
-            <option value="">Todos</option>
-            <?php foreach ($semestres as $s): ?>
-                <option value="<?= $s['id_semestre'] ?>"><?= $s['numero'] ?>°</option>
-            <?php endforeach; ?>
-        </select>
     </div>
-</div>
-
 
     <button class="btn-agregar" onclick="abrirModalMateria()">Agregar Materia</button>
 
@@ -162,64 +161,64 @@ ob_start();
 </div>
 
 <script>
-function abrirModalMateria(id = null) {
-    const modal = document.getElementById('modalMateria');
-    modal.style.display = 'block';
+    function abrirModalMateria(id = null) {
+        const modal = document.getElementById('modalMateria');
+        modal.style.display = 'block';
 
-    if (id) {
-        const row = document.querySelector(`tr[data-id='${id}']`);
-        document.getElementById('tituloModalMateria').innerText = 'Editar Materia';
-        document.getElementById('accionMateria').value = 'editar';
-        document.getElementById('id_materia').value = id;
-        document.getElementById('nombreMateria').value = row.dataset.nombre;
-        document.getElementById('claveMateria').value = row.dataset.clave;
-        document.getElementById('horasSemanaMateria').value = row.dataset.horas_semana;
-        document.getElementById('horasSemestreMateria').value = row.dataset.horas_semestre;
-        document.getElementById('id_semestre_materia').value = row.dataset.id_semestre || '';
-        const carrera_input = document.getElementById('id_carrera_materia');
-        if(carrera_input) carrera_input.value = row.dataset.id_carrera || '';
-    } else {
-        document.getElementById('tituloModalMateria').innerText = 'Agregar Materia';
-        document.getElementById('accionMateria').value = 'agregar';
-        document.getElementById('id_materia').value = '';
-        document.getElementById('nombreMateria').value = '';
-        document.getElementById('claveMateria').value = '';
-        document.getElementById('horasSemanaMateria').value = '';
-        document.getElementById('horasSemestreMateria').value = '';
-        document.getElementById('id_semestre_materia').value = '';
-        const carrera_input = document.getElementById('id_carrera_materia');
-        if(carrera_input) carrera_input.value = '';
+        if (id) {
+            const row = document.querySelector(`tr[data-id='${id}']`);
+            document.getElementById('tituloModalMateria').innerText = 'Editar Materia';
+            document.getElementById('accionMateria').value = 'editar';
+            document.getElementById('id_materia').value = id;
+            document.getElementById('nombreMateria').value = row.dataset.nombre;
+            document.getElementById('claveMateria').value = row.dataset.clave;
+            document.getElementById('horasSemanaMateria').value = row.dataset.horas_semana;
+            document.getElementById('horasSemestreMateria').value = row.dataset.horas_semestre;
+            document.getElementById('id_semestre_materia').value = row.dataset.id_semestre || '';
+            const carrera_input = document.getElementById('id_carrera_materia');
+            if (carrera_input) carrera_input.value = row.dataset.id_carrera || '';
+        } else {
+            document.getElementById('tituloModalMateria').innerText = 'Agregar Materia';
+            document.getElementById('accionMateria').value = 'agregar';
+            document.getElementById('id_materia').value = '';
+            document.getElementById('nombreMateria').value = '';
+            document.getElementById('claveMateria').value = '';
+            document.getElementById('horasSemanaMateria').value = '';
+            document.getElementById('horasSemestreMateria').value = '';
+            document.getElementById('id_semestre_materia').value = '';
+            const carrera_input = document.getElementById('id_carrera_materia');
+            if (carrera_input) carrera_input.value = '';
+        }
     }
-}
 
-function cerrarModalMateria() {
-    document.getElementById('modalMateria').style.display = 'none';
-}
+    function cerrarModalMateria() {
+        document.getElementById('modalMateria').style.display = 'none';
+    }
 
-window.onclick = function(event) {
-    const modal = document.getElementById('modalMateria');
-    if (event.target == modal) cerrarModalMateria();
-}
+    window.onclick = function(event) {
+        const modal = document.getElementById('modalMateria');
+        if (event.target == modal) cerrarModalMateria();
+    }
 
-// Filtro por carrera
-document.getElementById('filtroCarrera')?.addEventListener('change', function() {
-    const carrera = this.value;
-    const filas = document.querySelectorAll('table tbody tr');
-    filas.forEach(fila => {
-        const idCarreraFila = fila.dataset.id_carrera;
-        fila.style.display = (carrera === "" || carrera === idCarreraFila) ? "" : "none";
+    // Filtro por carrera
+    document.getElementById('filtroCarrera')?.addEventListener('change', function() {
+        const carrera = this.value;
+        const filas = document.querySelectorAll('table tbody tr');
+        filas.forEach(fila => {
+            const idCarreraFila = fila.dataset.id_carrera;
+            fila.style.display = (carrera === "" || carrera === idCarreraFila) ? "" : "none";
+        });
     });
-});
 
-// Filtro por semestre
-document.getElementById('filtroSemestre')?.addEventListener('change', function() {
-    const semestre = this.value;
-    const filas = document.querySelectorAll('table tbody tr');
-    filas.forEach(fila => {
-        const idSemestreFila = fila.dataset.id_semestre;
-        fila.style.display = (semestre === "" || idSemestreFila === semestre) ? "" : "none";
+    // Filtro por semestre
+    document.getElementById('filtroSemestre')?.addEventListener('change', function() {
+        const semestre = this.value;
+        const filas = document.querySelectorAll('table tbody tr');
+        filas.forEach(fila => {
+            const idSemestreFila = fila.dataset.id_semestre;
+            fila.style.display = (semestre === "" || idSemestreFila === semestre) ? "" : "none";
+        });
     });
-});
 </script>
 <script src="/ASISTENCIAS/js/modales.js"></script>
 

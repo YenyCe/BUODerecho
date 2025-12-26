@@ -41,26 +41,30 @@ ob_start();
     <?= $alerta ?>
 
     <?php if ($rol === 'admin'): ?>
-        <div class="filtros-container" style="margin-bottom:15px;">
-            <div>
-                <label>Filtrar por carrera:</label>
-                <select id="filtroCarrera">
-                    <option value="">Todas</option>
-                    <?php foreach ($carreras as $c): ?>
-                        <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div>
-                <label>Filtrar por semestre:</label>
-                <select id="filtroSemestre">
-                    <option value="">Todos</option>
-                    <?php foreach ($semestres as $s): ?>
-                        <option value="<?= $s['id_semestre'] ?>"><?= $s['numero'] ?>°</option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+<div class="filtros-container" style="margin-bottom:15px;">
+    <?php if ($rol === 'admin'): ?>
+        <div>
+            <label>Filtrar por carrera:</label>
+            <select id="filtroCarrera">
+                <option value="">Todas</option>
+                <?php foreach ($carreras as $c): ?>
+                    <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
+    <?php endif; ?>
+
+    <div>
+        <label>Filtrar por semestre:</label>
+        <select id="filtroSemestre">
+            <option value="">Todos</option>
+            <?php foreach ($semestres as $s): ?>
+                <option value="<?= $s['id_semestre'] ?>"><?= $s['numero'] ?>°</option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+</div>
+
     <?php endif; ?>
 
     <button class="btn-agregar" onclick="abrirModalMateria()">Agregar Materia</button>

@@ -97,7 +97,14 @@ ob_start();
         </thead>
 
         <tbody>
-            <?php foreach ($alumnos as $a): ?>
+    <?php if (count($alumnos) === 0): ?>
+        <tr>
+            <td colspan="5" style="text-align:center; color:#555;">
+                No hay alumnos registrados
+            </td>
+        </tr>
+    <?php else: ?>
+        <?php foreach ($alumnos as $a): ?>
             <tr
                 data-id="<?= $a['id_alumno']; ?>"
                 data-nombre="<?= htmlspecialchars($a['nombre']); ?>"
@@ -118,8 +125,10 @@ ob_start();
                     </a>
                 </td>
             </tr>
-            <?php endforeach; ?>
-        </tbody>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</tbody>
+
     </table>
 
 </div>

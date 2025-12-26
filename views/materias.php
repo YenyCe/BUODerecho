@@ -64,29 +64,38 @@ ob_start();
                 <th>Acciones</th>
             </tr>
         </thead>
-        <tbody>
-            <?php foreach ($materias as $m): ?>
-                <tr
-                    data-id="<?= $m['id_materia'] ?>"
-                    data-nombre="<?= htmlspecialchars($m['nombre']) ?>"
-                    data-clave="<?= htmlspecialchars($m['clave']) ?>"
-                    data-horas_semana="<?= $m['horas_semana'] ?>"
-                    data-horas_semestre="<?= $m['horas_semestre'] ?>"
-                    data-id_carrera="<?= $m['id_carrera'] ?? '' ?>">
-                    <td><?= htmlspecialchars($m['nombre']) ?></td>
-                    <td><?= htmlspecialchars($m['clave']) ?></td>
-                    <td><?= $m['horas_semana'] ?></td>
-                    <td><?= $m['horas_semestre'] ?></td>
-                    <?php if ($rol === 'admin'): ?>
-                        <td><?= htmlspecialchars($m['nombre_carrera'] ?? '') ?></td>
-                    <?php endif; ?>
-                    <td>
-                        <button class="btn-editar" onclick="abrirModalMateria(<?= $m['id_materia'] ?>)">Editar</button>
-                        <a href="../controllers/MateriasController.php?eliminar=<?= $m['id_materia'] ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar esta materia?')">Eliminar</a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
+     <tbody>
+    <?php if (count($materias) === 0): ?>
+        <tr>
+            <td colspan="<?= $rol === 'admin' ? 6 : 5 ?>" style="text-align:center; color:#555;">
+                No hay materias registradas
+            </td>
+        </tr>
+    <?php else: ?>
+        <?php foreach ($materias as $m): ?>
+            <tr
+                data-id="<?= $m['id_materia'] ?>"
+                data-nombre="<?= htmlspecialchars($m['nombre']) ?>"
+                data-clave="<?= htmlspecialchars($m['clave']) ?>"
+                data-horas_semana="<?= $m['horas_semana'] ?>"
+                data-horas_semestre="<?= $m['horas_semestre'] ?>"
+                data-id_carrera="<?= $m['id_carrera'] ?? '' ?>">
+                <td><?= htmlspecialchars($m['nombre']) ?></td>
+                <td><?= htmlspecialchars($m['clave']) ?></td>
+                <td><?= $m['horas_semana'] ?></td>
+                <td><?= $m['horas_semestre'] ?></td>
+                <?php if ($rol === 'admin'): ?>
+                    <td><?= htmlspecialchars($m['nombre_carrera'] ?? '') ?></td>
+                <?php endif; ?>
+                <td>
+                    <button class="btn-editar" onclick="abrirModalMateria(<?= $m['id_materia'] ?>)">Editar</button>
+                    <a href="../controllers/MateriasController.php?eliminar=<?= $m['id_materia'] ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar esta materia?')">Eliminar</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</tbody>
+
     </table>
 </div>
 

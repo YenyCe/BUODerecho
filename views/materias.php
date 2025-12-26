@@ -7,16 +7,22 @@ require_once "../middlewares/auth.php";
 require_once "../config/conexion.php";
 require_once "../models/MateriasModel.php";
 require_once "../models/CarrerasModel.php";
+require_once "../models/SemestresModel.php";
 
 $rol = $_SESSION['rol'];
 $id_carrera = ($rol === 'coordinador') ? $_SESSION['id_carrera'] : null;
 
 $materiaModel = new MateriasModel($conn);
 $carrerasModel = new CarrerasModel($conn);
+$semModel = new SemestresModel($conn);
 
-$materias = $materiaModel->getMaterias($id_carrera); // Filtra por carrera si es coordinador
+// Obtener materias filtradas por carrera si es coordinador
+$materias = $materiaModel->getMaterias($id_carrera);
 
-// Solo administrador necesita todas las carreras para el select
+// Obtener todos los semestres para el select y filtro
+$semestres = $semModel->getSemestres();
+
+// Solo admin necesita todas las carreras
 $carreras = ($rol === 'admin') ? $carrerasModel->obtenerCarreras() : [];
 
 $alerta = '';
@@ -26,6 +32,7 @@ if (isset($_SESSION['alerta'])) {
                </div>";
     unset($_SESSION['alerta']);
 }
+
 ob_start();
 ?>
 
@@ -37,47 +44,43 @@ ob_start();
         <div class="filtros-container" style="margin-bottom:15px;">
             <div>
                 <label>Filtrar por carrera:</label>
-
-                <select id="filtroCarrera" onchange="filtrarCarrera()">
+                <select id="filtroCarrera">
                     <option value="">Todas</option>
-                    <?php
-                    $carreras = $conn->query("SELECT id_carrera, nombre FROM carreras ORDER BY nombre ASC")->fetch_all(MYSQLI_ASSOC);
-                    foreach ($carreras as $c): ?>
+                    <?php foreach ($carreras as $c): ?>
                         <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
                     <?php endforeach; ?>
                 </select>
-
+            </div>
+            <div>
                 <label>Filtrar por semestre:</label>
-<select id="filtroSemestre">
-    <option value="">Todos</option>
-    <?php for ($i = 1; $i <= 12; $i++): ?>
-        <option value="<?= $i ?>"><?= $i ?>°</option>
-    <?php endfor; ?>
-</select>
-
+                <select id="filtroSemestre">
+                    <option value="">Todos</option>
+                    <?php foreach ($semestres as $s): ?>
+                        <option value="<?= $s['id_semestre'] ?>"><?= $s['numero'] ?>°</option>
+                    <?php endforeach; ?>
+                </select>
             </div>
         </div>
     <?php endif; ?>
-    <button class="btn-agregar" onclick="abrirModalMateria()">Agregar Materia</button>
 
+    <button class="btn-agregar" onclick="abrirModalMateria()">Agregar Materia</button>
 
     <table class="tabla-docentes">
         <thead>
             <tr>
-
                 <th>Nombre</th>
                 <th>Clave</th>
+                <th>Semestre</th>
                 <th>H/Semana</th>
                 <th>H/Semestre</th>
-                <th>Semestre</th>
                 <?php if ($rol === 'admin'): ?><th>Carrera</th><?php endif; ?>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            <?php if (count($materias) === 0): ?>
+            <?php if (empty($materias)): ?>
                 <tr>
-                    <td colspan="<?= $rol === 'admin' ? 6 : 5 ?>" style="text-align:center; color:#555;">
+                    <td colspan="<?= $rol === 'admin' ? 7 : 6 ?>" style="text-align:center; color:#555;">
                         No hay materias registradas
                     </td>
                 </tr>
@@ -89,13 +92,13 @@ ob_start();
                         data-clave="<?= htmlspecialchars($m['clave']) ?>"
                         data-horas_semana="<?= $m['horas_semana'] ?>"
                         data-horas_semestre="<?= $m['horas_semestre'] ?>"
-                        data-id_carrera="<?= $m['id_carrera'] ?? '' ?>">
+                        data-id_carrera="<?= $m['id_carrera'] ?>"
+                        data-id_semestre="<?= $m['id_semestre'] ?>">
                         <td><?= htmlspecialchars($m['nombre']) ?></td>
                         <td><?= htmlspecialchars($m['clave']) ?></td>
+                        <td><?= $m['semestre_num'] ?></td>
                         <td><?= $m['horas_semana'] ?></td>
                         <td><?= $m['horas_semestre'] ?></td>
-                        <td><?= $m['semestre'] ?></td>
-
                         <?php if ($rol === 'admin'): ?>
                             <td><?= htmlspecialchars($m['nombre_carrera'] ?? '') ?></td>
                         <?php endif; ?>
@@ -107,7 +110,6 @@ ob_start();
                 <?php endforeach; ?>
             <?php endif; ?>
         </tbody>
-
     </table>
 </div>
 
@@ -126,20 +128,19 @@ ob_start();
             <label>Clave</label>
             <input type="text" name="clave" id="claveMateria" required>
 
+            <label>Semestre</label>
+            <select name="id_semestre" id="id_semestre_materia" required>
+                <option value="">Seleccione un semestre</option>
+                <?php foreach ($semestres as $s): ?>
+                    <option value="<?= $s['id_semestre'] ?>"><?= $s['numero'] ?>°</option>
+                <?php endforeach; ?>
+            </select>
+
             <label>Horas/Semana</label>
             <input type="number" name="horas_semana" id="horasSemanaMateria" required>
 
             <label>Horas/Semestre</label>
             <input type="number" name="horas_semestre" id="horasSemestreMateria" required>
-            
-            <label>Semestre</label>
-<select name="semestre" id="semestreMateria" required>
-    <option value="">Seleccione</option>
-    <?php for ($i = 1; $i <= 12; $i++): ?>
-        <option value="<?= $i ?>"><?= $i ?>°</option>
-    <?php endfor; ?>
-</select>
-
 
             <?php if ($rol === 'admin'): ?>
                 <label>Carrera</label>
@@ -159,69 +160,67 @@ ob_start();
 </div>
 
 <script>
-    function abrirModalMateria(id = null) {
-        const modal = document.getElementById('modalMateria');
-        modal.style.display = 'block';
+function abrirModalMateria(id = null) {
+    const modal = document.getElementById('modalMateria');
+    modal.style.display = 'block';
 
-        if (id) {
-            const row = document.querySelector(`tr[data-id='${id}']`);
-            document.getElementById('tituloModalMateria').innerText = 'Editar Materia';
-            document.getElementById('accionMateria').value = 'editar';
-            document.getElementById('id_materia').value = id;
-            document.getElementById('nombreMateria').value = row.dataset.nombre;
-            document.getElementById('claveMateria').value = row.dataset.clave;
-            document.getElementById('horasSemanaMateria').value = row.dataset.horas_semana;
-            document.getElementById('horasSemestreMateria').value = row.dataset.horas_semestre;
-            document.getElementById('semestreMateria').value = row.dataset.semestre;
-
-
-            if (document.getElementById('id_carrera_materia')) {
-                document.getElementById('id_carrera_materia').value = row.dataset.id_carrera || '';
-            }
-        } else {
-            document.getElementById('tituloModalMateria').innerText = 'Agregar Materia';
-            document.getElementById('accionMateria').value = 'agregar';
-            document.getElementById('id_materia').value = '';
-            document.getElementById('nombreMateria').value = '';
-            document.getElementById('claveMateria').value = '';
-            document.getElementById('horasSemanaMateria').value = '';
-            document.getElementById('horasSemestreMateria').value = '';
-            document.getElementById('semestreMateria').value = '';
-
-            if (document.getElementById('id_carrera_materia')) document.getElementById('id_carrera_materia').value = '';
-        }
+    if (id) {
+        const row = document.querySelector(`tr[data-id='${id}']`);
+        document.getElementById('tituloModalMateria').innerText = 'Editar Materia';
+        document.getElementById('accionMateria').value = 'editar';
+        document.getElementById('id_materia').value = id;
+        document.getElementById('nombreMateria').value = row.dataset.nombre;
+        document.getElementById('claveMateria').value = row.dataset.clave;
+        document.getElementById('horasSemanaMateria').value = row.dataset.horas_semana;
+        document.getElementById('horasSemestreMateria').value = row.dataset.horas_semestre;
+        document.getElementById('id_semestre_materia').value = row.dataset.id_semestre || '';
+        const carrera_input = document.getElementById('id_carrera_materia');
+        if(carrera_input) carrera_input.value = row.dataset.id_carrera || '';
+    } else {
+        document.getElementById('tituloModalMateria').innerText = 'Agregar Materia';
+        document.getElementById('accionMateria').value = 'agregar';
+        document.getElementById('id_materia').value = '';
+        document.getElementById('nombreMateria').value = '';
+        document.getElementById('claveMateria').value = '';
+        document.getElementById('horasSemanaMateria').value = '';
+        document.getElementById('horasSemestreMateria').value = '';
+        document.getElementById('id_semestre_materia').value = '';
+        const carrera_input = document.getElementById('id_carrera_materia');
+        if(carrera_input) carrera_input.value = '';
     }
+}
 
-    function cerrarModalMateria() {
-        document.getElementById('modalMateria').style.display = 'none';
-    }
+function cerrarModalMateria() {
+    document.getElementById('modalMateria').style.display = 'none';
+}
 
-    window.onclick = function(event) {
-        const modal = document.getElementById('modalMateria');
-        if (event.target == modal) {
-            cerrarModalMateria();
-        }
-    }
+window.onclick = function(event) {
+    const modal = document.getElementById('modalMateria');
+    if (event.target == modal) cerrarModalMateria();
+}
 
-    document.getElementById('filtroCarrera')?.addEventListener('change', function() {
-        const carrera = this.value;
-        const filas = document.querySelectorAll('table tbody tr');
-
-        filas.forEach(fila => {
-            const idCarreraFila = fila.getAttribute('data-id_carrera');
-            fila.style.display = (carrera === "" || carrera === idCarreraFila) ? "" : "none";
-        });
-    });
-
-    document.getElementById('filtroSemestre')?.addEventListener('change', function () {
-    const semestre = this.value;
-    document.querySelectorAll('tbody tr').forEach(tr => {
-        tr.style.display = (!semestre || tr.dataset.semestre === semestre) ? '' : 'none';
+// Filtro por carrera
+document.getElementById('filtroCarrera')?.addEventListener('change', function() {
+    const carrera = this.value;
+    const filas = document.querySelectorAll('table tbody tr');
+    filas.forEach(fila => {
+        const idCarreraFila = fila.dataset.id_carrera;
+        fila.style.display = (carrera === "" || carrera === idCarreraFila) ? "" : "none";
     });
 });
 
+// Filtro por semestre
+document.getElementById('filtroSemestre')?.addEventListener('change', function() {
+    const semestre = this.value;
+    const filas = document.querySelectorAll('table tbody tr');
+    filas.forEach(fila => {
+        const idSemestreFila = fila.dataset.id_semestre;
+        fila.style.display = (semestre === "" || idSemestreFila === semestre) ? "" : "none";
+    });
+});
 </script>
 <script src="/ASISTENCIAS/js/modales.js"></script>
+
 <?php
 $content = ob_get_clean();
 $title = "Materias";

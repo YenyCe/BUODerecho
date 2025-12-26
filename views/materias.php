@@ -46,6 +46,15 @@ ob_start();
                         <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
                     <?php endforeach; ?>
                 </select>
+
+                <label>Filtrar por semestre:</label>
+<select id="filtroSemestre">
+    <option value="">Todos</option>
+    <?php for ($i = 1; $i <= 12; $i++): ?>
+        <option value="<?= $i ?>"><?= $i ?>°</option>
+    <?php endfor; ?>
+</select>
+
             </div>
         </div>
     <?php endif; ?>
@@ -55,46 +64,49 @@ ob_start();
     <table class="tabla-docentes">
         <thead>
             <tr>
-               
+
                 <th>Nombre</th>
                 <th>Clave</th>
                 <th>H/Semana</th>
                 <th>H/Semestre</th>
+                <th>Semestre</th>
                 <?php if ($rol === 'admin'): ?><th>Carrera</th><?php endif; ?>
                 <th>Acciones</th>
             </tr>
         </thead>
-     <tbody>
-    <?php if (count($materias) === 0): ?>
-        <tr>
-            <td colspan="<?= $rol === 'admin' ? 6 : 5 ?>" style="text-align:center; color:#555;">
-                No hay materias registradas
-            </td>
-        </tr>
-    <?php else: ?>
-        <?php foreach ($materias as $m): ?>
-            <tr
-                data-id="<?= $m['id_materia'] ?>"
-                data-nombre="<?= htmlspecialchars($m['nombre']) ?>"
-                data-clave="<?= htmlspecialchars($m['clave']) ?>"
-                data-horas_semana="<?= $m['horas_semana'] ?>"
-                data-horas_semestre="<?= $m['horas_semestre'] ?>"
-                data-id_carrera="<?= $m['id_carrera'] ?? '' ?>">
-                <td><?= htmlspecialchars($m['nombre']) ?></td>
-                <td><?= htmlspecialchars($m['clave']) ?></td>
-                <td><?= $m['horas_semana'] ?></td>
-                <td><?= $m['horas_semestre'] ?></td>
-                <?php if ($rol === 'admin'): ?>
-                    <td><?= htmlspecialchars($m['nombre_carrera'] ?? '') ?></td>
-                <?php endif; ?>
-                <td>
-                    <button class="btn-editar" onclick="abrirModalMateria(<?= $m['id_materia'] ?>)">Editar</button>
-                    <a href="../controllers/MateriasController.php?eliminar=<?= $m['id_materia'] ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar esta materia?')">Eliminar</a>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    <?php endif; ?>
-</tbody>
+        <tbody>
+            <?php if (count($materias) === 0): ?>
+                <tr>
+                    <td colspan="<?= $rol === 'admin' ? 6 : 5 ?>" style="text-align:center; color:#555;">
+                        No hay materias registradas
+                    </td>
+                </tr>
+            <?php else: ?>
+                <?php foreach ($materias as $m): ?>
+                    <tr
+                        data-id="<?= $m['id_materia'] ?>"
+                        data-nombre="<?= htmlspecialchars($m['nombre']) ?>"
+                        data-clave="<?= htmlspecialchars($m['clave']) ?>"
+                        data-horas_semana="<?= $m['horas_semana'] ?>"
+                        data-horas_semestre="<?= $m['horas_semestre'] ?>"
+                        data-id_carrera="<?= $m['id_carrera'] ?? '' ?>">
+                        <td><?= htmlspecialchars($m['nombre']) ?></td>
+                        <td><?= htmlspecialchars($m['clave']) ?></td>
+                        <td><?= $m['horas_semana'] ?></td>
+                        <td><?= $m['horas_semestre'] ?></td>
+                        <td><?= $m['semestre'] ?></td>
+
+                        <?php if ($rol === 'admin'): ?>
+                            <td><?= htmlspecialchars($m['nombre_carrera'] ?? '') ?></td>
+                        <?php endif; ?>
+                        <td>
+                            <button class="btn-editar" onclick="abrirModalMateria(<?= $m['id_materia'] ?>)">Editar</button>
+                            <a href="../controllers/MateriasController.php?eliminar=<?= $m['id_materia'] ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar esta materia?')">Eliminar</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </tbody>
 
     </table>
 </div>
@@ -119,6 +131,15 @@ ob_start();
 
             <label>Horas/Semestre</label>
             <input type="number" name="horas_semestre" id="horasSemestreMateria" required>
+            
+            <label>Semestre</label>
+<select name="semestre" id="semestreMateria" required>
+    <option value="">Seleccione</option>
+    <?php for ($i = 1; $i <= 12; $i++): ?>
+        <option value="<?= $i ?>"><?= $i ?>°</option>
+    <?php endfor; ?>
+</select>
+
 
             <?php if ($rol === 'admin'): ?>
                 <label>Carrera</label>
@@ -151,6 +172,8 @@ ob_start();
             document.getElementById('claveMateria').value = row.dataset.clave;
             document.getElementById('horasSemanaMateria').value = row.dataset.horas_semana;
             document.getElementById('horasSemestreMateria').value = row.dataset.horas_semestre;
+            document.getElementById('semestreMateria').value = row.dataset.semestre;
+
 
             if (document.getElementById('id_carrera_materia')) {
                 document.getElementById('id_carrera_materia').value = row.dataset.id_carrera || '';
@@ -163,6 +186,8 @@ ob_start();
             document.getElementById('claveMateria').value = '';
             document.getElementById('horasSemanaMateria').value = '';
             document.getElementById('horasSemestreMateria').value = '';
+            document.getElementById('semestreMateria').value = '';
+
             if (document.getElementById('id_carrera_materia')) document.getElementById('id_carrera_materia').value = '';
         }
     }
@@ -187,6 +212,14 @@ ob_start();
             fila.style.display = (carrera === "" || carrera === idCarreraFila) ? "" : "none";
         });
     });
+
+    document.getElementById('filtroSemestre')?.addEventListener('change', function () {
+    const semestre = this.value;
+    document.querySelectorAll('tbody tr').forEach(tr => {
+        tr.style.display = (!semestre || tr.dataset.semestre === semestre) ? '' : 'none';
+    });
+});
+
 </script>
 <script src="/ASISTENCIAS/js/modales.js"></script>
 <?php

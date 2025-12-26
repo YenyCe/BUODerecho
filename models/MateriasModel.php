@@ -9,40 +9,58 @@ class MateriasModel {
 
     // Obtener materias, opcionalmente filtrando por carrera
 // Obtener materias, opcionalmente filtrando por carrera
-public function getMaterias($id_carrera = null){
+public function getMaterias($id_carrera = null, $semestre = null){
     $sql = "SELECT m.*, c.nombre AS nombre_carrera
             FROM materias m
             LEFT JOIN carreras c ON m.id_carrera = c.id_carrera
-            ORDER BY m.id_materia DESC";
+            WHERE 1=1";
 
-    if($id_carrera){
-        $sql = "SELECT m.*, c.nombre AS nombre_carrera
-                FROM materias m
-                LEFT JOIN carreras c ON m.id_carrera = c.id_carrera
-                WHERE m.id_carrera = ?
-                ORDER BY m.id_materia DESC";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $id_carrera);
-        $stmt->execute();
-        $result = $stmt->get_result();
-    } else {
-        $result = $this->conn->query($sql);
+    $params = [];
+    $types = "";
+
+    if ($id_carrera) {
+        $sql .= " AND m.id_carrera = ?";
+        $types .= "i";
+        $params[] = $id_carrera;
     }
 
-    return $result->fetch_all(MYSQLI_ASSOC);
+    if ($semestre) {
+        $sql .= " AND m.semestre = ?";
+        $types .= "i";
+        $params[] = $semestre;
+    }
+
+    $sql .= " ORDER BY m.semestre, m.nombre";
+
+    $stmt = $this->conn->prepare($sql);
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
+    }
+    $stmt->execute();
+
+    return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
-public function agregarMateria($nombre, $clave, $horas_semana, $horas_semestre, $id_carrera){
-    $stmt = $this->conn->prepare("INSERT INTO materias (nombre, clave, horas_semana, horas_semestre, id_carrera) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssiii", $nombre, $clave, $horas_semana, $horas_semestre, $id_carrera);
+
+public function agregarMateria($nombre, $clave, $semestre, $horas_semana, $horas_semestre, $id_carrera){
+    $stmt = $this->conn->prepare(
+        "INSERT INTO materias (nombre, clave, semestre, horas_semana, horas_semestre, id_carrera)
+         VALUES (?, ?, ?, ?, ?, ?)"
+    );
+    $stmt->bind_param("ssiiii", $nombre, $clave, $semestre, $horas_semana, $horas_semestre, $id_carrera);
     return $stmt->execute();
 }
 
-public function editarMateria($id, $nombre, $clave, $horas_semana, $horas_semestre, $id_carrera){
-    $stmt = $this->conn->prepare("UPDATE materias SET nombre=?, clave=?, horas_semana=?, horas_semestre=?, id_carrera=? WHERE id_materia=?");
-    $stmt->bind_param("ssiiii", $nombre, $clave, $horas_semana, $horas_semestre, $id_carrera, $id);
+public function editarMateria($id, $nombre, $clave, $semestre, $horas_semana, $horas_semestre, $id_carrera){
+    $stmt = $this->conn->prepare(
+        "UPDATE materias
+         SET nombre=?, clave=?, semestre=?, horas_semana=?, horas_semestre=?, id_carrera=?
+         WHERE id_materia=?"
+    );
+    $stmt->bind_param("ssiiiii", $nombre, $clave, $semestre, $horas_semana, $horas_semestre, $id_carrera, $id);
     return $stmt->execute();
 }
+
 
 
     public function getMateria($id){

@@ -20,6 +20,7 @@ if (isset($_POST['accion']) && $_POST['accion'] == 'agregar') {
         $_POST['clave'],
         $_POST['horas_semana'],
         $_POST['horas_semestre'],
+        $_POST['semestre'],
         $id_carrera_final
     );
     $_SESSION['alerta'] = [
@@ -44,6 +45,7 @@ if (isset($_POST['accion']) && $_POST['accion'] == 'editar') {
         $_POST['clave'],
         $_POST['horas_semana'],
         $_POST['horas_semestre'],
+        $_POST['semestre'],
         $id_carrera_final
     );
     $_SESSION['alerta'] = [

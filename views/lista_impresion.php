@@ -139,10 +139,10 @@ function fecha_larga_es($fecha)
     $paginas = max(1, ceil($total_alumnos / $por_pagina));
 
     $index_global = 0;
-$alumnos_ultima_pagina = $total_alumnos % $por_pagina;
-if ($alumnos_ultima_pagina == 0) {
-    $alumnos_ultima_pagina = $por_pagina;
-}
+    $alumnos_ultima_pagina = $total_alumnos % $por_pagina;
+    if ($alumnos_ultima_pagina == 0) {
+        $alumnos_ultima_pagina = $por_pagina;
+    }
 
     for ($pagina = 1; $pagina <= $paginas; $pagina++):
     ?>
@@ -174,7 +174,7 @@ if ($alumnos_ultima_pagina == 0) {
                         <td colspan="5"><strong>Docente:</strong> <?= htmlspecialchars($docente['nombre'] ?? '-') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="12"><strong>Horario:</strong> <?= htmlspecialchars(formato_horarios($horarios)) ?></td>
+                        <td colspan="12"><strong>Horario:<?= htmlspecialchars(formato_horarios($horarios)) ?></strong> </td>
                     </tr>
                 </table>
 
@@ -255,46 +255,46 @@ if ($alumnos_ultima_pagina == 0) {
 
                 <?php if ($pagina == $paginas): ?>
 
-    <?php
-    // Si la última página está llena (15 alumnos),
-    // las firmas van en hoja aparte
-    if ($alumnos_ultima_pagina == $por_pagina):
-    ?>
+                    <?php
+                    // Si la última página está llena (15 alumnos),
+                    // las firmas van en hoja aparte
+                    if ($alumnos_ultima_pagina == $por_pagina):
+                    ?>
             </div>
         </div>
         <div class="page-break"></div>
         <div class="page">
             <div class="contenido" style="margin-top:40px;">
-    <?php endif; ?>
+            <?php endif; ?>
 
-    <div class="pie-final">
-        <div class="fila-flex">
-            <div class="pie-col">
-                <p style="margin:0;">
-                    <?= htmlspecialchars($docente['nombre'] ?? '-') ?>
-                </p>
-                <div class="linea-firma"></div>
-                <p style="margin:0;"><strong>NOMBRE Y FIRMA DEL DOCENTE</strong></p>
-            </div>
-            <div class="pie-col">
-                <p><strong>CALF. APROBATORIA</strong> (Usar tinta negra)</p>
-                <p><strong>CALF. REPROBATORIA</strong> (Usar tinta roja)</p>
-            </div>
-        </div>
+            <div class="pie-final">
+                <div class="fila-flex">
+                    <div class="pie-col">
+                        <p style="margin:0;">
+                            <?= htmlspecialchars($docente['nombre'] ?? '-') ?>
+                        </p>
+                        <div class="linea-firma"></div>
+                        <p style="margin:0;"><strong>NOMBRE Y FIRMA DEL DOCENTE</strong></p>
+                    </div>
+                    <div class="pie-col">
+                        <p><strong>CALF. APROBATORIA</strong> (Usar tinta negra)</p>
+                        <p><strong>CALF. REPROBATORIA</strong> (Usar tinta roja)</p>
+                    </div>
+                </div>
 
-        <div class="fila-flex">
-            <div class="pie-col">
-                <div class="linea-firma"></div>
-                <p><strong>FECHA DE ENTREGA</strong></p>
+                <div class="fila-flex">
+                    <div class="pie-col">
+                        <div class="linea-firma"></div>
+                        <p><strong>FECHA DE ENTREGA</strong></p>
+                    </div>
+                    <div class="pie-col">
+                        <div class="linea-firma"></div>
+                        <p><strong>NOMBRE DE QUIEN RECIBE</strong></p>
+                    </div>
+                </div>
             </div>
-            <div class="pie-col">
-                <div class="linea-firma"></div>
-                <p><strong>NOMBRE DE QUIEN RECIBE</strong></p>
-            </div>
-        </div>
-    </div>
 
-<?php endif; ?>
+        <?php endif; ?>
 
 
             </div>

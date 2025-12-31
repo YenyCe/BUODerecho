@@ -119,7 +119,7 @@ ob_start();
     </div>
 </div>
 
-<script src="/ASISTENCIAS/js/modales.js"></script>
+<script src="/js/modales.js"></script>
 <script>
     function abrirModalAlumno(id = null) {
         const modal = document.getElementById('modalAlumno');

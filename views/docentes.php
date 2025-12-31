@@ -216,7 +216,7 @@ ob_start();
         });
     });
 </script>
-<script src="/ASISTENCIAS/js/modales.js"></script>
+<script src="/js/modales.js"></script>
 <?php
 $content = ob_get_clean();
 $title = "Docentes";

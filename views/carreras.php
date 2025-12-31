@@ -95,7 +95,7 @@ ob_start();
         }
     }
 </script>
-<script src="/ASISTENCIAS/js/modales.js"></script>
+<script src="/js/modales.js"></script>
 <?php
 // FIN CAPTURA
 $content = ob_get_clean();

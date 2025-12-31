@@ -206,7 +206,7 @@ filtroCarrera?.addEventListener("change", aplicarFiltros);
 filtroGrupo.addEventListener("change", aplicarFiltros);
 </script>
 
-<script src="/ASISTENCIAS/js/modales.js"></script>
+<script src="/js/modales.js"></script>
 
 <?php
 $content = ob_get_clean();

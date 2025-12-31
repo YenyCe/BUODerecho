@@ -5,7 +5,7 @@ $id_materia = intval($_GET['id_materia']);
 $id_grupo   = intval($_GET['id_grupo']);
 
 $res = $conn->query("
-    SELECT d.id_docente, d.nombre
+       SELECT d.id_docente, CONCAT(d.nombre,' ',d.apellidos) AS nombre
     FROM horarios h
     INNER JOIN docentes d ON d.id_docente = h.id_docente
     WHERE h.id_materia = $id_materia

@@ -68,19 +68,42 @@ ob_start();
     <?= $alerta ?>
 
     <h2>Horarios</h2>
+<div class="filtros-container" style="margin-bottom:15px; display:flex; gap:15px;">
+
+    <!-- FILTRO CARRERA (SOLO ADMIN) -->
     <?php if ($_SESSION['rol'] === 'admin'): ?>
-        <div class="filtros-container" style="margin-bottom:15px;">
-            <div>
-                <label>Carrera:</label>
-                <select id="filtroCarrera" class="form-control">
-                    <option value="">Todas</option>
-                    <?php foreach ($carreras as $c): ?>
-                        <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+        <div>
+            <label>Carrera:</label>
+            <select id="filtroCarrera" class="form-control">
+                <option value="">Todas</option>
+                <?php foreach ($carreras as $c): ?>
+                    <option value="<?= $c['id_carrera'] ?>">
+                        <?= htmlspecialchars($c['nombre']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
         </div>
     <?php endif; ?>
+
+    <!-- FILTRO GRUPO (ADMIN Y COORDINADOR) -->
+    <div>
+        <label>Grupo:</label>
+        <select id="filtroGrupo" class="form-control">
+            <option value="">Todos</option>
+            <?php
+            $gruposUnicos = [];
+            foreach ($horarios as $h) {
+                if (!in_array($h['grupo'], $gruposUnicos)) {
+                    $gruposUnicos[] = $h['grupo'];
+                    echo "<option value='{$h['grupo']}'>{$h['grupo']}</option>";
+                }
+            }
+            ?>
+        </select>
+    </div>
+
+</div>
+
 
     <button class="btn-agregar" onclick="abrirModalHorario()">Agregar Horario</button>
 
@@ -377,6 +400,35 @@ ob_start();
         const modal = document.getElementById('modalHorario');
         if (event.target == modal) modal.style.display = 'none';
     });
+</script>
+<script>
+function aplicarFiltros() {
+    const carreraSelect = document.getElementById("filtroCarrera");
+    const grupoSelect = document.getElementById("filtroGrupo");
+
+    const carrera = carreraSelect ? carreraSelect.value : "";
+    const grupo = grupoSelect ? grupoSelect.value : "";
+
+    document.querySelectorAll(".tabla-docentes tbody tr").forEach(fila => {
+        const tdCarrera = fila.children[0].innerText.trim();
+        const tdGrupo   = fila.children[1].innerText.trim();
+
+        let mostrar = true;
+
+        if (carrera !== "" && tdCarrera !== carrera) {
+            mostrar = false;
+        }
+
+        if (grupo !== "" && tdGrupo !== grupo) {
+            mostrar = false;
+        }
+
+        fila.style.display = mostrar ? "" : "none";
+    });
+}
+
+document.getElementById("filtroCarrera")?.addEventListener("change", aplicarFiltros);
+document.getElementById("filtroGrupo")?.addEventListener("change", aplicarFiltros);
 </script>
 
 <script src="/js/modales.js"></script>

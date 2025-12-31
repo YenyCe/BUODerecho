@@ -60,35 +60,44 @@ ob_start();
 ?>
 
 <script>
-function cargarDocentesYGrupos() {
+function cargarGrupos() {
     let materia = document.getElementById("materia").value;
 
     if (materia === "") {
-        document.getElementById("docente").innerHTML = "<option value=''>Seleccione materia...</option>";
         document.getElementById("grupo").innerHTML = "<option value=''>Seleccione materia...</option>";
+        document.getElementById("docente").innerHTML = "<option value=''>Seleccione grupo...</option>";
         return;
     }
 
-    fetch("../ajax/get_docentes_grupos.php?id_materia=" + materia)
+    fetch("../ajax/get_grupos_por_materia.php?id_materia=" + materia)
         .then(r => r.json())
         .then(data => {
 
-            // DOCENTES
-            let htmlDoc = "<option value=''>Seleccione docente...</option>";
-            data.docentes.forEach(d => {
-                htmlDoc += `<option value="${d.id_docente}">${d.nombre}</option>`;
-            });
-            document.getElementById("docente").innerHTML = htmlDoc;
-
-            // GRUPOS
             let htmlGrupo = "<option value=''>Seleccione grupo...</option>";
-            data.grupos.forEach(g => {
+            data.forEach(g => {
                 htmlGrupo += `<option value="${g.id_grupo}">${g.nombre}</option>`;
             });
+
             document.getElementById("grupo").innerHTML = htmlGrupo;
+            document.getElementById("docente").innerHTML = "<option value=''>Seleccione grupo...</option>";
+        });
+}
+
+function cargarDocente() {
+    let materia = document.getElementById("materia").value;
+    let grupo = document.getElementById("grupo").value;
+
+    if (grupo === "") return;
+
+    fetch(`../ajax/get_docente_por_grupo.php?id_materia=${materia}&id_grupo=${grupo}`)
+        .then(r => r.json())
+        .then(d => {
+            let html = `<option value="${d.id_docente}" selected>${d.nombre}</option>`;
+            document.getElementById("docente").innerHTML = html;
         });
 }
 </script>
+
 
 
 <div class="container-form">
@@ -125,7 +134,8 @@ function cargarDocentesYGrupos() {
 
         <div class="full-row">
             <label>Materia</label>
-            <select name="id_materia" id="materia" required onchange="cargarDocentesYGrupos()">
+                <select name="id_materia" id="materia" required onchange="cargarGrupos()">
+
                 <option value="">Seleccione materia...</option>
                 <?php foreach ($materias as $m): ?>
                     <option value="<?= $m['id_materia'] ?>"><?= $m['nombre'] ?></option>
@@ -135,16 +145,18 @@ function cargarDocentesYGrupos() {
 
         <div>
             <label>Docente</label>
-            <select name="id_docente" id="docente" required>
-                <option value="">Seleccione materia...</option>
-            </select>
+            <select name="id_docente" id="docente" required readonly>
+    <option value="">Seleccione grupo...</option>
+</select>
+
         </div>
 
         <div>
             <label>Grupo</label>
-            <select name="id_grupo" id="grupo" required>
-                <option value="">Seleccione materia...</option>
-            </select>
+            <select name="id_grupo" id="grupo" required onchange="cargarDocente()">
+    <option value="">Seleccione materia...</option>
+</select>
+
         </div>
 
         <div>

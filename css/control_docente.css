@@ -1,6 +1,6 @@
 @page {
   size: letter portrait;
-  margin: 15mm;
+  margin: 0;
 }
 
 body {
@@ -24,13 +24,13 @@ body {
 
 /* Página */
 .page {
-  width: 216mm;
-  min-height: 279mm;
+
   /*background: url("../img/logo2.jpg") no-repeat center center;*/
   background-size: 100% 100%;
   padding: 15mm;
   box-sizing: border-box;
 }
+
 
 
 .contenido {

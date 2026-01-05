@@ -116,8 +116,7 @@ $paginas = array_chunk($filas, $filas_por_hoja);
 ?>
 
 <?php foreach ($paginas as $pagina): ?>
-<div class="page" style="width: 216mm;
-  height: 279mm;
+<div class="page" 
   background: url('/img/<?= $nombre_membreteV; ?>') no-repeat center;
   background-size: contain;">
 

@@ -224,7 +224,7 @@ function fecha_larga_es($fecha)
 
                             <th colspan="2">Total</th>
                             <th colspan="2">Calif. Parc. </th>
-                            <th rowspan="1" class="observaciones">Obs</th>
+                            <th rowspan="2" class="observaciones">Obs</th>
                         </tr>
 
                         <!-- fila 2: fechas + subcolumnas Total y Calificación Parcial -->

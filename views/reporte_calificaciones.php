@@ -1,5 +1,12 @@
 <?php
+session_start();
 require_once "../config/conexion.php";
+
+$id_carrera = !empty($_SESSION['id_carrera']) ? $_SESSION['id_carrera'] : null;
+
+if(!$id_carrera){
+    die("403");
+}
 
 // Recibir datos
 $id_docente  = $_POST['id_docente'] ?? 0;
@@ -43,6 +50,16 @@ if ($alumnos_ultima_pagina == 0) {
     $alumnos_ultima_pagina = $por_pagina;
 }
 
+$nombre_membrete = '';
+
+switch ($id_carrera) {
+    case 1:
+        $nombre_membrete = 'logoListas.jpg';
+    break;
+    case 3:
+        $nombre_membrete = '3.jpg';
+    break;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">

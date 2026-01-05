@@ -179,13 +179,13 @@ function fecha_larga_es($fecha)
                     </colgroup>
 
                     <tr>
-                        <td colspan="7"><strong>Materia:</strong> <?= htmlspecialchars($materia['nombre'] ?? '-') ?></td>
+                        <td colspan="6"><strong>Materia:</strong> <?= htmlspecialchars($materia['nombre'] ?? '-') ?></td>
                         <td colspan="2"><strong>Clave:</strong> <?= htmlspecialchars($materia['clave'] ?? '-') ?></td>
                         <td colspan="2"><strong>Horas semestre:</strong> <?= htmlspecialchars($materia['horas_semestre'] ?? '-') ?></td>
                         <td colspan="2"><strong>Horas semana:</strong> <?= htmlspecialchars($materia['horas_semana'] ?? '-') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="3"> <?= ($grupo['semestre_num'] ?? '-') . ' / ' . ($grupo['nombre_grupo'] ?? '-') ?></td>
+                        <td colspan="2"> <?= ($grupo['semestre_num'] ?? '-') . ' / ' . ($grupo['nombre_grupo'] ?? '-') ?></td>
                         <td colspan="2">Parcial </strong> <?= ($p['numero_parcial'] ?? '-')  ?></td>
                         <td colspan="2">
                             <?php
@@ -198,7 +198,7 @@ function fecha_larga_es($fecha)
                             ?>
                         </td>
 
-                        <td colspan="5"><strong>Docente:</strong> <?= htmlspecialchars($docente['nombre'] ?? '-') ?></td>
+                        <td colspan="6"><strong>Docente:</strong> <?= htmlspecialchars($docente['nombre'] ?? '-') ?></td>
                     </tr>
                     <tr>
                         <td colspan="12"><strong>Horario:<?= htmlspecialchars(formato_horarios($horarios)) ?></strong> </td>

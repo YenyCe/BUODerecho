@@ -223,8 +223,8 @@ function fecha_larga_es($fecha)
                             <?php endforeach; ?>
 
                             <th colspan="2">Total</th>
-                            <th colspan="2">Calificación Parcial</th>
-                            <th rowspan="2" class="observaciones">Observaciones</th>
+                            <th colspan="2">Calif. Parc. </th>
+                            <th rowspan="1" class="observaciones">Obs</th>
                         </tr>
 
                         <!-- fila 2: fechas + subcolumnas Total y Calificación Parcial -->
@@ -238,11 +238,11 @@ function fecha_larga_es($fecha)
                             <?php endforeach; ?>
 
                             <!-- subcolumnas de Total -->
-                            <th>Asistencias</th>
+                            <th>Asist</th>
                             <th>Faltas</th>
 
                             <!-- subcolumnas de Calificación Parcial -->
-                            <th>Número</th>
+                            <th>Num</th>
                             <th>Letra</th>
                         </tr>
                     </thead>
@@ -341,3 +341,4 @@ function fecha_larga_es($fecha)
 </body>
 
 </html>
+

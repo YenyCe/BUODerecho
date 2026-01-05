@@ -201,28 +201,3 @@ td.capitalizar.nombre-muy-pequeno {
 }
 
 
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed; /* ⭐ CLAVE */
-  box-sizing: border-box;
-}
-
-.info-table,
-.nombre-normal,
-.nombre-pequeno,
-.nombre-muy-pequeno {
-  width: 100%;
-  table-layout: fixed;
-}
-
-
-.info-table {
-  width: 100%;
-  table-layout: fixed;
-}
-
-.info-table col {
-  width: calc(100% / 12);
-}

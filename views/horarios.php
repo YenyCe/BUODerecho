@@ -210,6 +210,8 @@ ob_start();
                         <label><input type="checkbox" name="dia_semana[]" value="X"> Mié</label>
                         <label><input type="checkbox" name="dia_semana[]" value="J"> Jue</label>
                         <label><input type="checkbox" name="dia_semana[]" value="V"> Vie</label>
+                        <label><input type="checkbox" name="dia_semana[]" value="S"> Sáb</label>
+
                     </div>
                 </div>
 

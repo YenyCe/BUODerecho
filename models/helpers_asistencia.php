@@ -105,7 +105,7 @@ function generar_fechas_y_horas($fecha_inicio, $fecha_fin, $horarios)
         'jueves' => 4,
         'viernes' => 5,
         'sabado' => 6,
-        'sáb ado' => 6,
+        'sábado' => 6,
         'sábado' => 6,
         'domingo' => 7
     ];

@@ -67,12 +67,12 @@ table td {
   border: 1px solid #c8c8c8;
 }
 
-/* Columna nombre del alumno */
+/* Columna nombre del alumno
 .nombre-col {
   width: 35%;
   text-align: left;
 }
-
+ */
 /* Columna Observaciones */
 .observaciones {
   width: 100px;
@@ -200,3 +200,19 @@ td.capitalizar.nombre-muy-pequeno {
   text-transform: uppercase;
 }
 
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* ⭐ CLAVE */
+  box-sizing: border-box;
+}
+
+.info-table,
+.nombre-normal,
+.nombre-pequeno,
+.nombre-muy-pequeno {
+  width: 100%;
+  table-layout: fixed;
+}

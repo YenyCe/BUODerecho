@@ -172,18 +172,22 @@ function fecha_larga_es($fecha)
   background: url('/img/<?= $nombre_membrete; ?>') no-repeat center;
   background-size: contain;">
             <div class="contenido" style="margin-top:40px;">
-                <!-- ENCABEZADO INFORMACIÓN -->
+           <!-- ENCABEZADO INFORMACIÓN -->
                 <table class="info-table">
+                    <colgroup>
+                        <col span="12">
+                    </colgroup>
+
                     <tr>
-                        <td colspan="7"><strong>Materia:</strong> <?= htmlspecialchars($materia['nombre'] ?? '-') ?></td>
+                        <td colspan="6"><strong>Materia:</strong> <?= htmlspecialchars($materia['nombre'] ?? '-') ?></td>
                         <td colspan="2"><strong>Clave:</strong> <?= htmlspecialchars($materia['clave'] ?? '-') ?></td>
                         <td colspan="2"><strong>Horas semestre:</strong> <?= htmlspecialchars($materia['horas_semestre'] ?? '-') ?></td>
                         <td colspan="2"><strong>Horas semana:</strong> <?= htmlspecialchars($materia['horas_semana'] ?? '-') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="3"> <?= ($grupo['semestre_num'] ?? '-') . ' / ' . ($grupo['nombre_grupo'] ?? '-') ?></td>
+                        <td colspan="1"> <?= ($grupo['semestre_num'] ?? '-') . ' / ' . ($grupo['nombre_grupo'] ?? '-') ?></td>
                         <td colspan="2">Parcial </strong> <?= ($p['numero_parcial'] ?? '-')  ?></td>
-                        <td colspan="2">
+                        <td colspan="3">
                             <?php
                             $f_i = fecha_larga_es($fecha_inicio);
                             $f_f = fecha_larga_es($fecha_fin);
@@ -194,12 +198,13 @@ function fecha_larga_es($fecha)
                             ?>
                         </td>
 
-                        <td colspan="5"><strong>Docente:</strong> <?= htmlspecialchars($docente['nombre'] ?? '-') ?></td>
+                        <td colspan="6"><strong>Docente:</strong> <?= htmlspecialchars($docente['nombre'] ?? '-') ?></td>
                     </tr>
                     <tr>
                         <td colspan="12"><strong>Horario:<?= htmlspecialchars(formato_horarios($horarios)) ?></strong> </td>
                     </tr>
                 </table>
+
 
                 <!-- TABLA PRINCIPAL -->
                 <table class="<?= $nombre_clase ?>">

@@ -74,7 +74,10 @@ switch ($id_carrera) {
     <button onclick="window.print()" class="print-btn">Imprimir</button>
 
     <?php for ($pagina = 1; $pagina <= $paginas; $pagina++): ?>
-        <div class="page">
+        <div class="page" style="width: 279.4mm;
+  height: 215.9mm;
+  background: url('/img/<?= $nombre_membrete; ?>') no-repeat center;
+  background-size: contain;">
             <div class="contenido" style="margin-top:40px;">
 
                 <!-- ================== ENCABEZADO ================== -->

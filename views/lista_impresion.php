@@ -174,6 +174,10 @@ function fecha_larga_es($fecha)
             <div class="contenido" style="margin-top:40px;">
                 <!-- ENCABEZADO INFORMACIÓN -->
                 <table class="info-table">
+                    <colgroup>
+                        <col span="12">
+                    </colgroup>
+
                     <tr>
                         <td colspan="7"><strong>Materia:</strong> <?= htmlspecialchars($materia['nombre'] ?? '-') ?></td>
                         <td colspan="2"><strong>Clave:</strong> <?= htmlspecialchars($materia['clave'] ?? '-') ?></td>

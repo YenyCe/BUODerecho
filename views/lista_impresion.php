@@ -180,8 +180,8 @@ function fecha_larga_es($fecha)
 
                     <tr>
                         <td colspan="6"><strong>Materia:</strong> <?= htmlspecialchars($materia['nombre'] ?? '-') ?></td>
-                        <td colspan="2"><strong>Clave:</strong> <?= htmlspecialchars($materia['clave'] ?? '-') ?></td>
-                        <td colspan="2"><strong>Horas semestre:</strong> <?= htmlspecialchars($materia['horas_semestre'] ?? '-') ?></td>
+                        <td colspan="1.5"><strong>Clave:</strong> <?= htmlspecialchars($materia['clave'] ?? '-') ?></td>
+                        <td colspan="2.5"><strong>Horas semestre:</strong> <?= htmlspecialchars($materia['horas_semestre'] ?? '-') ?></td>
                         <td colspan="2"><strong>Horas semana:</strong> <?= htmlspecialchars($materia['horas_semana'] ?? '-') ?></td>
                     </tr>
                     <tr>
@@ -237,8 +237,8 @@ function fecha_larga_es($fecha)
                             <?php endforeach; ?>
 
                             <!-- subcolumnas de Total -->
-                            <th>Total</th>
-                            <th>Faltas</th>
+                            <th>T</th>
+                            <th>F</th>
 
                             <!-- subcolumnas de Calificación Parcial -->
                             <th>Número</th>

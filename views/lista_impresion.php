@@ -1,6 +1,15 @@
 <?php
+session_start();
 require_once "../config/conexion.php";
 require_once "../models/helpers_asistencia.php";
+
+$id_carrera = !empty($_SESSION['id_carrera']) ? $_SESSION['id_carrera'] : null;
+
+if(!$id_carrera){
+    die("403");
+}
+
+
 
 // Recibir datos
 $id_docente  = isset($_POST['id_docente']) ? (int)$_POST['id_docente'] : 0;
@@ -57,6 +66,17 @@ if ($total_fechas <= 10) {
     $nombre_clase = "nombre-pequeno";  // un poco más pequeño
 } else {
     $nombre_clase = "nombre-muy-pequeno"; // aún más pequeño
+}
+
+$nombre_membrete = '';
+
+switch ($id_carrera) {
+    case 1:
+        $nombre_membrete = 'logoListas.jpg';
+    break;
+    case 3:
+        $nombre_membrete = '2.png';
+    break;
 }
 
 // Arreglo con los nombres de los meses en español
@@ -147,7 +167,10 @@ function fecha_larga_es($fecha)
     for ($pagina = 1; $pagina <= $paginas; $pagina++):
     ?>
 
-        <div class="page">
+        <div class="page" style="width: 279.4mm;
+  height: 215.9mm;
+  background: url('/img/<?= $nombre_membrete; ?>') no-repeat center;
+  background-size: contain;">
             <div class="contenido" style="margin-top:40px;">
                 <!-- ENCABEZADO INFORMACIÓN -->
                 <table class="info-table">
@@ -262,8 +285,12 @@ function fecha_larga_es($fecha)
                     ?>
             </div>
         </div>
+        
         <div class="page-break"></div>
-        <div class="page">
+        <div class="page" style="width: 279.4mm;
+  height: 215.9mm;
+  background: url('/img/<?= $nombre_membrete; ?>') no-repeat center;
+  background-size: contain;">
             <div class="contenido" style="margin-top:40px;">
             <?php endif; ?>
 

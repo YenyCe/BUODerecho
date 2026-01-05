@@ -22,15 +22,17 @@ body {
   cursor: pointer;
 }
 
+
 /* Página */
 .page {
   width: 279mm;
   height: 214.5mm;
-  background: url("../img/1.png") no-repeat center center;
+  /*background: url("../img/1.png") no-repeat center center;*/
   background-size: 100% 100%;
   padding: 15mm 8mm;
   box-sizing: border-box;
 }
+
 
 .contenido {
   padding: 10px;

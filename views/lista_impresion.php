@@ -237,8 +237,8 @@ function fecha_larga_es($fecha)
                             <?php endforeach; ?>
 
                             <!-- subcolumnas de Total -->
-                            <th>T</th>
-                            <th>F</th>
+                            <th>Total</th>
+                            <th>Faltas</th>
 
                           
                         </tr>
@@ -266,8 +266,7 @@ function fecha_larga_es($fecha)
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
 
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
+                 
 
                                 <td>&nbsp;</td>
                             </tr>

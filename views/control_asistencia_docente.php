@@ -116,10 +116,11 @@ $paginas = array_chunk($filas, $filas_por_hoja);
 ?>
 
 <?php foreach ($paginas as $pagina): ?>
-<div class="page" style="width: 279.4mm;
-  height: 215.9mm;
+<div class="page" style="width: 216mm;
+  height: 279mm;
   background: url('/img/<?= $nombre_membreteV; ?>') no-repeat center;
   background-size: contain;">
+
 <div class="contenido" style="margin-top:60px;">
 
 <table class="info-table">

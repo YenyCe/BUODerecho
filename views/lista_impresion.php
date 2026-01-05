@@ -186,8 +186,8 @@ function fecha_larga_es($fecha)
                     </tr>
                     <tr>
                         <td colspan="1"> <?= ($grupo['semestre_num'] ?? '-') . ' / ' . ($grupo['nombre_grupo'] ?? '-') ?></td>
-                        <td colspan="1">Parcial </strong> <?= ($p['numero_parcial'] ?? '-')  ?></td>
-                        <td colspan="4">
+                        <td colspan="2">Parcial </strong> <?= ($p['numero_parcial'] ?? '-')  ?></td>
+                        <td colspan="3">
                             <?php
                             $f_i = fecha_larga_es($fecha_inicio);
                             $f_f = fecha_larga_es($fecha_fin);
@@ -221,9 +221,9 @@ function fecha_larga_es($fecha)
                                 <th colspan="<?= $cols_mes ?>"><?= ucfirst($mes) ?></th>
                             <?php endforeach; ?>
 
-                            <th colspan="2">Total</th>
-                            <th colspan="2">Calificación Parcial</th>
-                            <th rowspan="2" class="observaciones">Observaciones</th>
+                            <th colspan="2">Asistencias</th>
+                            <th colspan="2">Calf.Parcial</th>
+                            <th rowspan="2" class="observaciones">Obse</th>
                         </tr>
 
                         <!-- fila 2: fechas + subcolumnas Total y Calificación Parcial -->
@@ -237,7 +237,7 @@ function fecha_larga_es($fecha)
                             <?php endforeach; ?>
 
                             <!-- subcolumnas de Total -->
-                            <th>Asistencias</th>
+                            <th>Total</th>
                             <th>Faltas</th>
 
                             <!-- subcolumnas de Calificación Parcial -->

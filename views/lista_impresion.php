@@ -185,9 +185,9 @@ function fecha_larga_es($fecha)
                         <td colspan="2"><strong>Horas semana:</strong> <?= htmlspecialchars($materia['horas_semana'] ?? '-') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="2"> <?= ($grupo['semestre_num'] ?? '-') . ' / ' . ($grupo['nombre_grupo'] ?? '-') ?></td>
-                        <td colspan="2">Parcial </strong> <?= ($p['numero_parcial'] ?? '-')  ?></td>
-                        <td colspan="2">
+                        <td colspan="1"> <?= ($grupo['semestre_num'] ?? '-') . ' / ' . ($grupo['nombre_grupo'] ?? '-') ?></td>
+                        <td colspan="1">Parcial </strong> <?= ($p['numero_parcial'] ?? '-')  ?></td>
+                        <td colspan="4">
                             <?php
                             $f_i = fecha_larga_es($fecha_inicio);
                             $f_f = fecha_larga_es($fecha_fin);

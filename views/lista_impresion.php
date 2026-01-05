@@ -75,7 +75,7 @@ switch ($id_carrera) {
         $nombre_membrete = 'logoListas.jpg';
     break;
     case 3:
-        $nombre_membrete = '1.png';
+        $nombre_membrete = '3.jpg';
     break;
 }
 

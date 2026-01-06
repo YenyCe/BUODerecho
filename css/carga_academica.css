@@ -132,3 +132,88 @@ table td {
     display: none;
   }
 }
+
+
+
+
+.texto p {
+    text-align: justify;
+    text-indent: 2.5em; /* Sangría formal */
+    margin-bottom: 14px;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+/* Bienvenida */
+.bienvenida {
+    text-align: center !important;
+    text-indent: 0 !important;
+}
+
+
+
+/* Colores institucionales */
+.bienvenida-naranja {
+    color: #e67e22;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.bienvenida-azul {
+    color: #1f4fa3;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+/* Fila del docente */
+.fila-docente {
+    background: #0c2958;
+    color: #ffffff; /* Azul fuerte */
+    font-size: 14px;
+    padding: 8px;
+    text-align: center;
+}
+
+
+/* Fila de detalles */
+.fila-detalle  {
+    background: #b9dafa;
+    color: #000000; /* Azul más bajo */
+    font-size: 13px;
+}
+
+
+
+/* Firma */
+.firma {
+    margin-top: 40px;
+    text-align: center;
+    line-height: 1.4;
+}
+
+/* ATENTAMENTE */
+.firma-atentamente {
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+
+/* Imagen de la firma */
+.firma-imagen img {
+    max-width: 180px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* Nombre */
+.firma-nombre {
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+/* Cargo */
+.firma-cargo {
+    font-size: 13px;
+}
+
+

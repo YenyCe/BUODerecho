@@ -115,51 +115,96 @@ $fecha = "Oaxaca de Juárez, Oaxaca a "
 
 <div class="titulo">
     <?= strtoupper($docente['nombre']) ?><br>
-    DOCENTE DE ASIGNATURA DE LA LICENCIATURA EN <?= strtoupper($docente['carrera']) ?> DE LA BENEMÉRITA UNIVERSIDAD DE OAXACA<br>
+    DOCENTE DE ASIGNATURA DE LA LICENCIATURA <br> EN <?= strtoupper($docente['carrera']) ?> DE LA BENEMÉRITA UNIVERSIDAD DE OAXACA<br>
     PRESENTE
 </div>
 
-
 <div class="texto">
-La Benemérita Universidad de Oaxaca (BUO), a través de sus Programas Académicos,
-asume el compromiso de formar profesionales de excelencia; por lo que resulta
-fundamental contar con docentes de alto nivel académico.
+    <p>
+        La Benemérita Universidad de Oaxaca (BUO), a través del Programa Académico de la
+        Licenciatura en Derecho, asume el compromiso de formar profesionales de excelencia,
+        que impacten de manera positiva en nuestra sociedad, como reconocidos Licenciados
+        en Derecho del país; por lo que resulta de gran importancia contar con docentes de
+        alto nivel, que mediante su práctica impacten de manera positiva en nuestra
+        comunidad universitaria.
+    </p>
 
-En este sentido, se detallan a continuación las horas clase asignadas durante
-el ciclo escolar vigente:
+    <p>
+        Conocedores de su amplia trayectoria como profesional del derecho y de su alto
+        profesionalismo académico, comprometido por vocación en la labor educativa,
+        agradecemos su invaluable participación en esta institución y le brindamos la más
+        cordial
+    </p>
+
+    <p class="bienvenida">
+        <span class="bienvenida-naranja">BIENVENIDA A NUESTRO</span><br>
+        <span class="bienvenida-azul">CLAUSTRO DOCENTE BUO, CICLO ESCOLAR 2024–2025</span>
+    </p>
+    
+    <p>
+        En este sentido y con fundamento en los artículos 30, 32, 34, 35 y 36 del Reglamento
+        Interno de la BUO, tengo a bien presentarle las horas clase asignadas en la
+        Licenciatura en Derecho de esta institución educativa, durante el periodo
+        comprendido del 19 de agosto al 21 de diciembre de 2024, que se detalla a
+        continuación:
+    </p>
 </div>
 
+
 <table class="tabla">
-<thead>
-<tr>
-    <th>SEMESTRE</th>
-    <th>MATERIA</th>
-    <th>DÍAS Y HORAS</th>
-    <th>HORAS</th>
-</tr>
-</thead>
-<tbody>
-<?php while ($r = $carga->fetch_assoc()): ?>
-<tr>
-    <td align="center"><?= $r['semestre'] ?></td>
-    <td><?= $r['materia'] ?></td>
-    <td><?= $r['horario'] ?></td>
-    <td align="center"><?= (int)$r['horas'] ?></td>
-</tr>
-<?php endwhile; ?>
-</tbody>
+    <thead>
+        <tr class="fila-docente">
+            <td class="docente-label">DOCENTE</td>
+            <td class="docente-nombre" colspan="3">
+                <?= strtoupper($docente['nombre']) ?>
+            </td>
+        </tr>
+
+        <tr class="fila-detalle">
+            <th>SEMESTRE</th>
+            <th>MATERIA</th>
+            <th>DÍAS Y HORAS</th>
+            <th>HORAS</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    <?php while ($r = $carga->fetch_assoc()): ?>
+   
+
+        <!-- FILA DETALLE -->
+        <tr >
+            <td align="center"><?= $r['semestre'] ?></td>
+            <td><?= $r['materia'] ?></td>
+            <td><?= $r['horario'] ?></td>
+            <td align="center"><?= (int)$r['horas'] ?></td>
+        </tr>
+    <?php endwhile; ?>
+    </tbody>
 </table>
 
+
 <div class="texto">
-Seguros del amplio intercambio de experiencias educativas, me suscribo reiterándole
-mis consideraciones.
+        <p>
+        Seguros del amplio intercambio de experiencias educativas, me suscribo de usted
+reiterándole mis consideraciones. Sin otro particular, le envió un respetuoso saludo.
+    </p>
 </div>
 
 <div class="firma">
-<strong>MTRA. ADABELIA PELÁEZ GARCÍA</strong><br>
-Directora de la Facultad de Ciencias Jurídicas y Humanidades<br>
-Benemérita Universidad de Oaxaca
+    <p class="firma-atentamente">ATENTAMENTE</p>
+
+    <div class="firma-imagen">
+        <img src="/img/firma.png" alt="Firma digital">
+    </div>
+
+    <p class="firma-nombre">MTRA. ADABELIA PELÁEZ GARCÍA</p>
+    <p class="firma-cargo">
+        Directora de la Facultad de Ciencias Jurídicas y Humanidades<br>
+        Benemérita Universidad de Oaxaca
+    </p>
 </div>
+
 
 </div>
 </div>

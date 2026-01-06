@@ -39,26 +39,16 @@ if (!$docente) {
 /* ================= CARGA ACADÉMICA ================= */
 $carga = $conn->query("
     SELECT
-        s.numero AS semestre,
+        m.id_semestre AS semestre,
         m.nombre AS materia,
-        GROUP_CONCAT(
-            CONCAT(
-                h.dias, ' ',
-                TIME_FORMAT(h.hora_inicio,'%H:%i'),
-                ' a ',
-                TIME_FORMAT(h.hora_fin,'%H:%i')
-            )
-            SEPARATOR ', '
-        ) AS horario,
-        SUM(TIMESTAMPDIFF(MINUTE, h.hora_inicio, h.hora_fin))/60 AS horas
+        h.horario_texto AS horario,
+        m.horas_semana AS horas
     FROM horarios h
     INNER JOIN materias m ON h.id_materia = m.id_materia
-    INNER JOIN grupos g ON h.id_grupo = g.id_grupo
-    INNER JOIN semestres s ON g.id_semestre = s.id_semestre
     WHERE h.id_docente = $id_docente
-    GROUP BY s.numero, m.nombre
-    ORDER BY s.numero
+    ORDER BY m.id_semestre, m.nombre
 ");
+
 
 /* ================= FECHA ================= */
 $fecha = "Oaxaca de Juárez, Oaxaca a ".date('d')." de ".date('F')." del ".date('Y');

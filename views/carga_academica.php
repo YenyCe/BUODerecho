@@ -1,18 +1,22 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 require_once "../config/conexion.php";
 
-$id_carrera = $_SESSION['id_carrera'] ?? null;
-$id_docente = (int)($_GET['id_docente'] ?? 0);
-
-if (!$id_carrera || !$id_docente) {
+/* ================= SEGURIDAD ================= */
+if (!isset($_SESSION['id_usuario'])) {
     die("403");
 }
 
-/* ================= CONFIG GENERAL ================= */
-$fecha_oficio = "Oaxaca de Juárez, Oaxaca a " . date('d') . " de " . date('F') . " del " . date('Y');
-$asunto = "CARGA ACADÉMICA";
-$periodo = "19 de agosto al 21 de diciembre de 2024";
+$id_docente = (int)($_GET['id_docente'] ?? 0);
+$id_carrera = $_SESSION['id_carrera'] ?? 1;
+
+if (!$id_docente) {
+    die("Docente inválido");
+}
 
 /* ================= MEMBRETE ================= */
 $membrete = '';
@@ -23,14 +27,14 @@ switch ($id_carrera) {
 
 /* ================= DOCENTE ================= */
 $docente = $conn->query("
-    SELECT 
-        CONCAT(nombre,' ',apellidos) AS nombre,
-        nivel_estudios
+    SELECT CONCAT(nombre,' ',apellidos) AS nombre
     FROM docentes
     WHERE id_docente = $id_docente
 ")->fetch_assoc();
 
-if (!$docente) die("Docente no encontrado");
+if (!$docente) {
+    die("Docente no encontrado");
+}
 
 /* ================= CARGA ACADÉMICA ================= */
 $carga = $conn->query("
@@ -39,13 +43,13 @@ $carga = $conn->query("
         m.nombre AS materia,
         GROUP_CONCAT(
             CONCAT(
-                h.dias,' de ',
+                h.dias, ' ',
                 TIME_FORMAT(h.hora_inicio,'%H:%i'),
                 ' a ',
-                TIME_FORMAT(h.hora_fin,'%H:%i'),
-                ' hrs'
-            ) SEPARATOR ', '
-        ) AS horarios,
+                TIME_FORMAT(h.hora_fin,'%H:%i')
+            )
+            SEPARATOR ', '
+        ) AS horario,
         SUM(TIMESTAMPDIFF(MINUTE, h.hora_inicio, h.hora_fin))/60 AS horas
     FROM horarios h
     INNER JOIN materias m ON h.id_materia = m.id_materia
@@ -56,20 +60,8 @@ $carga = $conn->query("
     ORDER BY s.numero
 ");
 
-/* ================= TEXTO OFICIO ================= */
-$texto = "
-La Benemérita Universidad de Oaxaca (BUO) a través del Programa Académico correspondiente,
-asume el compromiso de formar profesionales de excelencia, que impacten de manera positiva
-en nuestra sociedad; por lo que resulta de gran importancia contar con docentes de alto nivel.
-
-Conocedores de su amplia trayectoria profesional y su alto profesionalismo académico,
-agradecemos su invaluable participación en esta institución y le brindamos la más cordial
-bienvenida a nuestro Claustro Docente BUO, ciclo escolar 2024–2025.
-
-En este sentido y con fundamento en el Reglamento Interno de la BUO, tengo a bien presentarle
-las horas clase asignadas durante el periodo comprendido del $periodo, mismas que se detallan
-a continuación:
-";
+/* ================= FECHA ================= */
+$fecha = "Oaxaca de Juárez, Oaxaca a ".date('d')." de ".date('F')." del ".date('Y');
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -95,7 +87,7 @@ body {
 }
 
 .contenido {
-  padding: 60px 40px;
+  padding: 70px 40px;
 }
 
 .encabezado {
@@ -103,7 +95,7 @@ body {
   font-size: 12px;
 }
 
-.asunto {
+.titulo {
   margin-top: 30px;
   font-weight: bold;
 }
@@ -117,7 +109,7 @@ body {
 .tabla {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  margin-top: 25px;
   font-size: 13px;
 }
 
@@ -127,41 +119,41 @@ body {
 }
 
 .tabla th {
-  background: #f0f0f0;
-  text-align: center;
+  background: #f2f2f2;
 }
 
 .firma {
-  margin-top: 60px;
+  margin-top: 70px;
   text-align: center;
-}
-
-.firma img {
-  height: 60px;
 }
 </style>
 </head>
 
 <body>
 
-<button onclick="window.print()" style="position:fixed; top:20px; right:20px;">Imprimir</button>
+<button onclick="window.print()" class="print-btn">Imprimir</button>
 
 <div class="page">
 <div class="contenido">
 
 <div class="encabezado">
-<?= $fecha_oficio ?><br>
-<strong>ASUNTO:</strong> <?= $asunto ?>
+<?= $fecha ?><br>
+<strong>ASUNTO:</strong> CARGA ACADÉMICA
 </div>
 
-<div class="asunto">
+<div class="titulo">
 <?= strtoupper($docente['nombre']) ?><br>
 DOCENTE DE ASIGNATURA<br>
 PRESENTE
 </div>
 
 <div class="texto">
-<?= nl2br($texto) ?>
+La Benemérita Universidad de Oaxaca (BUO), a través de sus Programas Académicos,
+asume el compromiso de formar profesionales de excelencia; por lo que resulta
+fundamental contar con docentes de alto nivel académico.
+
+En este sentido, se detallan a continuación las horas clase asignadas durante
+el ciclo escolar vigente:
 </div>
 
 <table class="tabla">
@@ -174,11 +166,11 @@ PRESENTE
 </tr>
 </thead>
 <tbody>
-<?php while($r = $carga->fetch_assoc()): ?>
+<?php while ($r = $carga->fetch_assoc()): ?>
 <tr>
     <td align="center"><?= $r['semestre'] ?></td>
     <td><?= $r['materia'] ?></td>
-    <td><?= $r['horarios'] ?></td>
+    <td><?= $r['horario'] ?></td>
     <td align="center"><?= (int)$r['horas'] ?></td>
 </tr>
 <?php endwhile; ?>
@@ -191,7 +183,6 @@ mis consideraciones.
 </div>
 
 <div class="firma">
-<img src="/img/firma_directora.png"><br>
 <strong>MTRA. ADABELIA PELÁEZ GARCÍA</strong><br>
 Directora de la Facultad de Ciencias Jurídicas y Humanidades<br>
 Benemérita Universidad de Oaxaca

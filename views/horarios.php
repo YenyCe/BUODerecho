@@ -79,42 +79,42 @@ ob_start();
     <?= $alerta ?>
 
     <h2>Horarios</h2>
-<div class="filtros-container" style="margin-bottom:15px; display:flex; gap:15px;">
+    <div class="filtros-container" style="margin-bottom:15px; display:flex; gap:15px;">
 
-    <!-- FILTRO CARRERA (SOLO ADMIN) -->
-    <?php if ($_SESSION['rol'] === 'admin'): ?>
+        <!-- FILTRO CARRERA (SOLO ADMIN) -->
+        <?php if ($_SESSION['rol'] === 'admin'): ?>
+            <div>
+                <label>Carrera:</label>
+                <select id="filtroCarrera" class="form-control">
+                    <option value="">Todas</option>
+                    <?php foreach ($carreras as $c): ?>
+                        <option value="<?= $c['id_carrera'] ?>">
+                            <?= htmlspecialchars($c['nombre']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        <?php endif; ?>
+
+        <!-- FILTRO GRUPO (ADMIN Y COORDINADOR) -->
         <div>
-            <label>Carrera:</label>
-            <select id="filtroCarrera" class="form-control">
-                <option value="">Todas</option>
-                <?php foreach ($carreras as $c): ?>
-                    <option value="<?= $c['id_carrera'] ?>">
-                        <?= htmlspecialchars($c['nombre']) ?>
-                    </option>
-                <?php endforeach; ?>
+            <label>Grupo:</label>
+            <select id="filtroGrupo" class="form-control">
+                <option value="">Todos</option>
+                <?php
+                $gruposUnicos = [];
+                foreach ($horarios as $h) {
+                    if (!in_array($h['grupo'], $gruposUnicos)) {
+                        $gruposUnicos[] = $h['grupo'];
+                        echo "<option value='{$h['grupo']}'>{$h['grupo']}</option>";
+                    }
+                }
+                ?>
             </select>
         </div>
-    <?php endif; ?>
-
-    <!-- FILTRO GRUPO (ADMIN Y COORDINADOR) -->
-    <div>
-        <label>Grupo:</label>
-        <select id="filtroGrupo" class="form-control">
-            <option value="">Todos</option>
-            <?php
-            $gruposUnicos = [];
-            foreach ($horarios as $h) {
-                if (!in_array($h['grupo'], $gruposUnicos)) {
-                    $gruposUnicos[] = $h['grupo'];
-                    echo "<option value='{$h['grupo']}'>{$h['grupo']}</option>";
-                }
-            }
-            ?>
-        </select>
     </div>
-</div>
 
-            
+
     <button class="btn-agregar" onclick="abrirModalHorario()">Agregar Horario</button>
 
     <table class="tabla-docentes">
@@ -138,33 +138,33 @@ ob_start();
                     <td><?= htmlspecialchars($h['docente'] ?? '') ?></td>
                     <td><?= htmlspecialchars($h['dias'] ?? '') ?></td>
                     <td><?= htmlspecialchars($h['horario_texto'] ?? '') ?></td>
-<td>
-    <div class="acciones">
-        <button class="btn-editar"
-            onclick='abrirModalHorario(
-                <?= $h["id_horario"] ?>,
-                <?= json_encode($h, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>
-            )'>
-            ✏️ Editar
-        </button>
+                    <td>
+                        <div class="acciones">
+                            <button class="btn-editar"
+                                onclick='abrirModalHorario(
+                                <?= $h["id_horario"] ?>,
+                                <?= json_encode($h, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>
+                            )'>
+                                Editar
+                            </button>
 
-        <a class="btn-eliminar"
-           href="/controllers/HorariosController.php?accion=eliminar&id=<?= $h['id_horario'] ?>"
-           onclick="return confirm('¿Eliminar?')">
-           🗑️ Eliminar
-        </a>
+                            <a class="btn-eliminar"
+                                href="/controllers/HorariosController.php?accion=eliminar&id=<?= $h['id_horario'] ?>"
+                                onclick="return confirm('¿Eliminar?')">
+                                Eliminar
+                            </a>
 
-        <button class="btn-generar"
-            onclick='abrirModalGenerar(
-                <?= $h["id_carrera"] ?>,
-                <?= $h["id_grupo"] ?>,
-                <?= $h["id_materia"] ?>,
-                <?= $h["id_docente"] ?>
-            )'>
-            📄 Generar
-        </button>
-    </div>
-</td>
+                            <button class="btn-generar"
+                                onclick='abrirModalGenerar(
+                                    <?= $h["id_carrera"] ?>,
+                                    <?= $h["id_grupo"] ?>,
+                                    <?= $h["id_materia"] ?>,
+                                    <?= $h["id_docente"] ?>
+                                )'>
+                            Generar
+                            </button>
+                        </div>
+                    </td>
 
                 </tr>
             <?php endforeach; ?>
@@ -274,15 +274,15 @@ ob_start();
             <input type="hidden" name="id_materia" id="g_id_materia">
             <input type="hidden" name="id_docente" id="g_id_docente">
 
-                   <label>Parcial</label>
-                <select name="id_parcial">
-                    <option value="">-- Ninguno --</option>
-                    <?php foreach ($parciales as $p): ?>
-                        <option value="<?= $p['id_parcial'] ?>">
-                            Parcial <?= $p['numero_parcial'] ?> (<?= $p['fecha_inicio'] ?> a <?= $p['fecha_fin'] ?>)
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+            <label>Parcial</label>
+            <select name="id_parcial">
+                <option value="">-- Ninguno --</option>
+                <?php foreach ($parciales as $p): ?>
+                    <option value="<?= $p['id_parcial'] ?>">
+                        Parcial <?= $p['numero_parcial'] ?> (<?= $p['fecha_inicio'] ?> a <?= $p['fecha_fin'] ?>)
+                    </option>
+                <?php endforeach; ?>
+            </select>
             <div style="display:flex; gap:10px; margin-top:15px; justify-content:center;">
 
                 <button type="submit"
@@ -465,13 +465,13 @@ ob_start();
 
     function abrirModalGenerar(id_carrera, id_grupo, id_materia, id_docente) {
 
-    document.getElementById('g_id_carrera').value = id_carrera;
-    document.getElementById('g_id_grupo').value   = id_grupo;
-    document.getElementById('g_id_materia').value = id_materia;
-    document.getElementById('g_id_docente').value = id_docente;
+        document.getElementById('g_id_carrera').value = id_carrera;
+        document.getElementById('g_id_grupo').value = id_grupo;
+        document.getElementById('g_id_materia').value = id_materia;
+        document.getElementById('g_id_docente').value = id_docente;
 
-    document.getElementById('modalGenerar').style.display = 'block';
-}
+        document.getElementById('modalGenerar').style.display = 'block';
+    }
 
     // filtro en la tabla principal por carrera (solo UI)
     document.getElementById("filtroCarrera")?.addEventListener("change", function() {
@@ -495,33 +495,33 @@ ob_start();
     });
 </script>
 <script>
-function aplicarFiltros() {
-    const carreraSelect = document.getElementById("filtroCarrera");
-    const grupoSelect = document.getElementById("filtroGrupo");
+    function aplicarFiltros() {
+        const carreraSelect = document.getElementById("filtroCarrera");
+        const grupoSelect = document.getElementById("filtroGrupo");
 
-    const carrera = carreraSelect ? carreraSelect.value : "";
-    const grupo = grupoSelect ? grupoSelect.value : "";
+        const carrera = carreraSelect ? carreraSelect.value : "";
+        const grupo = grupoSelect ? grupoSelect.value : "";
 
-    document.querySelectorAll(".tabla-docentes tbody tr").forEach(fila => {
-        const tdCarrera = fila.children[0].innerText.trim();
-        const tdGrupo   = fila.children[1].innerText.trim();
+        document.querySelectorAll(".tabla-docentes tbody tr").forEach(fila => {
+            const tdCarrera = fila.children[0].innerText.trim();
+            const tdGrupo = fila.children[1].innerText.trim();
 
-        let mostrar = true;
+            let mostrar = true;
 
-        if (carrera !== "" && tdCarrera !== carrera) {
-            mostrar = false;
-        }
+            if (carrera !== "" && tdCarrera !== carrera) {
+                mostrar = false;
+            }
 
-        if (grupo !== "" && tdGrupo !== grupo) {
-            mostrar = false;
-        }
+            if (grupo !== "" && tdGrupo !== grupo) {
+                mostrar = false;
+            }
 
-        fila.style.display = mostrar ? "" : "none";
-    });
-}
+            fila.style.display = mostrar ? "" : "none";
+        });
+    }
 
-document.getElementById("filtroCarrera")?.addEventListener("change", aplicarFiltros);
-document.getElementById("filtroGrupo")?.addEventListener("change", aplicarFiltros);
+    document.getElementById("filtroCarrera")?.addEventListener("change", aplicarFiltros);
+    document.getElementById("filtroGrupo")?.addEventListener("change", aplicarFiltros);
 </script>
 
 <script src="/js/modales.js"></script>
@@ -532,4 +532,3 @@ $title = "Horarios";
 $pagina = "horarios";
 include "dashboard.php";
 ?>
-

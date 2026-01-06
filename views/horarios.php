@@ -60,7 +60,18 @@ if (isset($_SESSION['alerta'])) {
 }
 var_dump($_SESSION['id_carrera']);
 
+// ===========================================================
+// 3. OBTENER PARCIALES DE ESA CARRERA
+// ===========================================================
+$parciales = [];
 
+if ($id_carrera) {
+    $parciales = $conn->query("
+        SELECT * FROM parciales
+        WHERE id_carrera = $id_carrera
+        ORDER BY numero_parcial
+    ")->fetch_all(MYSQLI_ASSOC);
+}
 ob_start();
 ?>
 
@@ -252,16 +263,15 @@ ob_start();
             <input type="hidden" name="id_materia" id="g_id_materia">
             <input type="hidden" name="id_docente" id="g_id_docente">
 
-            <label>Parcial (opcional)</label>
-            <select name="id_parcial">
-                <option value="">-- Ninguno --</option>
-                <?php foreach ($parciales as $p): ?>
-                    <option value="<?= $p['id_parcial'] ?>">
-                        Parcial <?= $p['numero_parcial'] ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-
+                   <label>Parcial</label>
+                <select name="id_parcial">
+                    <option value="">-- Ninguno --</option>
+                    <?php foreach ($parciales as $p): ?>
+                        <option value="<?= $p['id_parcial'] ?>">
+                            Parcial <?= $p['numero_parcial'] ?> (<?= $p['fecha_inicio'] ?> a <?= $p['fecha_fin'] ?>)
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             <div style="display:flex; gap:10px; margin-top:15px; justify-content:center;">
 
                 <button type="submit"

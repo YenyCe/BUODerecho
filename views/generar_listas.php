@@ -159,7 +159,7 @@ ob_start();
 
 
             <div>
-                <label>Parcial (opcional)</label>
+                <label>Parcial</label>
                 <select name="id_parcial">
                     <option value="">-- Ninguno --</option>
                     <?php foreach ($parciales as $p): ?>

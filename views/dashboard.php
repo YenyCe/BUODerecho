@@ -18,8 +18,7 @@ $pagina = $pagina ?? 'dashboard'; // Si la página no define $pagina, usar 'dash
         <h2>Sistema Académico</h2>
 
         <ul>
-            <li><a href="inicio.php" class="<?= $pagina == 'inicio' ? 'active' : '' ?>">Inicio</a></li>
-
+            <li><a href="inicio.php" class="<?= $pagina == 'inicio' ? 'active' : '' ?>">🏠 Inicio</a></li>
             <?php if ($rol === 'admin'): ?>
                 <li><a href="usuarios.php" class="<?= $pagina == 'usuarios' ? 'active' : '' ?>">👥 Usuarios</a></li>
                 <li><a href="carreras.php" class="<?= $pagina == 'carreras' ? 'active' : '' ?>">🎓 Carreras</a></li>
@@ -45,7 +44,7 @@ $pagina = $pagina ?? 'dashboard'; // Si la página no define $pagina, usar 'dash
             <?php endif; ?>
 
 
-            <li><a href="salir.php">🚪 Cerrar sesión</a></li>
+            <li><a href="salir.php">↩️ Cerrar sesión</a></li>   
 
         </ul>
     </div>

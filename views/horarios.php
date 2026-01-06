@@ -138,23 +138,34 @@ ob_start();
                     <td><?= htmlspecialchars($h['docente'] ?? '') ?></td>
                     <td><?= htmlspecialchars($h['dias'] ?? '') ?></td>
                     <td><?= htmlspecialchars($h['horario_texto'] ?? '') ?></td>
-                    <td>
-                        <button class="btn-editar"
-                            onclick='abrirModalHorario(<?= $h["id_horario"] ?>, <?= json_encode($h, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)'>
-                            Editar
-                        </button>
-                        <a class="btn-eliminar" href="/controllers/HorariosController.php?accion=eliminar&id=<?= $h['id_horario'] ?>" onclick="return confirm('¿Eliminar?')">Eliminar</a>
-                        <button class="btn-generar"
-                            onclick='abrirModalGenerar(
-                                <?= $h["id_carrera"] ?>,
-                                <?= $h["id_grupo"] ?>,
-                                <?= $h["id_materia"] ?>,
-                                <?= $h["id_docente"] ?>
-                            )'>
-                            Generar
-                        </button>
+<td>
+    <div class="acciones">
+        <button class="btn-editar"
+            onclick='abrirModalHorario(
+                <?= $h["id_horario"] ?>,
+                <?= json_encode($h, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>
+            )'>
+            ✏️ Editar
+        </button>
 
-                    </td>
+        <a class="btn-eliminar"
+           href="/controllers/HorariosController.php?accion=eliminar&id=<?= $h['id_horario'] ?>"
+           onclick="return confirm('¿Eliminar?')">
+           🗑️ Eliminar
+        </a>
+
+        <button class="btn-generar"
+            onclick='abrirModalGenerar(
+                <?= $h["id_carrera"] ?>,
+                <?= $h["id_grupo"] ?>,
+                <?= $h["id_materia"] ?>,
+                <?= $h["id_docente"] ?>
+            )'>
+            📄 Generar
+        </button>
+    </div>
+</td>
+
                 </tr>
             <?php endforeach; ?>
         </tbody>

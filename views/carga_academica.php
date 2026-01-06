@@ -11,8 +11,13 @@ if (!isset($_SESSION['id_usuario'])) {
     die("403");
 }
 
+$id_carrera = !empty($_SESSION['id_carrera']) ? $_SESSION['id_carrera'] : null;
+
+if(!$id_carrera){
+    die("403");
+}
+
 $id_docente = (int)($_GET['id_docente'] ?? 0);
-$id_carrera = $_SESSION['id_carrera'] ?? 1;
 
 if (!$id_docente) {
     die("Docente inválido");
@@ -66,7 +71,10 @@ $fecha = "Oaxaca de Juárez, Oaxaca a ".date('d')." de ".date('F')." del ".date(
 
 <button onclick="window.print()" class="print-btn">Imprimir</button>
 
-<div class="page">
+<div class="page" style="
+  background: url('/img/<?= $nombre_membreteV; ?>') no-repeat center;
+  background-size: contain;">
+
 <div class="contenido">
 
 <div class="encabezado">

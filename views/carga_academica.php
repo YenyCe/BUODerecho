@@ -63,7 +63,7 @@ $fecha = "Oaxaca de Juárez, Oaxaca a ".date('d')." de ".date('F')." del ".date(
 <head>
 <meta charset="UTF-8">
 <title>Carga Académica</title>
-<link rel="stylesheet" href="../css/control_docente.css">
+<link rel="stylesheet" href="../css/carga_academica.css">
 
 </head>
 
@@ -72,7 +72,7 @@ $fecha = "Oaxaca de Juárez, Oaxaca a ".date('d')." de ".date('F')." del ".date(
 <button onclick="window.print()" class="print-btn">Imprimir</button>
 
 <div class="page" style="
-  background: url('/img/<?= $nombre_membreteV; ?>') no-repeat center;
+  background: url('/img/<?= $membrete; ?>') no-repeat center;
   background-size: contain;">
 
 <div class="contenido">

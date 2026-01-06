@@ -32,9 +32,12 @@ switch ($id_carrera) {
 
 /* ================= DOCENTE ================= */
 $docente = $conn->query("
-    SELECT CONCAT(nombre,' ',apellidos) AS nombre
-    FROM docentes
-    WHERE id_docente = $id_docente
+    SELECT 
+        CONCAT(d.nombre,' ',d.apellidos) AS nombre,
+        c.nombre AS carrera
+    FROM docentes d
+    INNER JOIN carreras c ON d.id_carrera = c.id_carrera
+    WHERE d.id_docente = $id_docente
 ")->fetch_assoc();
 
 if (!$docente) {
@@ -56,7 +59,24 @@ $carga = $conn->query("
 
 
 /* ================= FECHA ================= */
-$fecha = "Oaxaca de Juárez, Oaxaca a ".date('d')." de ".date('F')." del ".date('Y');
+// ================= FECHA SELECCIONABLE =================
+$fecha_input = $_GET['fecha'] ?? date('Y-m-d');
+
+$meses = [
+    1=>'enero',2=>'febrero',3=>'marzo',4=>'abril',
+    5=>'mayo',6=>'junio',7=>'julio',8=>'agosto',
+    9=>'septiembre',10=>'octubre',11=>'noviembre',12=>'diciembre'
+];
+
+$timestamp = strtotime($fecha_input);
+
+$fecha = "Oaxaca de Juárez, Oaxaca a "
+        . date('d', $timestamp)
+        . " de "
+        . $meses[(int)date('m', $timestamp)]
+        . " del "
+        . date('Y', $timestamp);
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -71,6 +91,15 @@ $fecha = "Oaxaca de Juárez, Oaxaca a ".date('d')." de ".date('F')." del ".date(
 
 <button onclick="window.print()" class="print-btn">Imprimir</button>
 
+<form method="GET" style="margin:20px;">
+    <input type="hidden" name="id_docente" value="<?= $id_docente ?>">
+
+    <label><strong>Seleccionar fecha del documento:</strong></label><br>
+    <input type="date" name="fecha" value="<?= htmlspecialchars($fecha_input) ?>">
+    <button type="submit">Aplicar fecha</button>
+</form>
+
+
 <div class="page" style="
   background: url('/img/<?= $membrete; ?>') no-repeat center;
   background-size: contain;">
@@ -78,15 +107,18 @@ $fecha = "Oaxaca de Juárez, Oaxaca a ".date('d')." de ".date('F')." del ".date(
 <div class="contenido">
 
 <div class="encabezado">
-<?= $fecha ?><br>
-<strong>ASUNTO:</strong> CARGA ACADÉMICA
+    <?= $fecha ?><br>
+    BUO/CEL/LD/810<br>
+    <strong>ASUNTO:</strong> CARGA ACADÉMICA
 </div>
 
+
 <div class="titulo">
-<?= strtoupper($docente['nombre']) ?><br>
-DOCENTE DE ASIGNATURA<br>
-PRESENTE
+    <?= strtoupper($docente['nombre']) ?><br>
+    DOCENTE DE ASIGNATURA DE LA LICENCIATURA EN <?= strtoupper($docente['carrera']) ?> DE LA BENEMÉRITA UNIVERSIDAD DE OAXACA<br>
+    PRESENTE
 </div>
+
 
 <div class="texto">
 La Benemérita Universidad de Oaxaca (BUO), a través de sus Programas Académicos,

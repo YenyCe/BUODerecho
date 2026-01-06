@@ -36,7 +36,6 @@ body {
 
 .contenido {
   padding: 55px 30px; /* arriba/abajo | lados */
-  padding: 10px;
   width: 100%;
   height: 100%;
   box-sizing: border-box;
@@ -121,4 +120,15 @@ table td {
     padding: 6px 8px;
     vertical-align: middle;
     overflow-wrap: break-word;
+}
+
+.encabezado {
+  text-align: right;
+  font-size: 14px;
+}
+
+@media print {
+  form {
+    display: none;
+  }
 }

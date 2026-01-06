@@ -101,10 +101,9 @@ ob_start();
             ?>
         </select>
     </div>
-
 </div>
 
-
+            
     <button class="btn-agregar" onclick="abrirModalHorario()">Agregar Horario</button>
 
     <table class="tabla-docentes">
@@ -134,6 +133,16 @@ ob_start();
                             Editar
                         </button>
                         <a class="btn-eliminar" href="/controllers/HorariosController.php?accion=eliminar&id=<?= $h['id_horario'] ?>" onclick="return confirm('¿Eliminar?')">Eliminar</a>
+                        <button class="btn-generar"
+                            onclick='abrirModalGenerar(
+                                <?= $h["id_carrera"] ?>,
+                                <?= $h["id_grupo"] ?>,
+                                <?= $h["id_materia"] ?>,
+                                <?= $h["id_docente"] ?>
+                            )'>
+                            Generar
+                        </button>
+
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -230,6 +239,57 @@ ob_start();
         </form>
     </div>
 </div>
+
+<div id="modalGenerar" class="modal">
+    <div class="modal-content">
+        <span class="cerrar" onclick="cerrarModal('modalGenerar')">&times;</span>
+        <h2>Generar listas / reportes</h2>
+
+        <form method="POST" target="_blank" id="formGenerar">
+
+            <input type="hidden" name="id_carrera" id="g_id_carrera">
+            <input type="hidden" name="id_grupo" id="g_id_grupo">
+            <input type="hidden" name="id_materia" id="g_id_materia">
+            <input type="hidden" name="id_docente" id="g_id_docente">
+
+            <label>Parcial (opcional)</label>
+            <select name="id_parcial">
+                <option value="">-- Ninguno --</option>
+                <?php foreach ($parciales as $p): ?>
+                    <option value="<?= $p['id_parcial'] ?>">
+                        Parcial <?= $p['numero_parcial'] ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <div style="display:flex; gap:10px; margin-top:15px; justify-content:center;">
+
+                <button type="submit"
+                    formaction="lista_impresion.php"
+                    class="btn-agregar">
+                    Lista de Asistencia
+                </button>
+
+                <button type="submit"
+                    formaction="reporte_calificaciones.php"
+                    class="btn-agregar"
+                    style="background:#28a745;">
+                    Reporte Calificaciones
+                </button>
+
+                <button type="submit"
+                    formaction="control_asistencia_docente.php"
+                    class="btn-agregar"
+                    style="background:#6f42c1;">
+                    Control Docente
+                </button>
+
+            </div>
+
+        </form>
+    </div>
+</div>
+
 
 <script>
     // Datos PHP -> JS
@@ -381,6 +441,16 @@ ob_start();
             }, 10);
         }
     }
+
+    function abrirModalGenerar(id_carrera, id_grupo, id_materia, id_docente) {
+
+    document.getElementById('g_id_carrera').value = id_carrera;
+    document.getElementById('g_id_grupo').value   = id_grupo;
+    document.getElementById('g_id_materia').value = id_materia;
+    document.getElementById('g_id_docente').value = id_docente;
+
+    document.getElementById('modalGenerar').style.display = 'block';
+}
 
     // filtro en la tabla principal por carrera (solo UI)
     document.getElementById("filtroCarrera")?.addEventListener("change", function() {

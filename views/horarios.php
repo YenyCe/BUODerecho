@@ -161,7 +161,7 @@ ob_start();
                                     <?= $h["id_materia"] ?>,
                                     <?= $h["id_docente"] ?>
                                 )'>
-                           📄Generar
+                           Generar
                             </button>
                         </div>
                     </td>

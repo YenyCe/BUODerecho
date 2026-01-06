@@ -224,9 +224,10 @@ button,
     font-size: 14px; /* Tamaño de la fuente más pequeño */
     width: auto; /* Asegura que los botones no sean demasiado grandes */
     border: none;
-    color: rgb(25, 37, 73);
+    color: rgb(255, 255, 255);
     cursor: pointer;
     transition: background-color 0.3s ease;
+      background-color: #061d45;
 }
 
 

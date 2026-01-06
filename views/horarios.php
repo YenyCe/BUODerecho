@@ -145,13 +145,13 @@ ob_start();
                                 <?= $h["id_horario"] ?>,
                                 <?= json_encode($h, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>
                             )'>
-                                Editar
+                               ✏️  Editar
                             </button>
 
                             <a class="btn-eliminar"
                                 href="/controllers/HorariosController.php?accion=eliminar&id=<?= $h['id_horario'] ?>"
                                 onclick="return confirm('¿Eliminar?')">
-                                Eliminar
+                               🗑️ Eliminar
                             </a>
 
                             <button class="btn-generar"
@@ -161,7 +161,7 @@ ob_start();
                                     <?= $h["id_materia"] ?>,
                                     <?= $h["id_docente"] ?>
                                 )'>
-                            Generar
+                           📄 Generar
                             </button>
                         </div>
                     </td>

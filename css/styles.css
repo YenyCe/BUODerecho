@@ -652,9 +652,9 @@ body.login-body {
 
 .acciones {
   display: flex;
-  flex-direction: column;   /* 👈 uno debajo de otro */
+  flex-direction: column;
   gap: 6px;
-  align-items: stretch;     /* 👈 mismo ancho */
+  align-items: stretch;
 }
 
 .acciones button,
@@ -662,6 +662,6 @@ body.login-body {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
   text-decoration: none;
-  width: 100%;              /* 👈 todos iguales */
 }

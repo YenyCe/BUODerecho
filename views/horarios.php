@@ -153,6 +153,7 @@ ob_start();
                                 onclick="return confirm('¿Eliminar?')">
                                Eliminar
                             </a>
+                            
 
                             <button class="btn-generar"
                                 onclick='abrirModalGenerar(

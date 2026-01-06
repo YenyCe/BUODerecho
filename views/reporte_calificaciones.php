@@ -136,9 +136,9 @@ switch ($id_carrera) {
 
                         <tr>
 
-                            <th>Participación <br> %</th>
-                            <th>TRABAJOS <br> %</th>
-                            <th>Examen<br> %</th>
+                            <th>Participación <br> ___%</th>
+                            <th>TRABAJOS <br> ___%</th>
+                            <th>Examen<br> ___%</th>
                             <th>Total de <br>Inasistencias</th>
                             <th>Total <br> 100%</th>
                             <th>Firma del <br> alumno</th>

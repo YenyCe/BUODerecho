@@ -192,18 +192,20 @@ reiterándole mis consideraciones. Sin otro particular, le envió un respetuoso 
 </div>
 
 <div class="firma">
-    <p class="firma-atentamente">ATENTAMENTE</p>
-
     <div class="firma-imagen">
         <img src="/img/firma.png" alt="Firma digital">
     </div>
 
+    <p class="firma-atentamente">ATENTAMENTE</p>
+<br>
     <p class="firma-nombre">MTRA. ADABELIA PELÁEZ GARCÍA</p>
+
     <p class="firma-cargo">
         Directora de la Facultad de Ciencias Jurídicas y Humanidades<br>
         Benemérita Universidad de Oaxaca
     </p>
 </div>
+
 
 
 </div>

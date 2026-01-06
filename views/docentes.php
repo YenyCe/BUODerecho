@@ -92,12 +92,16 @@ ob_start();
                     <a href="../controllers/DocentesController.php?eliminar=<?= $d['id_docente'] ?>"
                        class="btn-eliminar"
                        onclick="return confirm('¿Eliminar este docente?')">Eliminar</a>
+                       <a class="btn-carga"
+                        href="/views/carga_academica.php?id_docente=<?= $d['id_docente'] ?>"
+                        target="_blank">
+                        📄 Carga Académica
+                        </a>
                 </td>
             </tr>
         <?php endforeach; ?>
     <?php endif; ?>
 </tbody>
-
     </table>
 </div>
 

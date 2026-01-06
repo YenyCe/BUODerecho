@@ -652,16 +652,16 @@ body.login-body {
 
 .acciones {
   display: flex;
+  flex-direction: column;   /* 👈 uno debajo de otro */
   gap: 6px;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: nowrap;
+  align-items: stretch;     /* 👈 mismo ancho */
 }
 
 .acciones button,
 .acciones a {
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: center;
   text-decoration: none;
+  width: 100%;              /* 👈 todos iguales */
 }

@@ -58,65 +58,8 @@ $fecha = "Oaxaca de Juárez, Oaxaca a ".date('d')." de ".date('F')." del ".date(
 <head>
 <meta charset="UTF-8">
 <title>Carga Académica</title>
+<link rel="stylesheet" href="../css/control_docente.css">
 
-<style>
-@page {
-  size: letter portrait;
-  margin: 20mm;
-}
-
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  margin: 0;
-}
-
-.page {
-  background: url('/img/<?= $membrete ?>') no-repeat center;
-  background-size: contain;
-  min-height: 279mm;
-}
-
-.contenido {
-  padding: 70px 40px;
-}
-
-.encabezado {
-  text-align: right;
-  font-size: 12px;
-}
-
-.titulo {
-  margin-top: 30px;
-  font-weight: bold;
-}
-
-.texto {
-  margin-top: 20px;
-  text-align: justify;
-  font-size: 13px;
-}
-
-.tabla {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 25px;
-  font-size: 13px;
-}
-
-.tabla th, .tabla td {
-  border: 1px solid #000;
-  padding: 6px;
-}
-
-.tabla th {
-  background: #f2f2f2;
-}
-
-.firma {
-  margin-top: 70px;
-  text-align: center;
-}
-</style>
 </head>
 
 <body>

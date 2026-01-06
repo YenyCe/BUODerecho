@@ -35,6 +35,7 @@ body {
 
 
 .contenido {
+  padding: 55px 30px; /* arriba/abajo | lados */
   padding: 10px;
   width: 100%;
   height: 100%;

@@ -65,10 +65,10 @@ var_dump($_SESSION['id_carrera']);
 // ===========================================================
 $parciales = [];
 
-if ($id_carrera) {
+if ($id_carrera_usuario) {
     $parciales = $conn->query("
         SELECT * FROM parciales
-        WHERE id_carrera = $id_carrera
+        WHERE id_carrera = $id_carrera_usuario
         ORDER BY numero_parcial
     ")->fetch_all(MYSQLI_ASSOC);
 }

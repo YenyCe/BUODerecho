@@ -35,10 +35,16 @@ body {
 
 
 .contenido {
-  padding: 55px 30px; /* arriba/abajo | lados */
+ /*   height: 100%; padding: 55px 30px; arriba/abajo | lados */
   width: 100%;
-  height: 100%;
+ padding: 0px 30px 20px 30px;
   box-sizing: border-box;
+     line-height: 1.2;
+}
+
+.titulo {
+    font-size: 14px;
+    text-transform: uppercase;
 }
 
 
@@ -79,6 +85,14 @@ table td {
   padding: 4px 6px;
   font-size: 14px;
 }
+
+table .fila-detalle-datos td {
+    color: #000000;
+    font-size: 12px;
+    padding: 6px 8px;
+    vertical-align: middle;
+}
+
 
 /* Asistencia */
 .asistencia-cell {
@@ -125,6 +139,8 @@ table td {
 .encabezado {
   text-align: right;
   font-size: 14px;
+   padding: 55px 0px 10px 0px;
+
 }
 
 @media print {
@@ -134,14 +150,10 @@ table td {
 }
 
 
-
-
 .texto p {
     text-align: justify;
-    text-indent: 2.5em; /* Sangría formal */
-    margin-bottom: 14px;
-    line-height: 1.6;
-    font-size: 14px;
+    margin-bottom: 8px;
+    font-size: 13px;
 }
 
 /* Bienvenida */
@@ -156,13 +168,13 @@ table td {
 .bienvenida-naranja {
     color: #e67e22;
     font-weight: bold;
-    font-size: 15px;
+    font-size: 20px;
 }
 
 .bienvenida-azul {
-    color: #1f4fa3;
+    color: #0c2958;
     font-weight: bold;
-    font-size: 15px;
+    font-size: 20px;
 }
 
 /* Fila del docente */
@@ -177,25 +189,26 @@ table td {
 
 /* Fila de detalles */
 .fila-detalle  {
-    background: #b9dafa;
+        background: #e8f2fc;
+
     color: #000000; /* Azul más bajo */
     font-size: 13px;
 }
 
-
 /* Contenedor de firma */
 .firma {
-    position: relative; /* ← referencia */
-    margin-top: 50px;
+    position: relative; /* referencia interna */
     text-align: center;
+    font-size: 14px;
 }
 
 /* Imagen de firma */
 .firma-imagen {
-    position: absolute; /* ← SALE del flujo */
-    top: -20px;         /* ← SUBE la firma */
+    position: absolute;
+    top: -20px;            /* sube la firma sobre “Atentamente” */
     left: 50%;
     transform: translateX(-50%);
+    pointer-events: none; /* impresión limpia */
 }
 
 /* Imagen */
@@ -211,16 +224,32 @@ table td {
     margin: 0;
     padding: 0;
     line-height: 1.3;
-}
-
-.firma-atentamente {
-    font-weight: bold;
-    margin-bottom: 14px;
-}
-
-.firma-nombre {
-    font-weight: bold;
     text-transform: uppercase;
+}
+
+.firma-atentamente,
+.firma-nombre{
+    margin-top: 0;
+    font-weight: bold;
+}
+
+
+/* ====== CONTROL DE PAGINADO ====== */
+table {
+  page-break-inside: auto;
+}
+
+tr {
+  page-break-inside: avoid;
+  page-break-after: auto;
+}
+
+thead {
+  display: table-header-group;
+}
+
+.firma {
+  page-break-inside: avoid;
 }
 
 

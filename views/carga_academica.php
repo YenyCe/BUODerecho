@@ -114,7 +114,7 @@ $fecha = "Oaxaca de Juárez, Oaxaca a "
 
 
 <div class="titulo">
-    <?= strtoupper($docente['nombre']) ?><br>
+     <strong><?= strtoupper($docente['nombre']) ?></strong><br>
     DOCENTE DE ASIGNATURA DE LA LICENCIATURA <br> EN <?= strtoupper($docente['carrera']) ?> DE LA BENEMÉRITA UNIVERSIDAD DE OAXACA<br>
     PRESENTE
 </div>
@@ -163,17 +163,17 @@ $fecha = "Oaxaca de Juárez, Oaxaca a "
         <tr class="fila-detalle">
             <th>SEMESTRE</th>
             <th>MATERIA</th>
-            <th>DÍAS Y HORAS</th>
+            <th>DÍAS</th>
             <th>HORAS</th>
         </tr>
     </thead>
 
-    <tbody>
+    <tbody >
     <?php while ($r = $carga->fetch_assoc()): ?>
    
 
         <!-- FILA DETALLE -->
-        <tr >
+        <tr class="fila-detalle-datos">
             <td align="center"><?= $r['semestre'] ?></td>
             <td><?= $r['materia'] ?></td>
             <td><?= $r['horario'] ?></td>
@@ -189,6 +189,7 @@ $fecha = "Oaxaca de Juárez, Oaxaca a "
         Seguros del amplio intercambio de experiencias educativas, me suscribo de usted
 reiterándole mis consideraciones. Sin otro particular, le envió un respetuoso saludo.
     </p>
+    <br>
 </div>
 
 <div class="firma">
@@ -196,13 +197,13 @@ reiterándole mis consideraciones. Sin otro particular, le envió un respetuoso 
         <img src="/img/firma.png" alt="Firma digital">
     </div>
 
-    <p class="firma-atentamente">ATENTAMENTE</p>
+    <p class="firma-atentamente">ATENTAMENTE</p> <br>
 <br>
     <p class="firma-nombre">MTRA. ADABELIA PELÁEZ GARCÍA</p>
 
     <p class="firma-cargo">
         Directora de la Facultad de Ciencias Jurídicas y Humanidades<br>
-        Benemérita Universidad de Oaxaca
+        de la Benemérita Universidad de Oaxaca
     </p>
 </div>
 

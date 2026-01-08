@@ -26,7 +26,7 @@ class HorariosModel
             m.nombre AS materia,
             CONCAT(d.nombre, ' ', d.apellidos) AS docente,
             h.horario_texto,
-            GROUP_CONCAT(hd.dia ORDER BY FIELD(hd.dia,'L','M','X','J','V') SEPARATOR '-') AS dias
+            GROUP_CONCAT(hd.dia ORDER BY FIELD(hd.dia,'L','M','X','J','V','S')  SEPARATOR '-') AS dias
         FROM horarios h
         INNER JOIN grupos g ON h.id_grupo = g.id_grupo
         INNER JOIN carreras c ON h.id_carrera = c.id_carrera
@@ -57,7 +57,7 @@ public function getHorariosByCarrera($id_carrera)
             m.nombre AS materia,
             CONCAT(d.nombre, ' ', d.apellidos) AS docente,
             h.horario_texto,
-            GROUP_CONCAT(hd.dia ORDER BY FIELD(hd.dia,'L','M','X','J','V') SEPARATOR '-') AS dias
+            GROUP_CONCAT(hd.dia ORDER BY FIELD(hd.dia,'L','M','X','J','V','S')  SEPARATOR '-') AS dias
         FROM horarios h
         INNER JOIN grupos g ON h.id_grupo = g.id_grupo
         INNER JOIN carreras c ON h.id_carrera = c.id_carrera

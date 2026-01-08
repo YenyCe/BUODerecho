@@ -1,6 +1,15 @@
 <?php
+session_start();
 require_once "../config/conexion.php";
 require_once "../models/helpers_asistencia.php";
+
+$id_carrera = !empty($_SESSION['id_carrera']) ? $_SESSION['id_carrera'] : null;
+
+if(!$id_carrera){
+    die("403");
+}
+
+
 
 // Recibir datos
 $id_docente  = isset($_POST['id_docente']) ? (int)$_POST['id_docente'] : 0;
@@ -57,6 +66,17 @@ if ($total_fechas <= 10) {
     $nombre_clase = "nombre-pequeno";  // un poco más pequeño
 } else {
     $nombre_clase = "nombre-muy-pequeno"; // aún más pequeño
+}
+
+$nombre_membrete = '';
+
+switch ($id_carrera) {
+    case 1:
+        $nombre_membrete = 'logoListas.jpg';
+    break;
+    case 3:
+        $nombre_membrete = '3.jpg';
+    break;
 }
 
 // Arreglo con los nombres de los meses en español
@@ -139,28 +159,35 @@ function fecha_larga_es($fecha)
     $paginas = max(1, ceil($total_alumnos / $por_pagina));
 
     $index_global = 0;
-$alumnos_ultima_pagina = $total_alumnos % $por_pagina;
-if ($alumnos_ultima_pagina == 0) {
-    $alumnos_ultima_pagina = $por_pagina;
-}
+    $alumnos_ultima_pagina = $total_alumnos % $por_pagina;
+    if ($alumnos_ultima_pagina == 0) {
+        $alumnos_ultima_pagina = $por_pagina;
+    }
 
     for ($pagina = 1; $pagina <= $paginas; $pagina++):
     ?>
 
-        <div class="page">
+        <div class="page" style="width: 279.4mm;
+  height: 215.9mm;
+  background: url('/img/<?= $nombre_membrete; ?>') no-repeat center;
+  background-size: contain;">
             <div class="contenido" style="margin-top:40px;">
-                <!-- ENCABEZADO INFORMACIÓN -->
+           <!-- ENCABEZADO INFORMACIÓN -->
                 <table class="info-table">
+                    <colgroup>
+                        <col span="12">
+                    </colgroup>
+
                     <tr>
-                        <td colspan="7"><strong>Materia:</strong> <?= htmlspecialchars($materia['nombre'] ?? '-') ?></td>
+                        <td colspan="6"><strong>Materia:</strong> <?= htmlspecialchars($materia['nombre'] ?? '-') ?></td>
                         <td colspan="2"><strong>Clave:</strong> <?= htmlspecialchars($materia['clave'] ?? '-') ?></td>
                         <td colspan="2"><strong>Horas semestre:</strong> <?= htmlspecialchars($materia['horas_semestre'] ?? '-') ?></td>
                         <td colspan="2"><strong>Horas semana:</strong> <?= htmlspecialchars($materia['horas_semana'] ?? '-') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="3"> <?= ($grupo['semestre_num'] ?? '-') . ' / ' . ($grupo['nombre_grupo'] ?? '-') ?></td>
+                        <td colspan="1"> <?= ($grupo['semestre_num'] ?? '-') . ' / ' . ($grupo['nombre_grupo'] ?? '-') ?></td>
                         <td colspan="2">Parcial </strong> <?= ($p['numero_parcial'] ?? '-')  ?></td>
-                        <td colspan="2">
+                        <td colspan="3">
                             <?php
                             $f_i = fecha_larga_es($fecha_inicio);
                             $f_f = fecha_larga_es($fecha_fin);
@@ -171,12 +198,13 @@ if ($alumnos_ultima_pagina == 0) {
                             ?>
                         </td>
 
-                        <td colspan="5"><strong>Docente:</strong> <?= htmlspecialchars($docente['nombre'] ?? '-') ?></td>
+                        <td colspan="6"><strong>Docente:</strong> <?= htmlspecialchars($docente['nombre'] ?? '-') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="12"><strong>Horario:</strong> <?= htmlspecialchars(formato_horarios($horarios)) ?></td>
+                        <td colspan="12"><strong>Horario:<?= htmlspecialchars(formato_horarios($horarios)) ?></strong> </td>
                     </tr>
                 </table>
+
 
                 <!-- TABLA PRINCIPAL -->
                 <table class="<?= $nombre_clase ?>">
@@ -195,8 +223,8 @@ if ($alumnos_ultima_pagina == 0) {
                             <?php endforeach; ?>
 
                             <th colspan="2">Total</th>
-                            <th colspan="2">Calificación Parcial</th>
-                            <th rowspan="2" class="observaciones">Observaciones</th>
+                            <th colspan="2">Calif. Parc. </th>
+                            <th rowspan="2" class="observaciones">Obs</th>
                         </tr>
 
                         <!-- fila 2: fechas + subcolumnas Total y Calificación Parcial -->
@@ -210,11 +238,11 @@ if ($alumnos_ultima_pagina == 0) {
                             <?php endforeach; ?>
 
                             <!-- subcolumnas de Total -->
-                            <th>Asistencias</th>
+                            <th>Asist</th>
                             <th>Faltas</th>
 
                             <!-- subcolumnas de Calificación Parcial -->
-                            <th>Número</th>
+                            <th>Num</th>
                             <th>Letra</th>
                         </tr>
                     </thead>
@@ -255,46 +283,50 @@ if ($alumnos_ultima_pagina == 0) {
 
                 <?php if ($pagina == $paginas): ?>
 
-    <?php
-    // Si la última página está llena (15 alumnos),
-    // las firmas van en hoja aparte
-    if ($alumnos_ultima_pagina == $por_pagina):
-    ?>
+                    <?php
+                    // Si la última página está llena (15 alumnos),
+                    // las firmas van en hoja aparte
+                    if ($alumnos_ultima_pagina == $por_pagina):
+                    ?>
             </div>
         </div>
+        
         <div class="page-break"></div>
-        <div class="page">
+        <div class="page" style="width: 279.4mm;
+  height: 215.9mm;
+  background: url('/img/<?= $nombre_membrete; ?>') no-repeat center;
+  background-size: contain;">
             <div class="contenido" style="margin-top:40px;">
-    <?php endif; ?>
+            <?php endif; ?>
 
-    <div class="pie-final">
-        <div class="fila-flex">
-            <div class="pie-col">
-                <p style="margin:0;">
-                    <?= htmlspecialchars($docente['nombre'] ?? '-') ?>
-                </p>
-                <div class="linea-firma"></div>
-                <p style="margin:0;"><strong>NOMBRE Y FIRMA DEL DOCENTE</strong></p>
-            </div>
-            <div class="pie-col">
-                <p><strong>CALF. APROBATORIA</strong> (Usar tinta negra)</p>
-                <p><strong>CALF. REPROBATORIA</strong> (Usar tinta roja)</p>
-            </div>
-        </div>
+            <div class="pie-final">
+                <div class="fila-flex">
+                    <div class="pie-col">
+                        <p style="margin:0;">
+                            <?= htmlspecialchars($docente['nombre'] ?? '-') ?>
+                        </p>
+                        <div class="linea-firma"></div>
+                        <p style="margin:0;"><strong>NOMBRE Y FIRMA DEL DOCENTE</strong></p>
+                    </div>
+                    <div class="pie-col">
+                        <p><strong>CALF. APROBATORIA</strong> (Usar tinta negra)</p>
+                        <p><strong>CALF. REPROBATORIA</strong> (Usar tinta roja)</p>
+                    </div>
+                </div>
 
-        <div class="fila-flex">
-            <div class="pie-col">
-                <div class="linea-firma"></div>
-                <p><strong>FECHA DE ENTREGA</strong></p>
+                <div class="fila-flex">
+                    <div class="pie-col">
+                        <div class="linea-firma"></div>
+                        <p><strong>FECHA DE ENTREGA</strong></p>
+                    </div>
+                    <div class="pie-col">
+                        <div class="linea-firma"></div>
+                        <p><strong>NOMBRE DE QUIEN RECIBE</strong></p>
+                    </div>
+                </div>
             </div>
-            <div class="pie-col">
-                <div class="linea-firma"></div>
-                <p><strong>NOMBRE DE QUIEN RECIBE</strong></p>
-            </div>
-        </div>
-    </div>
 
-<?php endif; ?>
+        <?php endif; ?>
 
 
             </div>
@@ -309,3 +341,4 @@ if ($alumnos_ultima_pagina == 0) {
 </body>
 
 </html>
+

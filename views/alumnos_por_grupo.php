@@ -28,33 +28,16 @@ $alumnosGrupo = array_filter($alumnos, fn($a) => intval($a['id_grupo']) === $id_
 // Lista de grupos para el select (editar/agregar)
 $grupos = ($rol === 'admin') ? $alumnoModel->getGrupos() : $alumnoModel->getGruposPorCarrera($id_carrera);
 
-$alerta = '';
-if (isset($_SESSION['alerta'])) {
-    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
-                {$_SESSION['alerta']['mensaje']}
-               </div>";
-    unset($_SESSION['alerta']);
-}
-
-
 ob_start();
 ?>
 
-<div class="container-form"">
+<div class="container-form">
 <h2>
    Alumnos del Semestre:   <?= htmlspecialchars($grupoInfo['semestre']); ?>  -
  Grupo: <?= htmlspecialchars($grupoInfo['grupo']); ?>
   
 </h2>
-
-
-
     <a href=" grupos.php" class="btn-agregar">← Volver a Grupos</a>
-    <?php if ($alerta): ?>
-        <?= $alerta ?>
-    <?php endif; ?>
-
-
     <button class="btn-agregar" onclick="abrirModalAlumno()">Agregar Alumno</button>
 
     <table class="tabla-docentes">
@@ -119,7 +102,7 @@ ob_start();
     </div>
 </div>
 
-<script src="/ASISTENCIAS/js/modales.js"></script>
+<script src="/js/modales.js"></script>
 <script>
     function abrirModalAlumno(id = null) {
         const modal = document.getElementById('modalAlumno');

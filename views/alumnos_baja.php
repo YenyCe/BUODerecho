@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once "../middlewares/auth.php";
 require_once "../config/conexion.php";
 require_once "../models/AlumnosModel.php";
@@ -8,7 +12,6 @@ $id_carrera = ($rol === 'coordinador') ? $_SESSION['id_carrera'] : null;
 
 $alumnosModel = new AlumnosModel($conn);
 $alumnosBaja = $alumnosModel->getAlumnosBaja($id_carrera);
-
 // Alertas
 $alerta = "";
 if (isset($_GET['msg'])) {

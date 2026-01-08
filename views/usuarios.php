@@ -6,20 +6,11 @@ require_once "../models/UsuariosModel.php";
 $usuarioModel = new UsuariosModel($conn);
 $usuarios = $usuarioModel->getUsuarios();
 $carreras = $usuarioModel->getCarreras();
-$alerta = '';
-if (isset($_SESSION['alerta'])) {
-    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
-               {$_SESSION['alerta']['mensaje']}
-               </div>";
-    unset($_SESSION['alerta']);
-}
-
 ob_start();
 ?>
 
 <div class="container-form">
     <h2>Usuarios</h2>
-    <?= $alerta ?>
     <button class="btn-agregar" onclick="abrirModalUsuario()">Agregar Usuario</button>
 
     <table class="tabla-docentes">
@@ -162,7 +153,7 @@ ob_start();
         }
     }
 </script>
-<script src="/ASISTENCIAS/js/modales.js"></script>
+<script src="/js/modales.js"></script>
 <?php
 $content = ob_get_clean();
 $title = "Usuarios";

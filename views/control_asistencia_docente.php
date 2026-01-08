@@ -1,7 +1,13 @@
 <?php
+session_start();
 require_once "../config/conexion.php";
 require_once "../models/helpers_asistencia.php";
 
+$id_carrera = !empty($_SESSION['id_carrera']) ? $_SESSION['id_carrera'] : null;
+
+if(!$id_carrera){
+    die("403");
+}
 $id_docente  = (int)($_POST['id_docente'] ?? 0);
 $id_materia  = (int)($_POST['id_materia'] ?? 0);
 $id_grupo    = (int)($_POST['id_grupo'] ?? 0);
@@ -67,7 +73,16 @@ function dia_fecha($fecha){
     return $dias[date('D', strtotime($fecha))]." ".date('d', strtotime($fecha));
 }
 
+$nombre_membreteV = '';
 
+switch ($id_carrera) {
+    case 1:
+        $nombre_membreteV = 'logo2.jpg';
+    break;
+    case 3:
+        $nombre_membreteV = 'me.png';
+    break;
+}
 /* ================= CONFIG ================= */
 $filas_por_hoja = 15;
 ?>
@@ -101,7 +116,10 @@ $paginas = array_chunk($filas, $filas_por_hoja);
 ?>
 
 <?php foreach ($paginas as $pagina): ?>
-<div class="page">
+<div class="page" style="
+  background: url('/img/<?= $nombre_membreteV; ?>') no-repeat center;
+  background-size: contain;">
+
 <div class="contenido" style="margin-top:60px;">
 
 <table class="info-table">

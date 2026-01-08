@@ -1,5 +1,12 @@
 <?php
+session_start();
 require_once "../config/conexion.php";
+
+$id_carrera = !empty($_SESSION['id_carrera']) ? $_SESSION['id_carrera'] : null;
+
+if(!$id_carrera){
+    die("403");
+}
 
 // Recibir datos
 $id_docente  = $_POST['id_docente'] ?? 0;
@@ -43,6 +50,16 @@ if ($alumnos_ultima_pagina == 0) {
     $alumnos_ultima_pagina = $por_pagina;
 }
 
+$nombre_membrete = '';
+
+switch ($id_carrera) {
+    case 1:
+        $nombre_membrete = 'logoListas.jpg';
+    break;
+    case 3:
+        $nombre_membrete = '3.jpg';
+    break;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -57,7 +74,10 @@ if ($alumnos_ultima_pagina == 0) {
     <button onclick="window.print()" class="print-btn">Imprimir</button>
 
     <?php for ($pagina = 1; $pagina <= $paginas; $pagina++): ?>
-        <div class="page">
+        <div class="page" style="width: 279.4mm;
+  height: 215.9mm;
+  background: url('/img/<?= $nombre_membrete; ?>') no-repeat center;
+  background-size: contain;">
             <div class="contenido" style="margin-top:40px;">
 
                 <!-- ================== ENCABEZADO ================== -->
@@ -116,9 +136,9 @@ if ($alumnos_ultima_pagina == 0) {
 
                         <tr>
 
-                            <th>Participación <br> %</th>
-                            <th>TRABAJOS <br> %</th>
-                            <th>Examen<br> %</th>
+                            <th>Participación <br> ___%</th>
+                            <th>TRABAJOS <br> ___%</th>
+                            <th>Examen<br> ___%</th>
                             <th>Total de <br>Inasistencias</th>
                             <th>Total <br> 100%</th>
                             <th>Firma del <br> alumno</th>

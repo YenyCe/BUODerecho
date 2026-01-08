@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once "../middlewares/auth.php";
 require_once "../config/conexion.php";
 require_once "../models/HorariosModel.php";
@@ -47,36 +51,60 @@ foreach ($todas as $c) {
 $carrerasMap = [];
 foreach ($todas as $c) $carrerasMap[$c['id_carrera']] = $c['nombre'];
 
-$alerta = '';
-if (isset($_SESSION['alerta'])) {
-    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
-                {$_SESSION['alerta']['mensaje']}
-               </div>";
-    unset($_SESSION['alerta']);
+
+// ===========================================================
+// 3. OBTENER PARCIALES DE ESA CARRERA
+// ===========================================================
+$parciales = [];
+
+if ($id_carrera_usuario) {
+    $parciales = $conn->query("
+        SELECT * FROM parciales
+        WHERE id_carrera = $id_carrera_usuario
+        ORDER BY numero_parcial
+    ")->fetch_all(MYSQLI_ASSOC);
 }
-var_dump($_SESSION['id_carrera']);
-
-
 ob_start();
 ?>
 
 <div class="container-form">
-    <?= $alerta ?>
 
     <h2>Horarios</h2>
-    <?php if ($_SESSION['rol'] === 'admin'): ?>
-        <div class="filtros-container" style="margin-bottom:15px;">
+    <div class="filtros-container" style="margin-bottom:15px; display:flex; gap:15px;">
+
+        <!-- FILTRO CARRERA (SOLO ADMIN) -->
+        <?php if ($_SESSION['rol'] === 'admin'): ?>
             <div>
                 <label>Carrera:</label>
                 <select id="filtroCarrera" class="form-control">
                     <option value="">Todas</option>
                     <?php foreach ($carreras as $c): ?>
-                        <option value="<?= $c['id_carrera'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
+                        <option value="<?= $c['id_carrera'] ?>">
+                            <?= htmlspecialchars($c['nombre']) ?>
+                        </option>
                     <?php endforeach; ?>
                 </select>
             </div>
+        <?php endif; ?>
+
+        <!-- FILTRO GRUPO (ADMIN Y COORDINADOR) -->
+        <div>
+            <label>Grupo:</label>
+            <select id="filtroGrupo" class="form-control">
+                <option value="">Todos</option>
+                <?php
+                $gruposUnicos = [];
+                foreach ($horarios as $h) {
+                    if (!in_array($h['grupo'], $gruposUnicos)) {
+                        $gruposUnicos[] = $h['grupo'];
+                        echo "<option value='{$h['grupo']}'>{$h['grupo']}</option>";
+                    }
+                }
+                ?>
+            </select>
         </div>
-    <?php endif; ?>
+    </div>
+
 
     <button class="btn-agregar" onclick="abrirModalHorario()">Agregar Horario</button>
 
@@ -102,12 +130,34 @@ ob_start();
                     <td><?= htmlspecialchars($h['dias'] ?? '') ?></td>
                     <td><?= htmlspecialchars($h['horario_texto'] ?? '') ?></td>
                     <td>
-                        <button class="btn-editar"
-                            onclick='abrirModalHorario(<?= $h["id_horario"] ?>, <?= json_encode($h, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)'>
-                            Editar
-                        </button>
-                        <a class="btn-eliminar" href="../controllers/horariosController.php?accion=eliminar&id=<?= $h['id_horario'] ?>" onclick="return confirm('¿Eliminar?')">Eliminar</a>
+                        <div class="acciones">
+                            <button class="btn-editar"
+                                onclick='abrirModalHorario(
+                                <?= $h["id_horario"] ?>,
+                                <?= json_encode($h, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>
+                            )'>
+                               Editar
+                            </button>
+
+                            <a class="btn-eliminar"
+                                href="/controllers/HorariosController.php?accion=eliminar&id=<?= $h['id_horario'] ?>"
+                                onclick="return confirm('¿Eliminar?')">
+                               Eliminar
+                            </a>
+                            
+
+                            <button class="btn-generar"
+                                onclick='abrirModalGenerar(
+                                    <?= $h["id_carrera"] ?>,
+                                    <?= $h["id_grupo"] ?>,
+                                    <?= $h["id_materia"] ?>,
+                                    <?= $h["id_docente"] ?>
+                                )'>
+                           Generar
+                            </button>
+                        </div>
                     </td>
+
                 </tr>
             <?php endforeach; ?>
         </tbody>
@@ -119,8 +169,7 @@ ob_start();
     <div class="modal-content">
         <span class="cerrar" onclick="cerrarModal('modalHorario')">&times;</span>
         <h2 id="tituloModalHorario">Agregar Horario</h2>
-
-        <form action="../controllers/horariosController.php" method="POST" id="formHorario">
+        <form action="../controllers/HorariosController.php" method="POST" id="formHorario">
 
             <input type="hidden" name="accion" id="accion" value="guardar">
             <input type="hidden" name="id_horario" id="id_horario">
@@ -184,6 +233,8 @@ ob_start();
                         <label><input type="checkbox" name="dia_semana[]" value="X"> Mié</label>
                         <label><input type="checkbox" name="dia_semana[]" value="J"> Jue</label>
                         <label><input type="checkbox" name="dia_semana[]" value="V"> Vie</label>
+                        <label><input type="checkbox" name="dia_semana[]" value="S"> Sáb</label>
+
                     </div>
                 </div>
 
@@ -202,6 +253,56 @@ ob_start();
         </form>
     </div>
 </div>
+
+<div id="modalGenerar" class="modal">
+    <div class="modal-content">
+        <span class="cerrar" onclick="cerrarModal('modalGenerar')">&times;</span>
+        <h2>Generar listas / reportes</h2>
+
+        <form method="POST" target="_blank" id="formGenerar">
+
+            <input type="hidden" name="id_carrera" id="g_id_carrera">
+            <input type="hidden" name="id_grupo" id="g_id_grupo">
+            <input type="hidden" name="id_materia" id="g_id_materia">
+            <input type="hidden" name="id_docente" id="g_id_docente">
+
+            <label>Parcial</label>
+            <select name="id_parcial">
+                <option value="">-- Ninguno --</option>
+                <?php foreach ($parciales as $p): ?>
+                    <option value="<?= $p['id_parcial'] ?>">
+                        Parcial <?= $p['numero_parcial'] ?> (<?= $p['fecha_inicio'] ?> a <?= $p['fecha_fin'] ?>)
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <div style="display:flex; gap:10px; margin-top:15px; justify-content:center;">
+
+                <button type="submit"
+                    formaction="lista_impresion.php"
+                    class="btn-agregar">
+                    Lista de Asistencia
+                </button>
+
+                <button type="submit"
+                    formaction="reporte_calificaciones.php"
+                    class="btn-agregar"
+                    style="background:#28a745;">
+                    Reporte Calificaciones
+                </button>
+
+                <button type="submit"
+                    formaction="control_asistencia_docente.php"
+                    class="btn-agregar"
+                    style="background:#6f42c1;">
+                    Control Docente
+                </button>
+
+            </div>
+
+        </form>
+    </div>
+</div>
+
 
 <script>
     // Datos PHP -> JS
@@ -354,6 +455,16 @@ ob_start();
         }
     }
 
+    function abrirModalGenerar(id_carrera, id_grupo, id_materia, id_docente) {
+
+        document.getElementById('g_id_carrera').value = id_carrera;
+        document.getElementById('g_id_grupo').value = id_grupo;
+        document.getElementById('g_id_materia').value = id_materia;
+        document.getElementById('g_id_docente').value = id_docente;
+
+        document.getElementById('modalGenerar').style.display = 'block';
+    }
+
     // filtro en la tabla principal por carrera (solo UI)
     document.getElementById("filtroCarrera")?.addEventListener("change", function() {
         const carrera = this.value;
@@ -375,8 +486,37 @@ ob_start();
         if (event.target == modal) modal.style.display = 'none';
     });
 </script>
+<script>
+    function aplicarFiltros() {
+        const carreraSelect = document.getElementById("filtroCarrera");
+        const grupoSelect = document.getElementById("filtroGrupo");
 
-<script src="/ASISTENCIAS/js/modales.js"></script>
+        const carrera = carreraSelect ? carreraSelect.value : "";
+        const grupo = grupoSelect ? grupoSelect.value : "";
+
+        document.querySelectorAll(".tabla-docentes tbody tr").forEach(fila => {
+            const tdCarrera = fila.children[0].innerText.trim();
+            const tdGrupo = fila.children[1].innerText.trim();
+
+            let mostrar = true;
+
+            if (carrera !== "" && tdCarrera !== carrera) {
+                mostrar = false;
+            }
+
+            if (grupo !== "" && tdGrupo !== grupo) {
+                mostrar = false;
+            }
+
+            fila.style.display = mostrar ? "" : "none";
+        });
+    }
+
+    document.getElementById("filtroCarrera")?.addEventListener("change", aplicarFiltros);
+    document.getElementById("filtroGrupo")?.addEventListener("change", aplicarFiltros);
+</script>
+
+<script src="/js/modales.js"></script>
 
 <?php
 $content = ob_get_clean();
@@ -384,4 +524,3 @@ $title = "Horarios";
 $pagina = "horarios";
 include "dashboard.php";
 ?>
-

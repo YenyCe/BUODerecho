@@ -9,21 +9,14 @@ $id_carrera = ($rol === 'coordinador') ? $_SESSION['id_carrera'] : null;
 $docenteModel = new DocentesModel($conn);
 $docentes = $docenteModel->getDocentes($id_carrera);
 
-$alerta = '';
-if (isset($_SESSION['alerta'])) {
-    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
-                {$_SESSION['alerta']['mensaje']}
-               </div>";
-    unset($_SESSION['alerta']);
-}
 
 // INICIAR CAPTURA  
 ob_start();
 ?>
 
 <div class="container-form">
-    <h2>Docentes</h2>
-    <?= $alerta ?>
+    <h2>Docentes</h2>   
+
     <?php if ($rol === 'admin'): ?>
         <div class="filtros-container" style="margin-bottom:15px;">
             <div>
@@ -50,6 +43,7 @@ ob_start();
                 <th>Nombre</th>
                 <th>Correo</th>
                 <th>Teléfono</th>
+                <th>Genero</th>
                 <?php if ($rol === 'admin'): ?>
                     <th>Carrera</th>
                 <?php endif; ?>
@@ -57,42 +51,60 @@ ob_start();
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($docentes as $d): ?>
-                <tr data-id="<?= $d['id_docente'] ?>"
-                    data-nombre="<?= htmlspecialchars($d['nombre']) ?>"
-                    data-apellidos="<?= htmlspecialchars($d['apellidos']) ?>"
-                    data-correo="<?= htmlspecialchars($d['correo']) ?>"
-                    data-telefono="<?= htmlspecialchars($d['telefono']) ?>"
-                    data-id_carrera="<?= $d['id_carrera'] ?? '' ?>">
-                    <td><?= $d['id_docente'] ?></td>
-                    <td><?= htmlspecialchars($d['nombre'] . ' ' . $d['apellidos']) ?></td>
-                    <td><?= htmlspecialchars($d['correo']) ?></td>
-                    <td><?= htmlspecialchars($d['telefono']) ?></td>
-                    <?php if ($rol === 'admin'): ?>
-                        <td>
-                            <?php
-                            if ($d['id_carrera']) {
-                                $carrera = $conn->query("SELECT nombre FROM carreras WHERE id_carrera={$d['id_carrera']}")->fetch_assoc();
-                                echo htmlspecialchars($carrera['nombre']);
-                            } else {
-                                echo "-";
-                            }
-                            ?>
-                        </td>
-                    <?php endif; ?>
-                    <td>
-                        <button class="btn-editar" onclick="abrirModal(<?= $d['id_docente'] ?>)">Editar</button>
-                        <a href="../controllers/DocentesController.php?eliminar=<?= $d['id_docente'] ?>"
-                            class="btn-eliminar"
-                            onclick="return confirm('¿Eliminar este docente?')">Eliminar</a>
+            <?php if (empty($docentes)): ?>
+                <tr>
+                    <td colspan="<?= ($rol === 'admin') ? 6 : 5 ?>" style="text-align:center; padding:20px;">
+                        No hay docentes registrados.
                     </td>
                 </tr>
-            <?php endforeach; ?>
+            <?php else: ?>
+                <?php foreach ($docentes as $d): ?>
+                    <tr data-id="<?= $d['id_docente'] ?>"
+                        data-nombre="<?= htmlspecialchars($d['nombre']) ?>"
+                        data-apellidos="<?= htmlspecialchars($d['apellidos']) ?>"
+                        data-correo="<?= htmlspecialchars($d['correo']) ?>"
+                        data-telefono="<?= htmlspecialchars($d['telefono']) ?>"
+                        data-genero="<?= $d['genero'] ?>"
+                        data-id_carrera="<?= $d['id_carrera'] ?? '' ?>">
+                        <td><?= $d['id_docente'] ?></td>
+                        <td><?= htmlspecialchars($d['nombre'] . ' ' . $d['apellidos']) ?></td>
+                        <td><?= htmlspecialchars($d['correo']) ?></td>
+                        <td><?= htmlspecialchars($d['telefono']) ?></td>
+                        <td>
+                            <?= ($d['genero'] === 'M') ? 'Mujer' : 'Hombre' ?>
+                        </td>
+
+                        <?php if ($rol === 'admin'): ?>
+                            <td>
+                                <?php
+                                if ($d['id_carrera']) {
+                                    $carrera = $conn->query("SELECT nombre FROM carreras WHERE id_carrera={$d['id_carrera']}")->fetch_assoc();
+                                    echo htmlspecialchars($carrera['nombre']);
+                                } else {
+                                    echo "-";
+                                }
+                                ?>
+                            </td>
+                        <?php endif; ?>
+                        <td>
+                            <button class="btn-editar" onclick="abrirModal(<?= $d['id_docente'] ?>)">Editar</button>
+                            <a href="../controllers/DocentesController.php?eliminar=<?= $d['id_docente'] ?>"
+                                class="btn-eliminar"
+                                onclick="return confirm('¿Eliminar este docente?')">Eliminar</a>
+                            <!-- GENERAR CARGA ACADÉMICA -->
+                            <a class="btn-carga"
+                                href="../views/impresion_carga_academica.php?id_docente=<?= $d['id_docente'] ?>"
+                                target="_blank">
+                                Carga Académica
+                            </a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </tbody>
     </table>
 </div>
 
-<!-- Modal -->
 <!-- Modal Docente -->
 <div id="modalDocente" class="modal">
     <div class="modal-content">
@@ -129,6 +141,15 @@ ob_start();
                     <label>Teléfono</label>
                     <input type="text" name="telefono" id="telefono">
                 </div>
+                <div>
+                    <label>Género</label>
+                    <select name="genero" id="genero" required>
+                        <option value="">Seleccione</option>
+                        <option value="H">Hombre</option>
+                        <option value="M">Mujer</option>
+                    </select>
+                </div>
+
 
                 <!-- Carrera (solo admin) -->
                 <?php if ($rol === 'admin'): ?>
@@ -172,6 +193,7 @@ ob_start();
             document.getElementById('apellidos').value = row.dataset.apellidos;
             document.getElementById('correo').value = row.dataset.correo;
             document.getElementById('telefono').value = row.dataset.telefono;
+            document.getElementById('genero').value = row.dataset.genero;
             <?php if ($rol === 'admin'): ?>
                 document.getElementById('id_carrera').value = row.dataset.id_carrera;
             <?php endif; ?>
@@ -183,6 +205,7 @@ ob_start();
             document.getElementById('apellidos').value = '';
             document.getElementById('correo').value = '';
             document.getElementById('telefono').value = '';
+            document.getElementById('genero').value = '';
             <?php if ($rol === 'admin'): ?>
                 document.getElementById('id_carrera').value = '';
             <?php endif; ?>
@@ -207,7 +230,7 @@ ob_start();
         });
     });
 </script>
-<script src="/ASISTENCIAS/js/modales.js"></script>
+<script src="../js/modales.js"></script>
 <?php
 $content = ob_get_clean();
 $title = "Docentes";

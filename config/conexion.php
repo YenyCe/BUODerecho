@@ -1,8 +1,10 @@
+
+
 <?php
 $host = "localhost";
 $user = "root";
 $pass = "";
-$dbname = "escuela";
+$dbname = "u224139272_buolistas";
 
 $conn = new mysqli($host, $user, $pass, $dbname);
 

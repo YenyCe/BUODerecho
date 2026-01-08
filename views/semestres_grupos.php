@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once "../middlewares/auth.php";
 require_once "../config/conexion.php";
 require_once "../models/SemestresModel.php";
@@ -16,23 +20,11 @@ $grupos = $semModel->getGrupos($id_carrera); // Filtra por carrera si es coordin
 
 // Solo administrador necesita todas las carreras para el select
 $carreras = ($rol === 'admin') ? $carrerasModel->obtenerCarreras() : [];
-$alerta = '';
-if (isset($_SESSION['alerta'])) {
-    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
-                {$_SESSION['alerta']['mensaje']}
-               </div>";
-    unset($_SESSION['alerta']);
-}
-
-
 // INICIAR CAPTURA  
 ob_start();
 ?>
 
 <div class="container-form">
-
-      <?= $alerta ?>
-
     <div class="tablas-pequenas">
         <!-- SEMESTRES -->
         <h2>Semestres</h2>
@@ -45,18 +37,25 @@ ob_start();
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php foreach ($semestres as $s): ?>
-                    <tr data-id="<?= $s['id_semestre'] ?>" data-numero="<?= $s['numero'] ?>">
-                        <td><?= $s['id_semestre'] ?></td>
-                        <td><?= $s['numero'] ?></td>
-                        <td>
-                            <button class="btn-editar" onclick="abrirModalSemestre(<?= $s['id_semestre'] ?>)">Editar</button>
-                            <a href="../controllers/SemestresController.php?eliminar_semestre=<?= $s['id_semestre'] ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar este semestre?')">Eliminar</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
+        <tbody>
+<?php if (empty($semestres)): ?>
+    <tr>
+        <td colspan="3" style="text-align:center;">No hay semestres registrados</td>
+    </tr>
+<?php else: ?>
+    <?php foreach ($semestres as $s): ?>
+        <tr data-id="<?= $s['id_semestre'] ?>" data-numero="<?= $s['numero'] ?>">
+            <td><?= $s['id_semestre'] ?></td>
+            <td><?= $s['numero'] ?></td>
+            <td>
+                <button class="btn-editar" onclick="abrirModalSemestre(<?= $s['id_semestre'] ?>)">Editar</button>
+                <a href="../controllers/SemestresController.php?eliminar_semestre=<?= $s['id_semestre'] ?>" class="btn-eliminar">Eliminar</a>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+<?php endif; ?>
+</tbody>
+
         </table>
 
         <br>
@@ -88,25 +87,34 @@ ob_start();
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($grupos as $g): ?>
-                    <tr
-                        data-id="<?= $g['id_grupo'] ?>"
-                        data-nombre="<?= htmlspecialchars($g['nombre']) ?>"
-                        data-id_semestre="<?= $g['id_semestre'] ?>"
-                        data-id_carrera="<?= $g['id_carrera'] ?>">
-                        <td><?= $g['id_grupo'] ?></td>
-                        <td><?= htmlspecialchars($g['nombre']) ?></td>
-                        <td><?= $g['semestre_num'] ?></td>
-                        <?php if ($rol === 'admin'): ?>
-                            <td><?= htmlspecialchars($g['nombre_carrera']) ?></td>
-                        <?php endif; ?>
-                        <td>
-                            <button class="btn-editar" onclick="abrirModalGrupo(<?= $g['id_grupo'] ?>)">Editar</button>
-                            <a href="../controllers/SemestresController.php?eliminar_grupo=<?= $g['id_grupo'] ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar este grupo?')">Eliminar</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
+<?php if (empty($grupos)): ?>
+    <tr>
+        <td colspan="<?= ($rol === 'admin') ? 5 : 4 ?>" style="text-align:center;">
+            No hay grupos registrados
+        </td>
+    </tr>
+<?php else: ?>
+    <?php foreach ($grupos as $g): ?>
+        <tr
+            data-id="<?= $g['id_grupo'] ?>"
+            data-nombre="<?= htmlspecialchars($g['nombre']) ?>"
+            data-id_semestre="<?= $g['id_semestre'] ?>"
+            data-id_carrera="<?= $g['id_carrera'] ?>">
+            <td><?= $g['id_grupo'] ?></td>
+            <td><?= htmlspecialchars($g['nombre']) ?></td>
+            <td><?= $g['semestre_num'] ?></td>
+            <?php if ($rol === 'admin'): ?>
+                <td><?= htmlspecialchars($g['nombre_carrera']) ?></td>
+            <?php endif; ?>
+            <td>
+                <button class="btn-editar" onclick="abrirModalGrupo(<?= $g['id_grupo'] ?>)">Editar</button>
+                <a href="../controllers/SemestresController.php?eliminar_grupo=<?= $g['id_grupo'] ?>" class="btn-eliminar">Eliminar</a>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+<?php endif; ?>
+</tbody>
+
         </table>
     </div>
 </div>
@@ -261,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 </script>
-<script src="/ASISTENCIAS/js/modales.js"></script>
+<script src="/js/modales.js"></script>
 <?php
 $content = ob_get_clean();
 $title = "Semestres y Grupos";

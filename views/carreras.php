@@ -6,17 +6,9 @@ require_once "../models/CarrerasModel.php";
 $model = new CarrerasModel($conn);
 $carreras = $model->obtenerCarreras();
 
-$alerta = '';
-if (isset($_SESSION['alerta'])) {
-    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
-                {$_SESSION['alerta']['mensaje']}
-               </div>";
-    unset($_SESSION['alerta']);
-}
 ob_start();
 ?>
 <div class="container-form">
-    <?= $alerta ?>
     <h2>Carreras</h2>
 
     <button class="btn-agregar" onclick="abrirModalCarrera()">Agregar Carrera</button>
@@ -95,7 +87,7 @@ ob_start();
         }
     }
 </script>
-<script src="/ASISTENCIAS/js/modales.js"></script>
+<script src="/js/modales.js"></script>
 <?php
 // FIN CAPTURA
 $content = ob_get_clean();

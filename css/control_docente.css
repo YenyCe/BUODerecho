@@ -1,6 +1,6 @@
 @page {
   size: letter portrait;
-  margin: 15mm;
+  margin: 0;
 }
 
 body {
@@ -26,11 +26,12 @@ body {
 .page {
   width: 216mm;
   min-height: 279mm;
-  background: url("../img/logo2.jpg") no-repeat center center;
+  /*background: url("../img/logo2.jpg") no-repeat center center;*/
   background-size: 100% 100%;
   padding: 15mm;
   box-sizing: border-box;
 }
+
 
 
 .contenido {
@@ -63,8 +64,6 @@ table td {
   font-size: 13px;
   height: 26px;
 }
-
-
 /* Columnas específicas */
 .col-dia {
   width: 150px;

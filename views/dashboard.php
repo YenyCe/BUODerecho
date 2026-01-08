@@ -1,6 +1,7 @@
 <?php
 $rol = $_SESSION['rol'] ?? '';
 $pagina = $pagina ?? 'dashboard'; // Si la página no define $pagina, usar 'dashboard'
+require_once __DIR__ . '/../helpers/alertas.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -9,7 +10,7 @@ $pagina = $pagina ?? 'dashboard'; // Si la página no define $pagina, usar 'dash
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?? "Sistema Académico"; ?></title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="../css/styles.css">
 </head>
 
 <body>
@@ -41,6 +42,7 @@ $pagina = $pagina ?? 'dashboard'; // Si la página no define $pagina, usar 'dash
                 <li><a href="generar_listas.php" class="<?= $pagina == 'generar_listas' ? 'active' : '' ?>">📝 Listas</a></li>
                 <li><a href="horarios.php" class="<?= $pagina == 'horarios' ? 'active' : '' ?>">⏰ Horarios</a></li>
                 <li><a href="alumnos_baja.php" class="<?= $pagina == 'alumnos_baja' ? 'active' : '' ?>">🚫 Alumnos baja</a></li>
+                <li><a href="config_carga_academica.php" class="<?= $pagina == 'carga' ? 'active' : '' ?>">🗂️Carga Academica</a></li>
             <?php endif; ?>
 
 
@@ -50,11 +52,10 @@ $pagina = $pagina ?? 'dashboard'; // Si la página no define $pagina, usar 'dash
     </div>
 
     <div class="main">
-        <?php
-        // Contenido de la página
-        echo $content ?? '';
-        ?>
+        <?= mostrarAlerta() ?>
+        <?= $content ?? '' ?>
     </div>
+
 
 </body>
 

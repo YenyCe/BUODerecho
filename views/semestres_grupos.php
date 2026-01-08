@@ -20,23 +20,11 @@ $grupos = $semModel->getGrupos($id_carrera); // Filtra por carrera si es coordin
 
 // Solo administrador necesita todas las carreras para el select
 $carreras = ($rol === 'admin') ? $carrerasModel->obtenerCarreras() : [];
-$alerta = '';
-if (isset($_SESSION['alerta'])) {
-    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
-                {$_SESSION['alerta']['mensaje']}
-               </div>";
-    unset($_SESSION['alerta']);
-}
-
-
 // INICIAR CAPTURA  
 ob_start();
 ?>
 
 <div class="container-form">
-
-      <?= $alerta ?>
-
     <div class="tablas-pequenas">
         <!-- SEMESTRES -->
         <h2>Semestres</h2>

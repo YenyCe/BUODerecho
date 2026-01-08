@@ -12,7 +12,6 @@ $id_carrera = ($rol === 'coordinador') ? $_SESSION['id_carrera'] : null;
 
 $alumnosModel = new AlumnosModel($conn);
 $alumnosBaja = $alumnosModel->getAlumnosBaja($id_carrera);
-
 // Alertas
 $alerta = "";
 if (isset($_GET['msg'])) {

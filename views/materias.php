@@ -25,21 +25,11 @@ $semestres = $semModel->getSemestres();
 // Solo admin necesita todas las carreras
 $carreras = ($rol === 'admin') ? $carrerasModel->obtenerCarreras() : [];
 
-$alerta = '';
-if (isset($_SESSION['alerta'])) {
-    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
-                {$_SESSION['alerta']['mensaje']}
-               </div>";
-    unset($_SESSION['alerta']);
-}
-
 ob_start();
 ?>
 
 <div class="container-form">
     <h2>Materias</h2>
-    <?= $alerta ?>
-
     <div class="filtros-container" style="margin-bottom:15px;">
         <?php if ($rol === 'admin'): ?>
             <div>

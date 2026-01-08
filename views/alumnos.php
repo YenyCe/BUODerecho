@@ -35,25 +35,12 @@ if ($rol === 'admin') {
     $carreras = $cm->obtenerCarreras();
 }
 
-/* -----------------------------------------------------------
-   ALERTAS
------------------------------------------------------------ */
-$alerta = '';
-if (isset($_SESSION['alerta'])) {
-    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
-                {$_SESSION['alerta']['mensaje']}
-               </div>";
-    unset($_SESSION['alerta']);
-}
-
 
 ob_start();
 ?>
 
 <div class="container-form">
     <h2>Alumnos</h2>
-    <?= $alerta ?>
-
     <!-- FILTROS -->
     <div class="filtros-container">
 

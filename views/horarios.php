@@ -51,14 +51,6 @@ foreach ($todas as $c) {
 $carrerasMap = [];
 foreach ($todas as $c) $carrerasMap[$c['id_carrera']] = $c['nombre'];
 
-$alerta = '';
-if (isset($_SESSION['alerta'])) {
-    $alerta = "<div class='alerta {$_SESSION['alerta']['tipo']}'>
-                {$_SESSION['alerta']['mensaje']}
-               </div>";
-    unset($_SESSION['alerta']);
-}
-var_dump($_SESSION['id_carrera']);
 
 // ===========================================================
 // 3. OBTENER PARCIALES DE ESA CARRERA
@@ -76,7 +68,6 @@ ob_start();
 ?>
 
 <div class="container-form">
-    <?= $alerta ?>
 
     <h2>Horarios</h2>
     <div class="filtros-container" style="margin-bottom:15px; display:flex; gap:15px;">

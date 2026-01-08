@@ -202,10 +202,34 @@ button,
 .btn-eliminar {
   background: #e74c3c;
   margin-left: 5px;
+    text-decoration: none;
 }
 
 .btn-eliminar:hover {
   background: #c0392b;
+}
+
+/* Botón Carga Académica */
+.btn-carga {
+  width: 110px;              /* más ancho por el texto */
+  padding: 6px 8px;
+  text-align: center;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  background: #2980b9;       /* azul académico */
+  transition: all 0.3s ease;
+  display: inline-block;
+  text-decoration: none;
+  margin-left: 5px;
+}
+
+.btn-carga:hover {
+  background: #1f618d;
+  transform: translateY(-1px);
 }
 
 
@@ -664,4 +688,80 @@ body.login-body {
   align-items: center;
   width: 100%;
   text-decoration: none;
+}
+
+
+
+/* ===================================== */
+/* FORMULARIO ELEGANTE – CARGA ACADÉMICA */
+/* ===================================== */
+
+.container-form .form-elegante label {
+  font-weight: 600;
+  color: #34495e;
+  margin-bottom: 6px;
+  display: block;
+  font-size: 14px;
+}
+
+/* Inputs, textarea y select */
+.container-form .form-elegante input,
+.container-form .form-elegante textarea,
+.container-form .form-elegante select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #cfcfcf;
+  font-size: 15px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
+}
+
+/* Focus elegante (igual al modal) */
+.container-form .form-elegante input:focus,
+.container-form .form-elegante textarea:focus,
+.container-form .form-elegante select:focus {
+  border-color: #2980b9;
+  box-shadow: 0 0 6px rgba(41, 128, 185, 0.35);
+  outline: none;
+}
+
+/* Textareas más formales */
+.container-form .form-elegante textarea {
+  resize: vertical;
+  min-height: 95px;
+  line-height: 1.5;
+}
+
+/* Placeholder sobrio */
+.container-form .form-elegante ::placeholder {
+  color: #9aa4ad;
+  font-size: 14px;
+}
+
+/* Botón principal */
+.container-form .form-elegante button {
+  width: 100%;
+  padding: 14px;
+  background-color: #0b0b32;
+  color: #ffffff;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.15s ease;
+}
+
+/* Hover del botón */
+.container-form .form-elegante button:hover {
+  background-color: #16335a;
+  transform: translateY(-1px);
+}
+
+/* Espaciado elegante entre campos */
+.container-form .form-elegante > div {
+  gap: 6px;
 }

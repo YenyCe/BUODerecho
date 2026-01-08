@@ -9,7 +9,7 @@ class DocentesModel {
 
     // Obtener docentes, filtrando por carrera si se pasa $id_carrera
     public function getDocentes($id_carrera = null){
-        $sql = "SELECT d.id_docente, d.nombre, d.apellidos, d.correo, d.telefono, d.id_carrera
+        $sql = "SELECT d.id_docente, d.nombre, d.apellidos, d.correo, d.telefono, d.genero, d.id_carrera
                 FROM docentes d";
 
         if($id_carrera){
@@ -26,9 +26,9 @@ class DocentesModel {
     }
 
     // Agregar docente con carrera
-    public function agregarDocente($nombre, $apellidos, $correo, $telefono, $id_carrera){
-        $stmt = $this->conn->prepare("INSERT INTO docentes (nombre, apellidos, correo, telefono, id_carrera) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssi", $nombre, $apellidos, $correo, $telefono, $id_carrera);
+    public function agregarDocente($nombre, $apellidos, $correo, $telefono, $genero, $id_carrera) {
+        $stmt = $this->conn->prepare("INSERT INTO docentes (nombre, apellidos, correo, telefono, genero, id_carrera) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssi", $nombre, $apellidos, $correo, $telefono, $genero, $id_carrera);
         return $stmt->execute();
     }
 
@@ -41,9 +41,9 @@ class DocentesModel {
     }
 
     // Editar docente con carrera
-    public function editarDocente($id, $nombre, $apellidos, $correo, $telefono, $id_carrera){
-        $stmt = $this->conn->prepare("UPDATE docentes SET nombre=?, apellidos=?, correo=?, telefono=?, id_carrera=? WHERE id_docente=?");
-        $stmt->bind_param("ssssii", $nombre, $apellidos, $correo, $telefono, $id_carrera, $id);
+    public function editarDocente($id, $nombre, $apellidos, $correo, $telefono, $genero, $id_carrera){
+        $stmt = $this->conn->prepare("UPDATE docentes SET nombre=?, apellidos=?, correo=?, telefono=?, genero=?, id_carrera=? WHERE id_docente=?");
+        $stmt->bind_param("sssssii", $nombre, $apellidos, $correo, $telefono, $genero, $id_carrera, $id);
         return $stmt->execute();
     }
 
@@ -53,5 +53,32 @@ class DocentesModel {
         $stmt->bind_param("i", $id);
         return $stmt->execute();
     }
+
+    // Verificar si ya existe docente por nombre + apellidos
+public function existeDocentePorNombre($nombre, $apellidos, $id_docente = null) {
+    $sql = "
+        SELECT id_docente
+        FROM docentes
+        WHERE LOWER(nombre) = LOWER(?)
+          AND LOWER(apellidos) = LOWER(?)
+    ";
+
+    // Para edición: excluir al mismo docente
+    if ($id_docente) {
+        $sql .= " AND id_docente != ?";
+    }
+
+    $stmt = $this->conn->prepare($sql);
+
+    if ($id_docente) {
+        $stmt->bind_param("ssi", $nombre, $apellidos, $id_docente);
+    } else {
+        $stmt->bind_param("ss", $nombre, $apellidos);
+    }
+
+    $stmt->execute();
+    return $stmt->get_result()->num_rows > 0;
+}
+
 }
 ?>

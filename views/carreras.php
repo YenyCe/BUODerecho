@@ -24,16 +24,21 @@ ob_start();
         </thead>
         <tbody>
             <?php foreach ($carreras as $c): ?>
-                <tr data-id="<?php echo $c['id_carrera']; ?>"
-                    data-nombre="<?php echo $c['nombre']; ?>"
-                    data-clave="<?php echo $c['clave']; ?>">
+                <tr
+                    data-id="<?= (int)$c['id_carrera']; ?>"
+                    data-nombre="<?= htmlspecialchars($c['nombre']); ?>"
+                    data-clave="<?= htmlspecialchars($c['clave']); ?>">
 
-                    <td><?php echo $c['id_carrera']; ?></td>
-                    <td><?php echo $c['nombre']; ?></td>
-                    <td><?php echo $c['clave']; ?></td>
+                    <td><?= (int)$c['id_carrera']; ?></td>
+                    <td><?= htmlspecialchars($c['nombre']); ?></td>
+                    <td><?= htmlspecialchars($c['clave']); ?></td>
                     <td>
-                        <button class="btn-editar" onclick="abrirModalCarrera(<?php echo $c['id_carrera']; ?>)">Editar</button>
-                        <a href="../controllers/CarrerasController.php?eliminar=<?php echo $c['id_carrera']; ?>"
+                        <button class="btn-editar"
+                            onclick="abrirModalCarrera(<?= (int)$c['id_carrera']; ?>)">
+                            Editar
+                        </button>
+
+                        <a href="../controllers/CarrerasController.php?eliminar=<?= (int)$c['id_carrera']; ?>"
                             class="btn-eliminar"
                             onclick="return confirm('¿Eliminar esta carrera?')">
                             Eliminar
@@ -41,6 +46,7 @@ ob_start();
                     </td>
                 </tr>
             <?php endforeach; ?>
+
         </tbody>
     </table>
 </div>
@@ -87,11 +93,9 @@ ob_start();
         }
     }
 </script>
-<script src="/js/modales.js"></script>
 <?php
-// FIN CAPTURA
 $content = ob_get_clean();
 $title = "Carreras";
-$pagina = "carreras"; // Esto indica que el menú activo es "Carreras"
+$pagina = "carreras";
 include "dashboard.php";
 ?>

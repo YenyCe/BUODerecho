@@ -2,10 +2,14 @@
 session_start();
 require_once "../config/conexion.php";
 require_once "../models/helpers_asistencia.php";
+require_once "../models/ParcialesModel.php";
+require_once "../models/SemestresModel.php";
+require_once "../models/DocentesModel.php";
+require_once "../models/MateriasModel.php";
 
 $id_carrera = !empty($_SESSION['id_carrera']) ? $_SESSION['id_carrera'] : null;
 
-if(!$id_carrera){
+if (!$id_carrera) {
     die("403");
 }
 $id_docente  = (int)($_POST['id_docente'] ?? 0);
@@ -13,168 +17,134 @@ $id_materia  = (int)($_POST['id_materia'] ?? 0);
 $id_grupo    = (int)($_POST['id_grupo'] ?? 0);
 $id_parcial  = (int)($_POST['id_parcial'] ?? 0);
 
+$parcialModel  = new ParcialesModel($conn);
+$semestreModel = new SemestresModel($conn);
+$docenteModel  = new DocentesModel($conn);
+$materiaModel  = new MateriasModel($conn);
+
 if (!$id_docente || !$id_materia || !$id_grupo || !$id_parcial) {
     die("Faltan parámetros obligatorios.");
 }
 
 /* ================= PARCIAL ================= */
-$p = $conn->query("
-    SELECT fecha_inicio, fecha_fin, numero_parcial
-    FROM parciales
-    WHERE id_parcial = $id_parcial
-")->fetch_assoc();
+$p       = $parcialModel->getParcialPorId($id_parcial);
 
 $fecha_inicio = $p['fecha_inicio'];
 $fecha_fin    = $p['fecha_fin'];
 
 /* ================= DATOS ================= */
-$docente = $conn->query("
-    SELECT CONCAT(nombre,' ',apellidos) AS nombre
-    FROM docentes WHERE id_docente = $id_docente
-")->fetch_assoc();
+$docente = $docenteModel->getDocente($id_docente);
+$materia = $materiaModel->getMateria($id_materia);
 
-$materia = $conn->query("
-    SELECT nombre FROM materias WHERE id_materia = $id_materia
-")->fetch_assoc();
-
-$grupo = $conn->query("
-    SELECT g.nombre AS grupo, s.numero AS semestre
-    FROM grupos g
-    INNER JOIN semestres s ON g.id_semestre = s.id_semestre
-    WHERE g.id_grupo = $id_grupo
-")->fetch_assoc();
+$grupo   = $semestreModel->getGrupo($id_grupo);
 
 /* ================= HORARIOS ================= */
 $horarios = obtener_horarios_docente($conn, $id_docente, $id_materia, $id_grupo);
 $fechas = generar_fechas_y_horas($fecha_inicio, $fecha_fin, $horarios);
 
 /* ================= AGRUPAR POR MES ================= */
-$meses = [
-    1=>'ENERO',2=>'FEBRERO',3=>'MARZO',4=>'ABRIL',
-    5=>'MAYO',6=>'JUNIO',7=>'JULIO',8=>'AGOSTO',
-    9=>'SEPTIEMBRE',10=>'OCTUBRE',11=>'NOVIEMBRE',12=>'DICIEMBRE'
-];
-
-$fechas_por_mes = [];
-foreach ($fechas as $f) {
-    $m = (int)date('m', strtotime($f['fecha']));
-    $a = date('Y', strtotime($f['fecha']));
-    $fechas_por_mes[$meses[$m]." ".$a][] = $f;
-}
-
-/* ================= HELPERS ================= */
-function formato_horarios($horarios){
-    if (!$horarios) return '-';
-    return implode(', ', array_column($horarios, 'horario_texto'));
-}
-
-function dia_fecha($fecha){
-    $dias = ['Sun'=>'DOMINGO','Mon'=>'LUNES','Tue'=>'MARTES','Wed'=>'MIERCOLES','Thu'=>'JUEVES','Fri'=>'VIERNES','Sat'=>'SABADO'];
-    return $dias[date('D', strtotime($fecha))]." ".date('d', strtotime($fecha));
-}
+$fechas_por_mes = agrupar_fechas_por_mes($fechas);
 
 $nombre_membreteV = '';
 
 switch ($id_carrera) {
     case 1:
         $nombre_membreteV = 'logo2.jpg';
-    break;
+        break;
     case 3:
         $nombre_membreteV = 'me.png';
-    break;
+        break;
 }
 /* ================= CONFIG ================= */
 $filas_por_hoja = 15;
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<title>Control de Asistencia Docente</title>
-<link rel="stylesheet" href="../css/control_docente.css">
+    <meta charset="UTF-8">
+    <title>Control de Asistencia Docente</title>
+    <link rel="stylesheet" href="../css/control_docente.css">
 </head>
 
 <body>
-<button onclick="window.print()" class="print-btn">Imprimir</button>
+    <button onclick="window.print()" class="print-btn">Imprimir</button>
 
-<?php foreach ($fechas_por_mes as $mes => $dias): ?>
+    <?php foreach ($fechas_por_mes as $mes => $dias): ?>
 
-<?php
-$filas = [];
-foreach ($dias as $d) {
-    for ($i=1; $i<=($d['horas'] ?? 1); $i++) {
-        $filas[] = [
-            'fecha'=>$d['fecha'],
-            'hora_inicio'=>$d['hora_inicio'] ?? '',
-            'hora_fin'=>$d['hora_fin'] ?? '',
-            'rowspan'=>($i===1 ? ($d['horas'] ?? 1) : 0)
-        ];
-    }
-}
+        <?php
+        $filas = [];
+        foreach ($dias as $d) {
+            for ($i = 1; $i <= ($d['horas'] ?? 1); $i++) {
+                $filas[] = [
+                    'fecha' => $d['fecha'],
+                    'hora_inicio' => $d['hora_inicio'] ?? '',
+                    'hora_fin' => $d['hora_fin'] ?? '',
+                    'rowspan' => ($i === 1 ? ($d['horas'] ?? 1) : 0)
+                ];
+            }
+        }
 
-$paginas = array_chunk($filas, $filas_por_hoja);
-?>
+        $paginas = array_chunk($filas, $filas_por_hoja);
+        ?>
 
-<?php foreach ($paginas as $pagina): ?>
-<div class="page" style="
-  background: url('/img/<?= $nombre_membreteV; ?>') no-repeat center;
-  background-size: contain;">
+        <?php foreach ($paginas as $pagina): ?>
+            <div class="page" style="background: url('/img/<?= $nombre_membreteV; ?>') no-repeat center; background-size: contain;">
+                <div class="contenido" style="margin-top:60px;">
+                    <table class="info-table">
+                        <tr>
+                            <td colspan="8"><strong>Materia:</strong> <?= $materia['nombre'] ?></td>
+                            <td colspan="4"><strong>Mes:</strong> <?= $mes ?></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4"><?= $grupo['semestre'] ?> / <?= $grupo['grupo'] ?></td>
+                            <td colspan="8"><strong>Docente:</strong> <?= $docente['nombre'] ?></td>
+                        </tr>
+                        <tr>
+                            <td colspan="12"><strong>Horario:</strong> <?= formato_horarios($horarios) ?></td>
+                        </tr>
+                    </table>
 
-<div class="contenido" style="margin-top:60px;">
+                    <table class="table-reporte" style="margin-top:15px;">
+                        <thead>
+                            <tr>
+                                <th colspan="7">CONTROL DE ASISTENCIAS</th>
+                            </tr>
+                            <tr>
+                                <th>DÍA</th>
+                                <th>ASISTENCIA</th>
+                                <th>HORA ENTRADA</th>
+                                <th>HORA SALIDA</th>
+                                <th>INASISTENCIA</th>
+                                <th>REPOSICIÓN</th>
+                                <th>OBSERVACIONES</th>
+                            </tr>
+                        </thead>
 
-<table class="info-table">
-<tr>
-    <td colspan="8"><strong>Materia:</strong> <?= $materia['nombre'] ?></td>
-    <td colspan="4"><strong>Mes:</strong> <?= $mes ?></td>
-</tr>
-<tr>
-    <td colspan="4"><?= $grupo['semestre'] ?> / <?= $grupo['grupo'] ?></td>
-    <td colspan="8"><strong>Docente:</strong> <?= $docente['nombre'] ?></td>
-</tr>
-<tr>
-    <td colspan="12"><strong>Horario:</strong> <?= formato_horarios($horarios) ?></td>
-</tr>
-</table>
+                        <tbody>
+                            <?php foreach ($pagina as $f): ?>
+                                <tr>
+                                    <?php if ($f['rowspan']): ?>
+                                        <td rowspan="<?= $f['rowspan'] ?>"><?= dia_fecha($f['fecha']) ?></td>
+                                    <?php endif; ?>
+                                    <td></td>
+                                    <td><?= $f['hora_inicio'] ?></td>
+                                    <td><?= $f['hora_fin'] ?></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
 
-<table class="table-reporte" style="margin-top:15px;">
-<thead>
-<tr>
-    <th colspan="7">CONTROL DE ASISTENCIAS</th>
-</tr>
-<tr>
-    <th>DÍA</th>
-    <th>ASISTENCIA</th>
-    <th>HORA ENTRADA</th>
-    <th>HORA SALIDA</th>
-    <th>INASISTENCIA</th>
-    <th>REPOSICIÓN</th>
-    <th>OBSERVACIONES</th>
-</tr>
-</thead>
+                </div>
+            </div>
+            <div class="page-break"></div>
+        <?php endforeach; ?>
 
-<tbody>
-<?php foreach ($pagina as $f): ?>
-<tr>
-    <?php if ($f['rowspan']): ?>
-        <td rowspan="<?= $f['rowspan'] ?>"><?= dia_fecha($f['fecha']) ?></td>
-    <?php endif; ?>
-    <td></td>
-    <td><?= $f['hora_inicio'] ?></td>
-    <td><?= $f['hora_fin'] ?></td>
-    <td></td>
-    <td></td>
-    <td></td>
-</tr>
-<?php endforeach; ?>
-</tbody>
-</table>
-
-</div>
-</div>
-<div class="page-break"></div>
-<?php endforeach; ?>
-
-<?php endforeach; ?>
+    <?php endforeach; ?>
 
 </body>
+
 </html>

@@ -34,10 +34,22 @@ class DocentesModel {
 
     // Obtener un docente por id
     public function getDocente($id){
-        $stmt = $this->conn->prepare("SELECT * FROM docentes WHERE id_docente=?");
+          if (!is_numeric($id) || intval($id) <= 0) {
+            return false;
+        }
+
+        $stmt = $this->conn->prepare("
+            SELECT 
+                id_docente,
+                CONCAT(nombre,' ',apellidos) AS nombre
+            FROM docentes
+            WHERE id_docente = ?
+        ");
         $stmt->bind_param("i", $id);
         $stmt->execute();
-        return $stmt->get_result()->fetch_assoc();
+
+        return $stmt->get_result()->fetch_assoc() ?: false;
+    
     }
 
     // Editar docente con carrera

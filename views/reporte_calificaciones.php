@@ -4,7 +4,7 @@ require_once "../config/conexion.php";
 
 $id_carrera = !empty($_SESSION['id_carrera']) ? $_SESSION['id_carrera'] : null;
 
-if(!$id_carrera){
+if (!$id_carrera) {
     die("403");
 }
 
@@ -55,10 +55,10 @@ $nombre_membrete = '';
 switch ($id_carrera) {
     case 1:
         $nombre_membrete = 'logoListas.jpg';
-    break;
+        break;
     case 3:
         $nombre_membrete = '3.jpg';
-    break;
+        break;
 }
 ?>
 <!DOCTYPE html>
@@ -169,43 +169,41 @@ switch ($id_carrera) {
                         ?>
                     </tbody>
                 </table>
-               <?php if ($pagina == $paginas): ?>
+                <?php if ($pagina == $paginas): ?>
 
-    <?php
-    // Si la última página está llena (15 alumnos),
-    // mandamos firmas a hoja nueva
-    if ($alumnos_ultima_pagina == $por_pagina):
-    ?>
-        </div></div>
+                    <?php
+                    // Si la última página está llena (15 alumnos),
+                    // mandamos firmas a hoja nueva
+                    if ($alumnos_ultima_pagina == $por_pagina):
+                    ?>
+            </div>
+        </div>
         <div class="page-break"></div>
         <div class="page">
             <div class="contenido" style="margin-top:40px;">
-    <?php endif; ?>
+            <?php endif; ?>
 
-    <div style="margin-top:20px; width:90%; font-size:0.75em; text-align:justify;">
-        NOTA: Los criterios aquí mencionados son enunciativos más no limitativos,
-        por lo que el docente podrá variar los criterios de evaluación acorde a las
-        actividades que considere optimicen el aprendizaje del alumno, pudiendo
-        agregar o disminuir las columnas necesarias.
-    </div>
-
-    <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:flex-start;">
-        <div style="text-align:center; width:45%;">
-            <p><?= htmlspecialchars($docente['nombre']) ?><br>TITULAR DE ASIGNATURA</p>
-        </div>
-
-        <div style="text-align:center; width:45%;">
-            <br>
-            <div>
-                CONTROL ESCOLAR DE <br> LICENCIATURA EN DERECHO
+            <div style="margin-top:20px; width:90%; font-size:0.75em; text-align:justify;">
+                NOTA: Los criterios aquí mencionados son enunciativos más no limitativos,
+                por lo que el docente podrá variar los criterios de evaluación acorde a las
+                actividades que considere optimicen el aprendizaje del alumno, pudiendo
+                agregar o disminuir las columnas necesarias.
             </div>
-        </div>
-    </div>
 
-<?php endif; ?>
+            <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:flex-start;">
+                <div style="text-align:center; width:45%;">
+                    <p><?= htmlspecialchars($docente['nombre']) ?><br>TITULAR DE ASIGNATURA</p>
+                </div>
 
+                <div style="text-align:center; width:45%;">
+                    <br>
+                    <div>
+                        CONTROL ESCOLAR DE <br> LICENCIATURA EN DERECHO
+                    </div>
+                </div>
+            </div>
 
-
+        <?php endif; ?>
             </div>
         </div>
 

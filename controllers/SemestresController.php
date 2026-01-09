@@ -73,7 +73,6 @@ if (isset($_GET['eliminar_semestre'])) {
 
 
 /* --- GRUPOS --- */
-/* --- GRUPOS --- */
 if (isset($_POST['accion_grupo'])) {
 
     $nombre = trim($_POST['nombre']);

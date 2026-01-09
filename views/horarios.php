@@ -70,7 +70,7 @@ ob_start();
 <div class="container-form">
 
     <h2>Horarios</h2>
-    <div class="filtros-container" style="margin-bottom:15px; display:flex; gap:15px;">
+    <div class="filtros-container">
 
         <!-- FILTRO CARRERA (SOLO ADMIN) -->
         <?php if ($_SESSION['rol'] === 'admin'): ?>
@@ -136,15 +136,15 @@ ob_start();
                                 <?= $h["id_horario"] ?>,
                                 <?= json_encode($h, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>
                             )'>
-                               Editar
+                                Editar
                             </button>
 
                             <a class="btn-eliminar"
                                 href="/controllers/HorariosController.php?accion=eliminar&id=<?= $h['id_horario'] ?>"
                                 onclick="return confirm('¿Eliminar?')">
-                               Eliminar
+                                Eliminar
                             </a>
-                            
+
 
                             <button class="btn-generar"
                                 onclick='abrirModalGenerar(
@@ -153,7 +153,7 @@ ob_start();
                                     <?= $h["id_materia"] ?>,
                                     <?= $h["id_docente"] ?>
                                 )'>
-                           Generar
+                                Generar
                             </button>
                         </div>
                     </td>
@@ -275,30 +275,21 @@ ob_start();
                     </option>
                 <?php endforeach; ?>
             </select>
-            <div style="display:flex; gap:10px; margin-top:15px; justify-content:center;">
-
+            <div class="filtros-container">
                 <button type="submit"
-                    formaction="lista_impresion.php"
-                    class="btn-agregar">
-                    Lista de Asistencia
+                    formaction="lista_impresion.php" class="btn-agregar">Lista de Asistencia
                 </button>
 
                 <button type="submit"
-                    formaction="reporte_calificaciones.php"
-                    class="btn-agregar"
-                    style="background:#28a745;">
+                    formaction="reporte_calificaciones.php" class="btn-agregar" style="background:#28a745;">
                     Reporte Calificaciones
                 </button>
 
                 <button type="submit"
-                    formaction="control_asistencia_docente.php"
-                    class="btn-agregar"
-                    style="background:#6f42c1;">
+                    formaction="control_asistencia_docente.php" class="btn-agregar" style="background:#6f42c1;">
                     Control Docente
                 </button>
-
             </div>
-
         </form>
     </div>
 </div>
@@ -479,12 +470,6 @@ ob_start();
             }
         });
     });
-
-    // cerrar modal al click fuera
-    window.addEventListener('click', function(event) {
-        const modal = document.getElementById('modalHorario');
-        if (event.target == modal) modal.style.display = 'none';
-    });
 </script>
 <script>
     function aplicarFiltros() {
@@ -515,9 +500,6 @@ ob_start();
     document.getElementById("filtroCarrera")?.addEventListener("change", aplicarFiltros);
     document.getElementById("filtroGrupo")?.addEventListener("change", aplicarFiltros);
 </script>
-
-<script src="/js/modales.js"></script>
-
 <?php
 $content = ob_get_clean();
 $title = "Horarios";

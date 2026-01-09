@@ -1,4 +1,3 @@
-
 // FUNCION UNIVERSAL PARA CERRAR MODAL
 function cerrarModal(idModal) {
     const modal = document.getElementById(idModal);

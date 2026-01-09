@@ -2,10 +2,13 @@
 require_once "../middlewares/auth.php"; // Solo usuarios logueados
 require_once "../config/conexion.php";
 require_once "../models/UsuariosModel.php";
+require_once "../models/CarrerasModel.php";
 
 $usuarioModel = new UsuariosModel($conn);
 $usuarios = $usuarioModel->getUsuarios();
-$carreras = $usuarioModel->getCarreras();
+
+$carreraModel = new CarrerasModel($conn);
+$carreras = $carreraModel->obtenerCarreras();
 ob_start();
 ?>
 
@@ -153,7 +156,6 @@ ob_start();
         }
     }
 </script>
-<script src="/js/modales.js"></script>
 <?php
 $content = ob_get_clean();
 $title = "Usuarios";

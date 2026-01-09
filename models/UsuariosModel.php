@@ -17,41 +17,6 @@ class UsuariosModel
         $result = $this->conn->query($sql);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
-
-    public function agregarUsuario($nombre, $correo, $usuario, $password, $rol, $id_carrera = null)
-    {
-        $hash = password_hash($password, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO usuarios (nombre, correo, usuario, password, rol, id_carrera) VALUES (?, ?, ?, ?, ?, ?)";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("sssssi", $nombre, $correo, $usuario, $hash, $rol, $id_carrera);
-        return $stmt->execute();
-    }
-
-   public function editarUsuario($id_usuario,$nombre,$correo,$usuario,$password,$rol,$estado,$id_carrera = null) {
-
-        if (!empty($password)) {
-            $hash = password_hash($password, PASSWORD_DEFAULT);
-            $sql = "UPDATE usuarios SET nombre = ?,correo = ?,usuario = ?,password = ?,rol = ?, estado = ?, id_carrera = ?
-                    WHERE id_usuario = ?";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param( "sssssiii",$nombre,$correo,$usuario, $hash, $rol, $estado, $id_carrera, $id_usuario);
-
-        } else {
-            $sql = "UPDATE usuarios SET nombre = ?, correo = ?, usuario = ?, rol = ?, estado = ?, id_carrera = ?  WHERE id_usuario = ?";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param("ssssiii", $nombre, $correo,  $usuario, $rol, $estado, $id_carrera, $id_usuario );
-        }
-        return $stmt->execute();
-    }
-
-    public function eliminarUsuario($id_usuario)
-    {
-        $sql = "DELETE FROM usuarios WHERE id_usuario=?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $id_usuario);
-        return $stmt->execute();
-    }
-
     public function getUsuario($id_usuario)
     {
         $sql = "SELECT * FROM usuarios WHERE id_usuario=?";
@@ -62,10 +27,37 @@ class UsuariosModel
         return $result->fetch_assoc();
     }
 
-    public function getCarreras()
+    public function agregarUsuario($nombre, $correo, $usuario, $password, $rol, $id_carrera = null)
     {
-        $sql = "SELECT * FROM carreras";
-        $result = $this->conn->query($sql);
-        return $result->fetch_all(MYSQLI_ASSOC);
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $sql = "INSERT INTO usuarios (nombre, correo, usuario, password, rol, id_carrera) VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("sssssi", $nombre, $correo, $usuario, $hash, $rol, $id_carrera);
+        return $stmt->execute();
+    }
+
+    public function editarUsuario($id_usuario, $nombre, $correo, $usuario, $password, $rol, $estado, $id_carrera = null)
+    {
+
+        if (!empty($password)) {
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $sql = "UPDATE usuarios SET nombre = ?,correo = ?,usuario = ?,password = ?,rol = ?, estado = ?, id_carrera = ?
+                    WHERE id_usuario = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("sssssiii", $nombre, $correo, $usuario, $hash, $rol, $estado, $id_carrera, $id_usuario);
+        } else {
+            $sql = "UPDATE usuarios SET nombre = ?, correo = ?, usuario = ?, rol = ?, estado = ?, id_carrera = ?  WHERE id_usuario = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("ssssiii", $nombre, $correo,  $usuario, $rol, $estado, $id_carrera, $id_usuario);
+        }
+        return $stmt->execute();
+    }
+
+    public function eliminarUsuario($id_usuario)
+    {
+        $sql = "DELETE FROM usuarios WHERE id_usuario=?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $id_usuario);
+        return $stmt->execute();
     }
 }

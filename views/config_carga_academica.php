@@ -76,9 +76,15 @@ ob_start();
                     💾 Guardar Configuración
                 </button>
             </div>
+
         </div>
+
     </form>
+
+
 </div>
+
+<script src="/js/modales.js"></script>
 <?php
 $content = ob_get_clean();
 $title = "Carga Académica";

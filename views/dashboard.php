@@ -54,7 +54,6 @@ require_once __DIR__ . '/../helpers/alertas.php';
     <div class="main">
         <?= mostrarAlerta() ?>
         <?= $content ?? '' ?>
-        <script src="../js/modales.js"></script>
     </div>
 
 

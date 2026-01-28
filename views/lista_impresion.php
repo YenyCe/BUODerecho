@@ -5,7 +5,7 @@ require_once "../models/helpers_asistencia.php";
 
 $id_carrera = !empty($_SESSION['id_carrera']) ? $_SESSION['id_carrera'] : null;
 
-if (!$id_carrera) {
+if(!$id_carrera){
     die("403");
 }
 
@@ -73,10 +73,10 @@ $nombre_membrete = '';
 switch ($id_carrera) {
     case 1:
         $nombre_membrete = 'logoListas.jpg';
-        break;
+    break;
     case 3:
         $nombre_membrete = '3.jpg';
-        break;
+    break;
 }
 
 // Arreglo con los nombres de los meses en español
@@ -171,7 +171,7 @@ function fecha_larga_es($fecha)
   height: 215.9mm;
   background: url('/img/<?= $nombre_membrete; ?>') no-repeat center;
   background-size: contain;">
-            <div class="contenido" style="margin-top:40px;">
+            <div class="contenido" style="margin-top:10px;">
            <!-- ENCABEZADO INFORMACIÓN -->
                 <table class="info-table">
                     <colgroup>
@@ -290,7 +290,7 @@ function fecha_larga_es($fecha)
                     ?>
             </div>
         </div>
-
+        
         <div class="page-break"></div>
         <div class="page" style="width: 279.4mm;
   height: 215.9mm;

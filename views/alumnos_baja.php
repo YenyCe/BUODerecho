@@ -12,11 +12,31 @@ $id_carrera = ($rol === 'coordinador') ? $_SESSION['id_carrera'] : null;
 
 $alumnosModel = new AlumnosModel($conn);
 $alumnosBaja = $alumnosModel->getAlumnosBaja($id_carrera);
+// Alertas
+$alerta = "";
+if (isset($_GET['msg'])) {
+    if ($_GET['msg'] === "success") {
+        $alerta = "<div class='alerta success'>Acción realizada correctamente</div>";
+    }
+    if ($_GET['msg'] === "error") {
+        $razon = htmlspecialchars($_GET['reason'] ?? "Error desconocido");
+        $alerta = "<div class='alerta error'>Error: $razon</div>";
+    }
+}
+
 ob_start();
 ?>
 
 <div class="container-form">
     <h2>Alumnos de Baja</h2>
+
+    <?php if ($alerta): ?>
+        <div id="alertaMsg" class="alerta <?php echo (strpos($alerta,'success') ? 'success':'error'); ?>">
+            <span><?php echo strip_tags($alerta); ?></span>
+            <span class="cerrar-alerta" onclick="cerrarAlerta()">&times;</span>
+        </div>
+    <?php endif; ?>
+
     <table class="tabla-docentes">
         <thead>
             <tr>
@@ -42,8 +62,15 @@ ob_start();
         </tbody>
     </table>
 </div>
+
 <script>
-    
+function cerrarAlerta() {
+    const alerta = document.getElementById("alertaMsg");
+    alerta.classList.add("ocultar");
+    setTimeout(() => alerta.remove(), 600);
+}
+</script>
+
 <?php
 $content = ob_get_clean();
 $title = "Alumnos de Baja";

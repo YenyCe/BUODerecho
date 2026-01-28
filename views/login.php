@@ -56,7 +56,7 @@ if (isset($_SESSION['id_usuario'])) {
     </form>
 
     <div class="text-center mt-3">
-        <small class="text-muted">© <?= date('Y') ?> BUO. Todos los derechos reservados.</small>
+        <small class="text-muted">© <?= date('Y') ?> Universidad. Todos los derechos reservados.</small>
     </div>
 </div>
 

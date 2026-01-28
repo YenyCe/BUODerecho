@@ -17,15 +17,6 @@ class UsuariosModel
         $result = $this->conn->query($sql);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
-    public function getUsuario($id_usuario)
-    {
-        $sql = "SELECT * FROM usuarios WHERE id_usuario=?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $id_usuario);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_assoc();
-    }
 
     public function agregarUsuario($nombre, $correo, $usuario, $password, $rol, $id_carrera = null)
     {
@@ -36,19 +27,19 @@ class UsuariosModel
         return $stmt->execute();
     }
 
-    public function editarUsuario($id_usuario, $nombre, $correo, $usuario, $password, $rol, $estado, $id_carrera = null)
-    {
+   public function editarUsuario($id_usuario,$nombre,$correo,$usuario,$password,$rol,$estado,$id_carrera = null) {
 
         if (!empty($password)) {
             $hash = password_hash($password, PASSWORD_DEFAULT);
             $sql = "UPDATE usuarios SET nombre = ?,correo = ?,usuario = ?,password = ?,rol = ?, estado = ?, id_carrera = ?
                     WHERE id_usuario = ?";
             $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param("sssssiii", $nombre, $correo, $usuario, $hash, $rol, $estado, $id_carrera, $id_usuario);
+            $stmt->bind_param( "sssssiii",$nombre,$correo,$usuario, $hash, $rol, $estado, $id_carrera, $id_usuario);
+
         } else {
             $sql = "UPDATE usuarios SET nombre = ?, correo = ?, usuario = ?, rol = ?, estado = ?, id_carrera = ?  WHERE id_usuario = ?";
             $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param("ssssiii", $nombre, $correo,  $usuario, $rol, $estado, $id_carrera, $id_usuario);
+            $stmt->bind_param("ssssiii", $nombre, $correo,  $usuario, $rol, $estado, $id_carrera, $id_usuario );
         }
         return $stmt->execute();
     }
@@ -59,5 +50,22 @@ class UsuariosModel
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("i", $id_usuario);
         return $stmt->execute();
+    }
+
+    public function getUsuario($id_usuario)
+    {
+        $sql = "SELECT * FROM usuarios WHERE id_usuario=?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $id_usuario);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+
+    public function getCarreras()
+    {
+        $sql = "SELECT * FROM carreras";
+        $result = $this->conn->query($sql);
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
 }

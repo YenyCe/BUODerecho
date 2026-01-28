@@ -118,40 +118,6 @@ class SemestresModel {
 
         return $result->fetch_all(MYSQLI_ASSOC);
     }
-  
-    // Obtener información de un grupo por su ID
-    public function getGrupo($id_grupo)
-    {
-        $stmt = $this->conn->prepare("
-        SELECT 
-            g.id_grupo,
-            g.nombre AS grupo,
-            g.id_carrera,
-            s.id_semestre,
-            s.numero AS semestre
-        FROM grupos g
-        INNER JOIN semestres s ON g.id_semestre = s.id_semestre
-        WHERE g.id_grupo = ?
-    ");
-        $stmt->bind_param("i", $id_grupo);
-        $stmt->execute();
-        $res = $stmt->get_result();
-        return $res->fetch_assoc() ?: false;
-    }
-
-    public function getGruposPorCarrera($id_carrera)
-    {
-        $stmt = $this->conn->prepare(
-            "SELECT g.id_grupo, g.nombre AS nombre_grupo, g.id_carrera, c.nombre AS nombre_carrera
-         FROM grupos g
-         JOIN carreras c ON g.id_carrera = c.id_carrera
-         WHERE g.id_carrera = ?
-         ORDER BY g.nombre ASC"
-        );
-        $stmt->bind_param("i", $id_carrera);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }
 
     public function existeGrupo($nombre, $id_semestre, $id_carrera, $id_excluir = null){
         if($id_excluir){

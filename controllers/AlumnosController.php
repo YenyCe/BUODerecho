@@ -87,5 +87,3 @@ if (isset($_GET['eliminar'])) {
 
 header("Location: ../views/alumnos.php");
 exit();
-
-

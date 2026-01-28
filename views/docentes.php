@@ -18,7 +18,7 @@ ob_start();
     <h2>Docentes</h2>   
 
     <?php if ($rol === 'admin'): ?>
-        <div class="filtros-container">
+        <div class="filtros-container" style="margin-bottom:15px;">
             <div>
                 <label>Filtrar por carrera:</label>
 
@@ -93,7 +93,8 @@ ob_start();
                                 onclick="return confirm('¿Eliminar este docente?')">Eliminar</a>
                             <!-- GENERAR CARGA ACADÉMICA -->
                             <a class="btn-carga"
-                                href="../views/impresion_carga_academica.php?id_docente=<?= $d['id_docente'] ?>" target="_blank">
+                                href="../views/impresion_carga_academica.php?id_docente=<?= $d['id_docente'] ?>"
+                                target="_blank">
                                 Carga Académica
                             </a>
                         </td>
@@ -211,6 +212,10 @@ ob_start();
         }
     }
 
+    function cerrarAlerta() {
+        document.getElementById('alertaMsg').style.display = 'none';
+    }
+
     // FILTRO POR CARRERA (solo admin)
     document.getElementById('filtroCarrera')?.addEventListener('change', function() {
         let filtro = this.value;
@@ -225,6 +230,7 @@ ob_start();
         });
     });
 </script>
+<script src="../js/modales.js"></script>
 <?php
 $content = ob_get_clean();
 $title = "Docentes";

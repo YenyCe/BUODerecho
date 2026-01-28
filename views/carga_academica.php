@@ -3,27 +3,36 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once "../middlewares/auth.php";
+session_start();
 require_once "../config/conexion.php";
-require_once "../models/CargaAcademicaModel.php";
 
 /* ================= SEGURIDAD ================= */
 if (!isset($_SESSION['id_usuario'])) {
     die("403");
 }
 
+$id_carrera = !empty($_SESSION['id_carrera']) ? $_SESSION['id_carrera'] : null;
+
+if(!$id_carrera){
+    die("403");
+}
+
 $id_docente = (int)($_GET['id_docente'] ?? 0);
+
 if (!$id_docente) {
     die("Docente inválido");
+}
+/* ================= MEMBRETE ================= */
+$membrete = '';
+switch ($id_carrera) {
+    case 1: $membrete = 'logo2.jpg'; break;
+    case 3: $membrete = 'me.png'; break;
 }
 
 /* ================= DOCENTE ================= */
 $docente = $conn->query("
     SELECT 
-        d.id_docente,
         CONCAT(d.nombre,' ',d.apellidos) AS nombre,
-        d.genero,
-        d.id_carrera,
         c.nombre AS carrera
     FROM docentes d
     INNER JOIN carreras c ON d.id_carrera = c.id_carrera
@@ -34,27 +43,9 @@ if (!$docente) {
     die("Docente no encontrado");
 }
 
-$id_carrera = $docente['id_carrera'];
-$saludo = ($docente['genero'] === 'M') ? 'BIENVENIDA' : 'BIENVENIDO';
-
-/* ================= CONFIGURACIÓN ================= */
-$model = new CargaAcademicaModel($conn);
-$config = $model->getConfigByCarrera($id_carrera);
-
-if (!$config) {
-    die("No existe configuración de carga académica para esta carrera");
-}
-
-/* ================= MEMBRETE (OPCIONAL) ================= */
-$membrete = '';
-switch ($id_carrera) {
-    case 1: $membrete = 'logo2.jpg'; break;
-    case 3: $membrete = 'me.png'; break;
-}
-
-/* ================= HORARIOS ================= */
+/* ================= CARGA ACADÉMICA ================= */
 $carga = $conn->query("
-    SELECT  
+    SELECT
         m.id_semestre AS semestre,
         m.nombre AS materia,
         h.horario_texto AS horario,
@@ -65,7 +56,9 @@ $carga = $conn->query("
     ORDER BY m.id_semestre, m.nombre
 ");
 
+
 /* ================= FECHA ================= */
+// ================= FECHA SELECCIONABLE =================
 $fecha_input = $_GET['fecha'] ?? date('Y-m-d');
 
 $meses = [
@@ -75,6 +68,7 @@ $meses = [
 ];
 
 $timestamp = strtotime($fecha_input);
+
 $fecha = "Oaxaca de Juárez, Oaxaca a "
         . date('d', $timestamp)
         . " de "
@@ -82,7 +76,6 @@ $fecha = "Oaxaca de Juárez, Oaxaca a "
         . " del "
         . date('Y', $timestamp);
 
-ob_start();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -90,56 +83,72 @@ ob_start();
 <meta charset="UTF-8">
 <title>Carga Académica</title>
 <link rel="stylesheet" href="../css/carga_academica.css">
+
 </head>
 
 <body>
+
 <button onclick="window.print()" class="print-btn">Imprimir</button>
 
 <form method="GET" style="margin:20px;">
     <input type="hidden" name="id_docente" value="<?= $id_docente ?>">
+
     <label><strong>Seleccionar fecha del documento:</strong></label><br>
     <input type="date" name="fecha" value="<?= htmlspecialchars($fecha_input) ?>">
     <button type="submit">Aplicar fecha</button>
 </form>
 
+
 <div class="page" style="
-  background: url('../img/<?= $membrete ?>') no-repeat center;
+  background: url('../img/<?= $membrete; ?>') no-repeat center;
   background-size: contain;">
 
 <div class="contenido">
 
 <div class="encabezado">
     <?= $fecha ?><br>
-    <?= htmlspecialchars($config['clave_oficio']) ?><br>
+    BUO/CEL/LD/810<br>
     <strong>ASUNTO:</strong> CARGA ACADÉMICA
 </div>
 
+
 <div class="titulo">
-    <strong><?= strtoupper($docente['nombre']) ?></strong><br>
-    DOCENTE DE ASIGNATURA DE LA LICENCIATURA <br>
-    EN <?= strtoupper($docente['carrera']) ?> DE LA BENEMÉRITA UNIVERSIDAD DE OAXACA<br>
+     <strong><?= strtoupper($docente['nombre']) ?></strong><br>
+    DOCENTE DE ASIGNATURA DE LA LICENCIATURA <br> EN <?= strtoupper($docente['carrera']) ?> DE LA BENEMÉRITA UNIVERSIDAD DE OAXACA<br>
     PRESENTE
 </div>
 
 <div class="texto">
-       <p> 
-
-    <?= nl2br(htmlspecialchars($config['texto_presentacion'])) ?>
-      </p>
-</div>
-
-<p class="bienvenida">
-    <span class="bienvenida-naranja"><?= $saludo ?> A NUESTRO</span><br>
-    <span class="bienvenida-azul"> CLAUSTRO DOCENTE BUO, CICLO ESCOLAR <?= strtoupper($config['ciclo_escolar']) ?></span>
-</p>
-
-
-
-<div class="texto">
     <p>
-    <?= nl2br(htmlspecialchars($config['claustro_texto'])) ?>
+        La Benemérita Universidad de Oaxaca (BUO), a través del Programa Académico de la
+        Licenciatura en Derecho, asume el compromiso de formar profesionales de excelencia,
+        que impacten de manera positiva en nuestra sociedad, como reconocidos Licenciados
+        en Derecho del país; por lo que resulta de gran importancia contar con docentes de
+        alto nivel, que mediante su práctica impacten de manera positiva en nuestra
+        comunidad universitaria.
+    </p>
+
+    <p>
+        Conocedores de su amplia trayectoria como profesional del derecho y de su alto
+        profesionalismo académico, comprometido por vocación en la labor educativa,
+        agradecemos su invaluable participación en esta institución y le brindamos la más
+        cordial
+    </p>
+
+    <p class="bienvenida">
+        <span class="bienvenida-naranja">BIENVENIDA A NUESTRO</span><br>
+        <span class="bienvenida-azul">CLAUSTRO DOCENTE BUO, CICLO ESCOLAR 2024–2025</span>
+    </p>
+    
+    <p>
+        En este sentido y con fundamento en los artículos 30, 32, 34, 35 y 36 del Reglamento
+        Interno de la BUO, tengo a bien presentarle las horas clase asignadas en la
+        Licenciatura en Derecho de esta institución educativa, durante el periodo
+        comprendido del 19 de agosto al 21 de diciembre de 2024, que se detalla a
+        continuación:
     </p>
 </div>
+
 
 <table class="tabla">
     <thead>
@@ -149,6 +158,7 @@ ob_start();
                 <?= strtoupper($docente['nombre']) ?>
             </td>
         </tr>
+
         <tr class="fila-detalle">
             <th>SEMESTRE</th>
             <th>MATERIA</th>
@@ -156,40 +166,47 @@ ob_start();
             <th>HORAS</th>
         </tr>
     </thead>
-    <tbody>
+
+    <tbody >
     <?php while ($r = $carga->fetch_assoc()): ?>
+   
+
+        <!-- FILA DETALLE -->
         <tr class="fila-detalle-datos">
             <td align="center"><?= $r['semestre'] ?></td>
-            <td><?= htmlspecialchars($r['materia']) ?></td>
-            <td><?= htmlspecialchars($r['horario']) ?></td>
+            <td><?= $r['materia'] ?></td>
+            <td><?= $r['horario'] ?></td>
             <td align="center"><?= (int)$r['horas'] ?></td>
         </tr>
     <?php endwhile; ?>
     </tbody>
 </table>
 
+
 <div class="texto">
-    <p>
-        <?= nl2br(htmlspecialchars($config['texto_pie'])) ?>
+        <p>
+        Seguros del amplio intercambio de experiencias educativas, me suscribo de usted
+reiterándole mis consideraciones. Sin otro particular, le envió un respetuoso saludo.
     </p>
-       <br>
+    <br>
 </div>
 
 <div class="firma">
     <div class="firma-imagen">
-        <img src="../img/<?= htmlspecialchars($config['archivo_firma']) ?>" alt="Firma">
+        <img src="../img/firma.png" alt="Firma digital">
     </div>
 
-    <p class="firma-atentamente">ATENTAMENTE</p><br><br>
-
-    <p class="firma-nombre">
-        <?= strtoupper($config['nombre_director']) ?>
-    </p>
+    <p class="firma-atentamente">ATENTAMENTE</p> <br>
+<br>
+    <p class="firma-nombre">MTRA. ADABELIA PELÁEZ GARCÍA</p>
 
     <p class="firma-cargo">
-        <?= nl2br(htmlspecialchars($config['cargo_director'])) ?>
+        Directora de la Facultad de Ciencias Jurídicas y Humanidades<br>
+        de la Benemérita Universidad de Oaxaca
     </p>
 </div>
+
+
 
 </div>
 </div>

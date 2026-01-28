@@ -1,6 +1,5 @@
 <?php
 session_start();
-require_once "../middlewares/auth.php";
 require_once "../config/conexion.php";
 require_once "../models/UsuariosModel.php";
 
@@ -61,5 +60,3 @@ if (isset($_GET['eliminar'])) {
     header("Location: ../views/usuarios.php");
     exit();
 }
-
-

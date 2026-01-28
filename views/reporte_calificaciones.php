@@ -41,7 +41,7 @@ $alumnos = $conn->query("
 
 // Paginación
 $total_alumnos = count($alumnos);
-$por_pagina = 15;
+$por_pagina = 18;
 $paginas = ceil($total_alumnos / $por_pagina);
 $index_global = 0;
 
@@ -184,7 +184,7 @@ switch ($id_carrera) {
 
   
 
-    <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:flex-start;">
+    <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:flex-start;">
         <div style="text-align:center; width:45%;">
             <p><?= htmlspecialchars($docente['nombre']) ?><br>TITULAR DE ASIGNATURA</p>
         </div>

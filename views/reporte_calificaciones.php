@@ -41,7 +41,7 @@ $alumnos = $conn->query("
 
 // Paginación
 $total_alumnos = count($alumnos);
-$por_pagina = 18;
+$por_pagina = 16;
 $paginas = ceil($total_alumnos / $por_pagina);
 $index_global = 0;
 
@@ -184,18 +184,25 @@ switch ($id_carrera) {
 
   
 
-    <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:flex-start;">
-        <div style="text-align:center; width:45%;">
-            <p><?= htmlspecialchars($docente['nombre']) ?><br>TITULAR DE ASIGNATURA</p>
+  <div class="pie-final">
+    <div class="fila-flex">
+        <div class="pie-col">
+            <p style="margin:0;">
+                <?= htmlspecialchars($docente['nombre'] ?? '-') ?>
+            </p>
+            <div class="linea-firma"></div>
+            <p style="margin:0;"><strong>TITULAR DE ASIGNATURA</strong></p>
         </div>
 
-        <div style="text-align:center; width:45%;">
-            <br>
-            <div>
-                CONTROL ESCOLAR DE <br> LICENCIATURA EN DERECHO
-            </div>
+        <div class="pie-col">
+            <p style="margin:0;">CONTROL ESCOLAR</p>
+            
+            <div class="linea-firma"></div>
+           <p style="margin:0;"><strong>LICENCIATURA EN DERECHO</strong></p>
         </div>
     </div>
+</div>
+
 
 <?php endif; ?>
 

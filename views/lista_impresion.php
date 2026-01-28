@@ -310,11 +310,7 @@ function fecha_larga_es($fecha)
             <p style="margin:0;"><strong>NOMBRE Y FIRMA DEL DOCENTE</strong></p>
         </div>
 
-        <div class="pie-col">
-            <p style="margin:0;"><strong>CALF. APROBATORIA</strong></p>
-            <p style="margin:0;">(Tinta negra)</p>
-            <div class="linea-firma"></div>
-        </div>
+       
 
         <div class="pie-col">
             <div class="linea-firma"></div>
@@ -324,6 +320,11 @@ function fecha_larga_es($fecha)
         <div class="pie-col">
             <div class="linea-firma"></div>
             <p style="margin:0;"><strong>NOMBRE DE QUIEN RECIBE</strong></p>
+        </div>
+         <div class="pie-col">
+            <p style="margin:0;"><strong>CALF. APROBATORIA(Tinta negra)</strong></p>
+             <p style="margin:0;"><strong>CALF. APROBATORIA(Tinta negra)</strong></p>
+            <div class="linea-firma"></div>
         </div>
 
     </div>

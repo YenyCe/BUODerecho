@@ -5,7 +5,7 @@ require_once "../models/helpers_asistencia.php";
 
 $id_carrera = !empty($_SESSION['id_carrera']) ? $_SESSION['id_carrera'] : null;
 
-if(!$id_carrera){
+if (!$id_carrera) {
     die("403");
 }
 
@@ -73,10 +73,10 @@ $nombre_membrete = '';
 switch ($id_carrera) {
     case 1:
         $nombre_membrete = 'logoListas.jpg';
-    break;
+        break;
     case 3:
         $nombre_membrete = '3.jpg';
-    break;
+        break;
 }
 
 // Arreglo con los nombres de los meses en español
@@ -172,7 +172,7 @@ function fecha_larga_es($fecha)
   background: url('/img/<?= $nombre_membrete; ?>') no-repeat center;
   background-size: contain;">
             <div class="contenido" style="margin-top:10px;">
-           <!-- ENCABEZADO INFORMACIÓN -->
+                <!-- ENCABEZADO INFORMACIÓN -->
                 <table class="info-table">
                     <colgroup>
                         <col span="12">
@@ -290,7 +290,7 @@ function fecha_larga_es($fecha)
                     ?>
             </div>
         </div>
-        
+
         <div class="page-break"></div>
         <div class="page" style="width: 279.4mm;
   height: 215.9mm;
@@ -299,42 +299,37 @@ function fecha_larga_es($fecha)
             <div class="contenido" style="margin-top:40px;">
             <?php endif; ?>
 
-<div class="pie-final">
-    <div class="fila-flex pie-una-fila">
+            <div class="pie-final">
+                <div class="fila-flex pie-una-fila">
 
-        <div class="pie-col">
-            <p style="margin:0;">
-                <?= htmlspecialchars($docente['nombre'] ?? '-') ?>
-            </p>
-            <div class="linea-firma"></div>
-            <p style="margin:0;"><strong>NOMBRE Y FIRMA DEL DOCENTE</strong></p>
-        </div>
+                    <div class="pie-col">
+                        <p style="margin:0;">
+                            <?= htmlspecialchars($docente['nombre'] ?? '-') ?>
+                        </p>
+                        <div class="linea-firma"></div>
+                        <p style="margin:0;"><strong>NOMBRE Y FIRMA DEL DOCENTE</strong></p>
+                    </div>
 
-       
+                    <div class="pie-col">
+                         <p style="margin:0; min-height:18px;">
+                                <!-- aquí se escribe la fecha -->
+                            </p>
+                        <div class="linea-firma"></div>
+                        <p style="margin:0;"><strong>FECHA DE ENTREGA</strong></p>
+                    </div>
 
-        <div class="pie-col">
-            <p style="margin:0;">
-            
-            </p>
-            <div class="linea-firma"></div>
-            <p style="margin:0;"><strong>FECHA DE ENTREGA</strong></p>
-        </div>
+                    <div class="pie-col">
+                        <div class="linea-firma"></div>
+                        <p style="margin:0;"><strong>NOMBRE DE QUIEN RECIBE</strong></p>
+                    </div>
+                    <div class="pie-col">
+                        <p style="margin:0;"><strong>CALF. APROBATORIA(Tinta negra)</strong></p>
+                        <p style="margin:0;"><strong>CALF. APROBATORIA(Tinta negra)</strong></p>
 
-        <div class="pie-col">
-            <p style="margin:0;">
-                
-            </p>
-            <div class="linea-firma"></div>
-            <p style="margin:0;"><strong>NOMBRE DE QUIEN RECIBE</strong></p>
-        </div>
-         <div class="pie-col">
-            <p style="margin:0;"><strong>CALF. APROBATORIA(Tinta negra)</strong></p>
-             <p style="margin:0;"><strong>CALF. APROBATORIA(Tinta negra)</strong></p>
-            
-        </div>
+                    </div>
 
-    </div>
-</div>
+                </div>
+            </div>
 
 
         <?php endif; ?>
@@ -352,4 +347,3 @@ function fecha_larga_es($fecha)
 </body>
 
 </html>
-

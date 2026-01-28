@@ -84,7 +84,7 @@ switch ($id_carrera) {
     break;
 }
 /* ================= CONFIG ================= */
-$filas_por_hoja = 15;
+$filas_por_hoja = 17;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -120,7 +120,7 @@ $paginas = array_chunk($filas, $filas_por_hoja);
   background: url('/img/<?= $nombre_membreteV; ?>') no-repeat center;
   background-size: contain;">
 
-<div class="contenido" style="margin-top:60px;">
+<div class="contenido" style="margin-top:40px;">
 
 <table class="info-table">
 <tr>

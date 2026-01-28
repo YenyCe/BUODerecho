@@ -78,7 +78,7 @@ switch ($id_carrera) {
   height: 215.9mm;
   background: url('/img/<?= $nombre_membrete; ?>') no-repeat center;
   background-size: contain;">
-            <div class="contenido" style="margin-top:40px;">
+            <div class="contenido" style="margin-top:0px;">
 
                 <!-- ================== ENCABEZADO ================== -->
                 <table class="info-reporte">
@@ -182,12 +182,7 @@ switch ($id_carrera) {
             <div class="contenido" style="margin-top:40px;">
     <?php endif; ?>
 
-    <div style="margin-top:20px; width:90%; font-size:0.75em; text-align:justify;">
-        NOTA: Los criterios aquí mencionados son enunciativos más no limitativos,
-        por lo que el docente podrá variar los criterios de evaluación acorde a las
-        actividades que considere optimicen el aprendizaje del alumno, pudiendo
-        agregar o disminuir las columnas necesarias.
-    </div>
+  
 
     <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:flex-start;">
         <div style="text-align:center; width:45%;">

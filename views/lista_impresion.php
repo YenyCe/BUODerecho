@@ -171,7 +171,7 @@ function fecha_larga_es($fecha)
   height: 215.9mm;
   background: url('/img/<?= $nombre_membrete; ?>') no-repeat center;
   background-size: contain;">
-            <div class="contenido" style="margin-top:40px;">
+            <div class="contenido" style="margin-top:10px;">
            <!-- ENCABEZADO INFORMACIÓN -->
                 <table class="info-table">
                     <colgroup>

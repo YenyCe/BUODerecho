@@ -311,14 +311,17 @@ function fecha_larga_es($fecha)
                     </div>
 
                     <div class="pie-col">
-                         <p style="margin:0; min-height:18px;">
-                                <!-- aquí se escribe la fecha -->
-                            </p>
+                        <p style="margin:0; min-height:18px;">
+                            <!-- aquí se escribe la fecha -->
+                        </p>
                         <div class="linea-firma"></div>
                         <p style="margin:0;"><strong>FECHA DE ENTREGA</strong></p>
                     </div>
 
                     <div class="pie-col">
+                        <p style="margin:0; min-height:18px;">
+                            <!-- aquí se escribe la fecha -->
+                        </p>
                         <div class="linea-firma"></div>
                         <p style="margin:0;"><strong>NOMBRE DE QUIEN RECIBE</strong></p>
                     </div>

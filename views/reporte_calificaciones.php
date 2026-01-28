@@ -78,7 +78,7 @@ switch ($id_carrera) {
   height: 215.9mm;
   background: url('/img/<?= $nombre_membrete; ?>') no-repeat center;
   background-size: contain;">
-            <div class="contenido" style="margin-top:0px;">
+            <div class="contenido" style="margin-top:10px;">
 
                 <!-- ================== ENCABEZADO ================== -->
                 <table class="info-reporte">

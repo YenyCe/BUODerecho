@@ -155,7 +155,7 @@ function fecha_larga_es($fecha)
     <?php
     // PAGINAR 15 POR HOJA (alumnos)
     $total_alumnos = count($alumnos);
-    $por_pagina = 15;
+    $por_pagina = 18;
     $paginas = max(1, ceil($total_alumnos / $por_pagina));
 
     $index_global = 0;
@@ -299,32 +299,36 @@ function fecha_larga_es($fecha)
             <div class="contenido" style="margin-top:40px;">
             <?php endif; ?>
 
-            <div class="pie-final">
-                <div class="fila-flex">
-                    <div class="pie-col">
-                        <p style="margin:0;">
-                            <?= htmlspecialchars($docente['nombre'] ?? '-') ?>
-                        </p>
-                        <div class="linea-firma"></div>
-                        <p style="margin:0;"><strong>NOMBRE Y FIRMA DEL DOCENTE</strong></p>
-                    </div>
-                    <div class="pie-col">
-                        <p><strong>CALF. APROBATORIA</strong> (Usar tinta negra)</p>
-                        <p><strong>CALF. REPROBATORIA</strong> (Usar tinta roja)</p>
-                    </div>
-                </div>
+<div class="pie-final">
+    <div class="fila-flex pie-una-fila">
 
-                <div class="fila-flex">
-                    <div class="pie-col">
-                        <div class="linea-firma"></div>
-                        <p><strong>FECHA DE ENTREGA</strong></p>
-                    </div>
-                    <div class="pie-col">
-                        <div class="linea-firma"></div>
-                        <p><strong>NOMBRE DE QUIEN RECIBE</strong></p>
-                    </div>
-                </div>
-            </div>
+        <div class="pie-col">
+            <p style="margin:0;">
+                <?= htmlspecialchars($docente['nombre'] ?? '-') ?>
+            </p>
+            <div class="linea-firma"></div>
+            <p style="margin:0;"><strong>NOMBRE Y FIRMA DEL DOCENTE</strong></p>
+        </div>
+
+        <div class="pie-col">
+            <p style="margin:0;"><strong>CALF. APROBATORIA</strong></p>
+            <p style="margin:0;">(Tinta negra)</p>
+            <div class="linea-firma"></div>
+        </div>
+
+        <div class="pie-col">
+            <div class="linea-firma"></div>
+            <p style="margin:0;"><strong>FECHA DE ENTREGA</strong></p>
+        </div>
+
+        <div class="pie-col">
+            <div class="linea-firma"></div>
+            <p style="margin:0;"><strong>NOMBRE DE QUIEN RECIBE</strong></p>
+        </div>
+
+    </div>
+</div>
+
 
         <?php endif; ?>
 

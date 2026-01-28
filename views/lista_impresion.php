@@ -155,7 +155,7 @@ function fecha_larga_es($fecha)
     <?php
     // PAGINAR 15 POR HOJA (alumnos)
     $total_alumnos = count($alumnos);
-    $por_pagina = 18;
+    $por_pagina = 17;
     $paginas = max(1, ceil($total_alumnos / $por_pagina));
 
     $index_global = 0;

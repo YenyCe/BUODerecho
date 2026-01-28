@@ -19,6 +19,22 @@ class ParcialesModel {
         return $this->conn->query($sql)->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function getParcialPorId($id_parcial)
+    {
+        if (!is_numeric($id_parcial) || $id_parcial <= 0) return false;
+
+        $stmt = $this->conn->prepare("
+            SELECT fecha_inicio, fecha_fin, numero_parcial
+            FROM parciales
+            WHERE id_parcial = ?
+        ");
+        $stmt->bind_param("i", $id_parcial);
+        $stmt->execute();
+
+        return $stmt->get_result()->fetch_assoc() ?: false;
+    }
+
+
     public function agregarParcial($numero, $inicio, $fin, $id_carrera) {
         $stmt = $this->conn->prepare("INSERT INTO parciales (numero_parcial, fecha_inicio, fecha_fin, id_carrera) VALUES (?, ?, ?, ?)");
         $stmt->bind_param("issi", $numero, $inicio, $fin, $id_carrera);

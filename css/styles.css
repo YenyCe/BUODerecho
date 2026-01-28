@@ -102,6 +102,8 @@ body {
   background: #fff;
   cursor: pointer;
   transition: 0.2s;
+  margin-bottom: 15px;
+
 }
 
 .container-form select:focus {
@@ -764,4 +766,12 @@ body.login-body {
 /* Espaciado elegante entre campos */
 .container-form .form-elegante > div {
   gap: 6px;
+}
+
+
+
+.filtros-container{
+  margin-bottom:15px; 
+  display:flex; 
+  gap:15px;
 }

@@ -150,7 +150,6 @@ ob_start();
         });
     });
 </script>
-<script src="/js/modales.js"></script>
 <?php
 $content = ob_get_clean();
 $title = "Parciales";

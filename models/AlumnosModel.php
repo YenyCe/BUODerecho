@@ -1,29 +1,22 @@
 <?php
-class AlumnosModel {
+require_once "SemestresModel.php";
 
+class AlumnosModel
+{
     private $conn;
-    // Ajustes
     private $NOMBRE_MAX = 150;
+    private $semestresModel;
 
     public function __construct($conexion){
         $this->conn = $conexion;
+        $this->semestresModel = new SemestresModel($conexion);
     }
 
-    /* ===========================
-       UTIL: Obtener fila del grupo (si existe)
-       Devuelve array asociativo del grupo o false
-       =========================== */
+
     private function obtenerGrupo($id_grupo){
-        $stmt = $this->conn->prepare("SELECT id_grupo, nombre, id_carrera FROM grupos WHERE id_grupo = ?");
-        $stmt->bind_param("i", $id_grupo);
-        $stmt->execute();
-        $res = $stmt->get_result();
-        return $res->fetch_assoc() ?: false;
+        return $this->semestresModel->getGrupo($id_grupo);
     }
 
-    /* ===========================
-       UTIL: Sanitizar y validar nombre
-       =========================== */
     private function validarNombre($nombre){
         $nombre = trim($nombre);
         if ($nombre === '') return [false, 'El nombre no puede estar vacío.'];
@@ -37,7 +30,7 @@ class AlumnosModel {
        Devuelve array de alumnos
        =========================== */
     public function getAlumnos($id_carrera = null){
-$sql = "SELECT 
+        $sql = "SELECT 
             a.id_alumno, 
             a.nombre, 
             a.id_grupo,
@@ -48,10 +41,7 @@ $sql = "SELECT
         JOIN grupos g ON a.id_grupo = g.id_grupo
         JOIN carreras c ON a.id_carrera = c.id_carrera";
 
-
-
-
-        if ($id_carrera){
+        if ($id_carrera) {
             $sql .= " WHERE g.id_carrera = ?";
             $stmt = $this->conn->prepare($sql);
             $stmt->bind_param("i", $id_carrera);
@@ -198,70 +188,46 @@ $sql = "SELECT
         return ['success' => false, 'message' => 'Error al eliminar alumno: ' . $this->conn->error];
     }
 
-    /* ===========================
-       LISTAR GRUPOS (sin cambios funcionales, seguro)
-       =========================== */
-    public function getGrupos(){
-    $sql = "SELECT g.id_grupo, g.nombre AS nombre_grupo, g.id_carrera, c.nombre AS nombre_carrera
-            FROM grupos g
-            JOIN carreras c ON g.id_carrera = c.id_carrera
-            ORDER BY g.nombre ASC";
-    $result = $this->conn->query($sql);
-    return $result->fetch_all(MYSQLI_ASSOC);
-}
+    public function getAlumnosPorGrupo($id_grupo, $user_role = null, $user_carrera = null){
+        if (!is_numeric($id_grupo) || intval($id_grupo) <= 0) {
+            return [];
+        }
 
+        $id_grupo = intval($id_grupo);
 
-    // Obtener información de un grupo por su ID
-public function getGrupo($id_grupo){
-    $stmt = $this->conn->prepare("
-        SELECT 
-            g.id_grupo,
-            g.nombre AS grupo,
-            g.id_carrera,
-            s.id_semestre,
-            s.numero AS semestre
-        FROM grupos g
-        INNER JOIN semestres s ON g.id_semestre = s.id_semestre
-        WHERE g.id_grupo = ?
-    ");
-    $stmt->bind_param("i", $id_grupo);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    return $res->fetch_assoc() ?: false;
-}
+        // Obtener info del grupo
+        $grupo = $this->obtenerGrupo($id_grupo);
+        if (!$grupo) {
+            return [];
+        }
 
-public function getGruposPorCarrera($id_carrera){
-    $stmt = $this->conn->prepare(
-        "SELECT g.id_grupo, g.nombre AS nombre_grupo, g.id_carrera, c.nombre AS nombre_carrera
-         FROM grupos g
-         JOIN carreras c ON g.id_carrera = c.id_carrera
-         WHERE g.id_carrera = ?
-         ORDER BY g.nombre ASC"
-    );
-    $stmt->bind_param("i", $id_carrera);
-    $stmt->execute();
-    return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-}
+        // Validar permisos si es coordinador
+        if ($user_role === 'coordinador') {
+            if ($user_carrera === null) return [];
+            if (intval($grupo['id_carrera']) !== intval($user_carrera)) {
+                return [];
+            }
+        }
 
-
-
-    public function getAlumnosPorGrupo($id_grupo){
-    $stmt = $this->conn->prepare(
-        "SELECT id_alumno, nombre 
-         FROM alumnos 
-         WHERE id_grupo = ? 
+        $stmt = $this->conn->prepare(
+            "SELECT 
+            id_alumno,
+            nombre,
+            id_grupo,
+            id_carrera
+         FROM alumnos
+         WHERE id_grupo = ?
          ORDER BY nombre ASC"
-    );
-    $stmt->bind_param("i", $id_grupo);
-    $stmt->execute();
-    return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-}
+        );
+        $stmt->bind_param("i", $id_grupo);
+        $stmt->execute();
+
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
 
 
-
-
-public function getAlumnosBaja($id_carrera = null){
-    $sql = "SELECT 
+    public function getAlumnosBaja($id_carrera = null){
+        $sql = "SELECT 
                 a.id_alumno,
                 a.nombre,
                 a.motivo_baja,
@@ -270,45 +236,42 @@ public function getAlumnosBaja($id_carrera = null){
             JOIN carreras c ON a.id_carrera = c.id_carrera
             WHERE a.status = 'baja'";
 
-    if ($id_carrera) {
-        $sql .= " AND a.id_carrera = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $id_carrera);
-        $stmt->execute();
-        $result = $stmt->get_result();
-    } else {
-        $result = $this->conn->query($sql);
+        if ($id_carrera) {
+            $sql .= " AND a.id_carrera = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("i", $id_carrera);
+            $stmt->execute();
+            $result = $stmt->get_result();
+        } else {
+            $result = $this->conn->query($sql);
+        }
+
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    return $result->fetch_all(MYSQLI_ASSOC);
-}
+    public function darBajaAlumno($id, $motivo = null, $user_role = null, $user_carrera = null){
+        if (!is_numeric($id) || intval($id) <= 0)
+            return ['success' => false, 'message' => 'ID inválido.'];
 
-public function darBajaAlumno($id, $motivo = null, $user_role = null, $user_carrera = null){
-    if (!is_numeric($id) || intval($id) <= 0) 
-        return ['success'=>false, 'message'=>'ID inválido.'];
+        $id = intval($id);
+        $alumno = $this->getAlumno($id);
+        if (!$alumno) return ['success' => false, 'message' => 'Alumno no encontrado.'];
 
-    $id = intval($id);
-    $alumno = $this->getAlumno($id);
-    if (!$alumno) return ['success'=>false, 'message'=>'Alumno no encontrado.'];
+        if ($user_role === 'coordinador' && intval($alumno['id_carrera']) !== intval($user_carrera)) {
+            return ['success' => false, 'message' => 'No tienes permiso para dar de baja a este alumno.'];
+        }
 
-    if ($user_role === 'coordinador' && intval($alumno['id_carrera']) !== intval($user_carrera)) {
-        return ['success'=>false, 'message'=>'No tienes permiso para dar de baja a este alumno.'];
-    }
-
-    // Solo actualizamos id_grupo, status y motivo_baja
-    $stmt = $this->conn->prepare(
-        "UPDATE alumnos 
+        // Solo actualizamos id_grupo, status y motivo_baja
+        $stmt = $this->conn->prepare(
+            "UPDATE alumnos 
          SET id_grupo = NULL, status = 'baja', motivo_baja = ? 
          WHERE id_alumno = ?"
-    );
-    $stmt->bind_param("si", $motivo, $id);
-    $exec = $stmt->execute();
+        );
+        $stmt->bind_param("si", $motivo, $id);
+        $exec = $stmt->execute();
 
-    if ($exec) return ['success'=>true, 'message'=>'Alumno dado de baja correctamente.'];
-    return ['success'=>false, 'message'=>'Error al actualizar alumno: '.$this->conn->error];
-}
-
-
+        if ($exec) return ['success' => true, 'message' => 'Alumno dado de baja correctamente.'];
+        return ['success' => false, 'message' => 'Error al actualizar alumno: ' . $this->conn->error];
+    }
 
 }
-?>

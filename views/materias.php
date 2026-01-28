@@ -30,7 +30,7 @@ ob_start();
 
 <div class="container-form">
     <h2>Materias</h2>
-    <div class="filtros-container" style="margin-bottom:15px;">
+    <div class="filtros-container">
         <?php if ($rol === 'admin'): ?>
             <div>
                 <label>Filtrar por carrera:</label>
@@ -78,26 +78,38 @@ ob_start();
             <?php else: ?>
                 <?php foreach ($materias as $m): ?>
                     <tr
-                        data-id="<?= $m['id_materia'] ?>"
-                        data-nombre="<?= htmlspecialchars($m['nombre']) ?>"
-                        data-clave="<?= htmlspecialchars($m['clave']) ?>"
-                        data-horas_semana="<?= $m['horas_semana'] ?>"
-                        data-horas_semestre="<?= $m['horas_semestre'] ?>"
-                        data-id_carrera="<?= $m['id_carrera'] ?>"
-                        data-id_semestre="<?= $m['id_semestre'] ?>">
-                        <td><?= htmlspecialchars($m['nombre']) ?></td>
-                        <td><?= htmlspecialchars($m['clave']) ?></td>
-                        <td><?= $m['semestre_num'] ?></td>
-                        <td><?= $m['horas_semana'] ?></td>
-                        <td><?= $m['horas_semestre'] ?></td>
+                        data-id="<?= (int)$m['id_materia'] ?>"
+                        data-nombre="<?= htmlspecialchars($m['nombre'], ENT_QUOTES, 'UTF-8') ?>"
+                        data-clave="<?= htmlspecialchars($m['clave'], ENT_QUOTES, 'UTF-8') ?>"
+                        data-horas_semana="<?= (int)$m['horas_semana'] ?>"
+                        data-horas_semestre="<?= (int)$m['horas_semestre'] ?>"
+                        data-id_carrera="<?= (int)$m['id_carrera'] ?>"
+                        data-id_semestre="<?= (int)$m['id_semestre'] ?>">
+
+                        <td><?= htmlspecialchars($m['nombre'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td><?= htmlspecialchars($m['clave'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td><?= (int)$m['semestre_num'] ?></td>
+                        <td><?= (int)$m['horas_semana'] ?></td>
+                        <td><?= (int)$m['horas_semestre'] ?></td>
+
                         <?php if ($rol === 'admin'): ?>
-                            <td><?= htmlspecialchars($m['nombre_carrera'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($m['nombre_carrera'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                         <?php endif; ?>
+
                         <td>
-                            <button class="btn-editar" onclick="abrirModalMateria(<?= $m['id_materia'] ?>)">Editar</button>
-                            <a href="../controllers/MateriasController.php?eliminar=<?= $m['id_materia'] ?>" class="btn-eliminar" onclick="return confirm('¿Eliminar esta materia?')">Eliminar</a>
+                            <button class="btn-editar"
+                                onclick="abrirModalMateria(<?= (int)$m['id_materia'] ?>)">
+                                Editar
+                            </button>
+
+                            <a href="../controllers/MateriasController.php?eliminar=<?= (int)$m['id_materia'] ?>"
+                                class="btn-eliminar"
+                                onclick="return confirm('¿Eliminar esta materia?')">
+                                Eliminar
+                            </a>
                         </td>
                     </tr>
+
                 <?php endforeach; ?>
             <?php endif; ?>
         </tbody>
@@ -107,7 +119,7 @@ ob_start();
 <!-- Modal Materia -->
 <div id="modalMateria" class="modal">
     <div class="modal-content">
-        <span class="cerrar" onclick="cerrarModalMateria()">&times;</span>
+        <span class="cerrar" onclick="cerrarModal('modalMateria')">&times;</span>
         <h2 id="tituloModalMateria">Agregar Materia</h2>
         <form id="formMateria" action="../controllers/MateriasController.php" method="POST">
             <input type="hidden" name="accion" value="agregar" id="accionMateria">
@@ -180,16 +192,6 @@ ob_start();
             if (carrera_input) carrera_input.value = '';
         }
     }
-
-    function cerrarModalMateria() {
-        document.getElementById('modalMateria').style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-        const modal = document.getElementById('modalMateria');
-        if (event.target == modal) cerrarModalMateria();
-    }
-
     // Filtro por carrera
     document.getElementById('filtroCarrera')?.addEventListener('change', function() {
         const carrera = this.value;
@@ -210,8 +212,6 @@ ob_start();
         });
     });
 </script>
-<script src="/js/modales.js"></script>
-
 <?php
 $content = ob_get_clean();
 $title = "Materias";

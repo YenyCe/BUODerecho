@@ -2,7 +2,7 @@
 require_once "../middlewares/auth.php";
 require_once "../config/conexion.php";
 require_once "../models/AlumnosModel.php";
-
+require_once "../models/SemestresModel.php";
 $rol = $_SESSION['rol'];
 $id_carrera = ($rol === 'coordinador') ? $_SESSION['id_carrera'] : null;
 
@@ -13,20 +13,21 @@ if (!isset($_GET['id_grupo'])) {
 
 $id_grupo = intval($_GET['id_grupo']);
 $alumnoModel = new AlumnosModel($conn);
+$semestreModel  = new SemestresModel($conn);
 
 // Info del grupo
-$grupoInfo = $alumnoModel->getGrupo($id_grupo);
+$grupoInfo = $semestreModel->getGrupo($id_grupo);
 if (!$grupoInfo) {
     echo "Grupo no encontrado";
     exit();
 }
 
 // Alumnos del grupo
-$alumnos = $alumnoModel->getAlumnos($id_carrera);
-$alumnosGrupo = array_filter($alumnos, fn($a) => intval($a['id_grupo']) === $id_grupo);
+$alumnosGrupo = $alumnoModel->getAlumnosPorGrupo( $id_grupo, $rol,$id_carrera);
+
 
 // Lista de grupos para el select (editar/agregar)
-$grupos = ($rol === 'admin') ? $alumnoModel->getGrupos() : $alumnoModel->getGruposPorCarrera($id_carrera);
+$grupos = ($rol === 'admin') ? $semestreModel->getGrupos() : $semestreModel->getGruposPorCarrera($id_carrera);
 
 ob_start();
 ?>
@@ -102,7 +103,6 @@ ob_start();
     </div>
 </div>
 
-<script src="/js/modales.js"></script>
 <script>
     function abrirModalAlumno(id = null) {
         const modal = document.getElementById('modalAlumno');

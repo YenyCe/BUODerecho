@@ -62,7 +62,7 @@ if (isset($_POST['accion']) && $_POST['accion'] == 'editar') {
 if (isset($_GET['eliminar'])) {
     $materiaModel->eliminarMateria($_GET['eliminar']);
     $_SESSION['alerta'] = [
-        'tipo' => 'error',
+        'tipo' => 'success',
         'mensaje' => 'Materia eliminada correctamente'
     ];
 
@@ -70,3 +70,4 @@ if (isset($_GET['eliminar'])) {
     exit();
 }
 ?>
+

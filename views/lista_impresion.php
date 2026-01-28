@@ -328,16 +328,11 @@ function fecha_larga_es($fecha)
                     <div class="pie-col">
                         <p style="margin:0;"><strong>CALF. APROBATORIA(Tinta negra)</strong></p>
                         <p style="margin:0;"><strong>CALF. APROBATORIA(Tinta negra)</strong></p>
-
                     </div>
 
                 </div>
             </div>
-
-
         <?php endif; ?>
-
-
             </div>
         </div>
 

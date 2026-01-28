@@ -61,7 +61,7 @@ table th {
 table td {
   font-size: 12px;
   text-align: left;
-  /* padding: 3px;*/
+   padding: 1px;
   border: 1px solid #c8c8c8;
 }
 

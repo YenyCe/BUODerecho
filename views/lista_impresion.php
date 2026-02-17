@@ -77,6 +77,7 @@ switch ($id_carrera) {
     case 3:
         $nombre_membrete = '3.jpg';
         break;
+    case 6: $nombre_membrete = '6.jpg'; break;
 }
 
 // Arreglo con los nombres de los meses en español

@@ -50,7 +50,7 @@ $membrete = '';
 switch ($id_carrera) {
     case 1: $membrete = 'logo2.jpg'; break;
     case 3: $membrete = 'me.png'; break;
-    case 6: $membrete = 'logo2.jpg'; break;
+    case 6: $membrete = '6.jpg'; break;
 }
 
 /* ================= HORARIOS ================= */
@@ -104,9 +104,7 @@ ob_start();
 </form>
 
 <div class="page" style="
-
-  background: url('/img/<?= $membrete ?>') no-repeat center;
-
+  background: url('../img/<?= $membrete ?>') no-repeat center;
   background-size: contain;">
 
 <div class="contenido">

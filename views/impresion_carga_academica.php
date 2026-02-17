@@ -104,7 +104,9 @@ ob_start();
 </form>
 
 <div class="page" style="
-  background: url('../img/<?= $membrete ?>') no-repeat center;
+
+  background: url('/img/<?= $membrete ?>') no-repeat center;
+
   background-size: contain;">
 
 <div class="contenido">

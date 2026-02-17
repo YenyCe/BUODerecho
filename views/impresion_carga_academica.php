@@ -50,7 +50,7 @@ $membrete = '';
 switch ($id_carrera) {
     case 1: $membrete = 'logo2.jpg'; break;
     case 3: $membrete = 'me.png'; break;
-    case 6: $membrete = '6.jpg'; break;
+    case 6: $membrete = 'logo2.jpg'; break;
 }
 
 /* ================= HORARIOS ================= */

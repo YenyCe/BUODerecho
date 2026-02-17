@@ -50,6 +50,7 @@ $membrete = '';
 switch ($id_carrera) {
     case 1: $membrete = 'logo2.jpg'; break;
     case 3: $membrete = 'me.png'; break;
+    case 6: $membrete = 'D.jpg'; break;
 }
 
 /* ================= HORARIOS ================= */
@@ -109,8 +110,13 @@ ob_start();
 <div class="contenido">
 
 <div class="encabezado">
+      <?php
+        $clave_oficio_final = $_GET['clave_oficio'] ?? $config['clave_oficio'];
+    ?>
     <?= $fecha ?><br>
-    <?= htmlspecialchars($config['clave_oficio']) ?><br>
+            <!-- Clave de oficio -->
+        <input type="text" name="clave_oficio" value="<?= htmlspecialchars($clave_oficio_final) ?>" style="border:none; background:transparent; font-size:inherit; text-align: right;"><br>
+ 
     <strong>ASUNTO:</strong> CARGA ACADÉMICA
 </div>
 
